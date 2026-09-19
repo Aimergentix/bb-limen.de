@@ -1,0 +1,15 @@
+# Arbeitsmaterial, nicht Teil der Website. Codeberg Pages liefert alles
+# aus, was im Branch liegt — deshalb bleibt Quellenmaterial ausserhalb der
+# Versionierung und damit ausserhalb des Netzes.
+#
+# docs/ enthaelt fremde PDF zur Betreuung in Leichter Sprache. Sie sind
+# Grundlage fuer leichte-sprache.html, aber nicht zum Weiterveroeffent-
+# lichen gedacht — das waere auch urheberrechtlich zu pruefen. Soll doch
+# etwas davon online, diese Zeile streichen.
+docs/
+
+# Werkzeuge und Zwischenstaende
+.agents/
+.codex/
+tmp/
+*.neu

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /docs/
+Disallow: /partials/
+
+Sitemap: https://bb-limen.de/sitemap.xml

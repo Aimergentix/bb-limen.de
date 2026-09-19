@@ -1,0 +1,1170 @@
+/* BB Limen — Stylesheet.
+   Keine externen Ressourcen, keine Webfonts, keine Skripte.
+
+   Aufbau
+   ------
+   Links eine stehende Kolumne in Graphit: Bürokennung, Navigation und
+   Kontakt. Sie bleibt beim Scrollen stehen, damit die Telefonnummer auf
+   jedem Bildschirmzentimeter erreichbar ist. Rechts der Satzspiegel im
+   Stil eines gesetzten Buches: Serifenschrift, Rubriken in Bernstein,
+   Aufgabenkreise als Register mit römischen Ziffern.
+
+   Proportion
+   ----------
+   Abstände sind Potenzen des Goldenen Schnitts (phi = 1.618), Schriftgrade
+   Schritte von phi^(1/4). Die Kolumne verhält sich zum Satzspiegel
+   annähernd wie 1 : phi.
+
+   Palette C — Graphit & Bernstein
+   -------------------------------
+   Graphit trägt die Amtsautorität, Bernstein die Wärme des Klassischen.
+   Alle Farbwerte stehen im Block PALETTE; ein Wechsel ersetzt nur ihn.
+   Jeder Textwert ist gegen WCAG geprüft (Fließtext 8,9:1, Nebentext 4,6:1,
+   Bernstein als Textfarbe 5,4:1, Kolumnentext 15,0:1).
+*/
+
+/* ================= PALETTE — austauschbarer Block ================= */
+
+:root {
+  --paper:   #fbfaf7;   /* Grund des Satzspiegels — eine Spur warm */
+  --surface: #f4f2ed;   /* abgesetzte Flächen, Register, Hinweis */
+  --tint:    #efece5;   /* tiefste helle Fläche */
+  --ink:     #14181c;   /* Überschriften */
+  --body:    #414750;   /* Fließtext */
+  --muted:   #656c77;   /* Nebentext, Beschriftungen */
+  --line:    #e6e2da;   /* Haarlinien auf Papier */
+
+  --carrier:   #1f242a; /* Graphit — die stehende Kolumne */
+  --carrier-2: #333b44;
+  --carrier-line: #434b56;
+  --on-carrier:     #fafafa;
+  --on-carrier-dim: #b9bfc7;
+
+  --accent:     #96581a;  /* Bernstein — Rubriken, Ziffern, Zierlinien */
+  --accent-ink: #96581a;  /* Bernstein als Textfarbe */
+  --accent-on-carrier: #b18355;
+
+  /* Salbei — die zweite Stimme. Sie steht ausschliesslich dort, wo die
+     Nachricht entlastet: keine Kosten, keine Entmuendigung, eigene Wahl
+     des Betreuers, der Weg zurueck. Nie als Schmuck. Geprueft: 6,53:1
+     auf Papier, 6,14:1 auf Flaeche. */
+  --gut:         #3a6350;
+  --gut-ink:     #3a6350;
+  --gut-flaeche: #edf2ee;
+
+  --hauch: #f7f1e6;     /* Bernstein sehr duenn — nur bei Beruehrung */
+
+  /* Fuenf Stimmen, ausschliesslich fuer die Leichte-Sprache-Seite: dort
+     hilft Farbe beim Wiederfinden, ueberall sonst waere sie Schmuck.
+     Alle als Beschriftung auf der Flaeche geprueft, mindestens 5,0:1. */
+  --st-1: #96581a;
+  --st-2: #3a6350;
+  --st-3: #8a4b32;
+  --st-4: #3f5a78;
+  --st-5: #6f5a18;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:   #111312;
+    --surface: #191a18;
+    --tint:    #1d1f1c;
+    --ink:     #eef0f2;
+    --body:    #c3c9d0;
+    --muted:   #949ba5;
+    --line:    #282a27;
+
+    --carrier:   #16191d;
+    --carrier-2: #262c33;
+    --carrier-line: #333a42;
+    --on-carrier:     #eef0f2;
+    --on-carrier-dim: #9aa2ac;
+
+    --accent:     #d09a52;
+    --accent-ink: #d09a52;
+    --accent-on-carrier: #d09a52;
+
+    --gut:         #94c4a6;   /* 9,57:1 auf Papier, 8,91:1 auf Flaeche */
+    --gut-ink:     #94c4a6;
+    --gut-flaeche: #171f1a;
+
+    --hauch: #1d1a15;
+
+    --st-1: #d09a52;
+    --st-2: #94c4a6;
+    --st-3: #d09a7f;
+    --st-4: #9bb6d4;
+    --st-5: #cfb964;
+  }
+}
+
+/* ================= Maße, Schrift ================= */
+
+:root {
+  --s-1: 0.382rem;
+  --s0:  0.618rem;
+  --s1:  1rem;
+  --s2:  1.618rem;
+  --s3:  2.618rem;
+  --s4:  4.236rem;
+
+  --rail: 21rem;          /* Kolumne : Satzspiegel ~ 1 : phi */
+  --measure: 40rem;
+
+  --serif: "Noto Serif", Georgia, "Liberation Serif", "Times New Roman", serif;
+  --sans:  ui-sans-serif, system-ui, "Noto Sans", "DejaVu Sans", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--body);
+  font-family: var(--serif);
+  font-size: clamp(1.02rem, 0.99rem + 0.18vw, 1.12rem);
+  line-height: 1.7;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--accent-ink); text-underline-offset: 0.18em; }
+
+/* ================= Gerüst ================= */
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  max-width: 96rem;
+  margin-inline: auto;
+}
+
+/* ================= Die stehende Kolumne ================= */
+
+.rail {
+  background: var(--carrier);
+  color: var(--on-carrier-dim);
+  font-family: var(--sans);
+  padding: var(--s3) var(--s2) var(--s2);
+}
+
+@media (min-width: 60.01rem) {
+  .rail {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    /* Auf sehr breiten Schirmen laeuft der Graphit bis an den linken
+       Bildschirmrand, damit die Kolumne die Seite begrenzt, statt als
+       Platte in der Mitte zu schweben. Ohne Einfluss auf das Layout. */
+    box-shadow: -100vw 0 0 var(--carrier);
+  }
+}
+
+.rail-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s0);
+  color: var(--on-carrier);
+  text-decoration: none;
+}
+
+.rail-brand .leaf { width: 1.75rem; height: 1.75rem; flex: none; color: var(--accent-on-carrier); }
+/* Blattkontur in Salbei, Mittelrippe und Adern in Bernstein — ein einziger
+   farbiger Punkt, aber auf jeder Seite sichtbar. */
+.rail-brand .leaf .blatt { stroke: var(--gut); }
+
+.rail-name {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rail-role {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-carrier-dim);
+  margin: var(--s1) 0 0;
+  line-height: 1.5;
+}
+.rail-role span { display: block; }
+
+.rail-ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: var(--s2) 0;
+  color: var(--accent-on-carrier);
+  font-size: 0.85rem;
+}
+.rail-ornament::before, .rail-ornament::after {
+  content: ""; flex: 1; height: 1px; background: var(--carrier-line);
+}
+
+.rail nav ul { list-style: none; margin: 0; padding: 0; }
+.rail nav a {
+  display: block;
+  color: var(--on-carrier-dim);
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--carrier-line);
+  transition: color 120ms linear;
+}
+.rail nav a:hover { color: var(--on-carrier); }
+.rail nav a[aria-current="page"] { color: var(--accent-on-carrier); font-weight: 600; }
+
+/* "Fuer Fachkreise" richtet sich an ein anderes Publikum als der Rest
+   der Navigation. Statt eines fuenften gleichrangigen Punktes bekommt es
+   Abstand und die Kapitaelchen-Anmutung der Rubriken: erkennbar ein
+   Seitenweg, kein Hauptweg. */
+.rail nav li.fach { margin-top: var(--s2); }
+.rail nav li.fach a {
+  border-bottom: 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent-on-carrier);
+  padding: 0.2rem 0;
+}
+.rail nav li.fach a:hover { color: var(--on-carrier); }
+.rail nav li.fach a[aria-current="page"] { color: var(--on-carrier); }
+
+.rail-spacer { flex: 1; min-height: var(--s2); }
+
+.rail-contact {
+  border-top: 2px solid var(--accent-on-carrier);
+  margin-top: var(--s2);
+  padding-top: var(--s1);
+}
+.rail-contact dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-carrier-dim);
+  margin-top: var(--s1);
+}
+.rail-contact dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--on-carrier);
+  line-height: 1.45;
+}
+.rail-contact dd.post { font-weight: 400; font-size: 0.95rem; }
+.rail-contact dd .wer {
+  display: block;
+  font-weight: 400;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--on-carrier-dim);
+  margin-top: 0.02rem;
+}
+.rail-contact dd.hint {
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: var(--on-carrier-dim);
+  margin-top: 0.1rem;
+}
+.rail-contact dd a {
+  color: var(--on-carrier);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-on-carrier);
+}
+
+.rail-legal {
+  margin: var(--s2) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: var(--s1);
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+.rail-legal a { color: var(--on-carrier-dim); text-decoration: none; }
+.rail-legal a:hover { color: var(--on-carrier); }
+
+/* ================= Satzspiegel ================= */
+
+.sheet { padding: var(--s3) clamp(var(--s2), 4vw, var(--s4)) var(--s4); }
+.sheet > * { max-width: var(--measure); }
+
+.kicker {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  font-weight: 600;
+  margin: 0 0 var(--s0);
+}
+
+h1 {
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 1.3rem + 2.5vw, 2.95rem);
+  line-height: 1.13;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s1);
+  text-wrap: balance;
+}
+
+h1::after {
+  content: "";
+  display: block;
+  width: 4.236rem;
+  height: 2px;
+  margin-top: var(--s1);
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+
+.lead {
+  font-size: clamp(1.12rem, 1.05rem + 0.5vw, 1.32rem);
+  line-height: 1.55;
+  color: var(--ink);
+  margin: var(--s2) 0 var(--s2);
+}
+
+/* Initiale im Buchsatz, nur auf der Startseite und nur breit genug */
+@media (min-width: 46rem) {
+  .sheet .lead.initial::first-letter {
+    float: left;
+    font-size: 3.5em;
+    line-height: 0.82;
+    padding: 0.06em 0.12em 0 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+}
+
+h2 {
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: clamp(1.3rem, 1.18rem + 0.7vw, 1.72rem);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  margin: var(--s3) 0 var(--s0);
+}
+
+h3 {
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 1.08rem;
+  margin: var(--s2) 0 var(--s-1);
+}
+
+p { margin: 0 0 var(--s1); }
+p:last-child { margin-bottom: 0; }
+
+/* Zierlinie mit Signet — das Schwellen-Motiv */
+.ornament {
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: var(--s3) 0;
+  color: var(--accent);
+  max-width: var(--measure);
+}
+.ornament::before, .ornament::after {
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+.ornament span { font-size: 0.95rem; color: var(--accent); }
+
+/* ================= Register der Aufgabenkreise ================= */
+
+.register {
+  border-top: 1px solid var(--line);
+  margin: var(--s2) 0 0;
+  max-width: var(--measure);
+  list-style: none;   /* die roemische Ziffer steht als .idx im Markup */
+  padding: 0;
+}
+
+.register .entry {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0 var(--s1);
+  padding: var(--s1) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.register .idx {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--accent-ink);
+  padding-top: 0.35em;
+}
+
+.register h3 { margin: 0 0 0.2rem; }
+.register p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+
+/* ================= Portrait ================= */
+
+/* Im Buchsatz laeuft der Text um das Bild. Unterhalb von 56rem steht das
+   Portrait ueber dem Text, damit die Zeilen nicht zu kurz werden. */
+.portrait {
+  margin: 0 0 var(--s2);
+  max-width: 18rem;
+}
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.portrait figcaption {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-top: var(--s0);
+  padding-top: var(--s0);
+  border-top: 1px solid var(--accent);
+}
+
+@media (min-width: 56rem) {
+  .portrait {
+    float: right;
+    width: 15rem;
+    margin: 0.4rem 0 var(--s1) var(--s2);
+  }
+}
+
+/* ================= Ortsliste des Einzugsgebiets ================= */
+
+.orte {
+  list-style: none;
+  margin: var(--s1) 0 var(--s1);
+  padding: 0;
+  columns: 2;
+  column-gap: var(--s2);
+  max-width: var(--measure);
+  font-family: var(--sans);
+  font-size: 0.94rem;
+  color: var(--muted);
+}
+.orte li {
+  break-inside: avoid;
+  padding: 0.14rem 0;
+}
+.orte li.hier {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+@media (min-width: 46rem) {
+  .orte { columns: 3; }
+}
+
+/* Aufzaehlung innerhalb eines Registereintrags */
+.unterliste {
+  list-style: none;
+  margin: var(--s0) 0;
+  padding: 0;
+}
+.unterliste li {
+  position: relative;
+  padding-left: var(--s1);
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+.unterliste li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--accent-ink);
+}
+
+/* ================= Stufe 3: Leben nur bei Beruehrung ================= */
+
+/* Im Ruhezustand unsichtbar — also ohne Wirkung auf den Ersteindruck und
+   auf den Druck. Nur auf Geraeten mit echtem Zeigegeraet, damit der
+   Zustand am Telefon nicht kleben bleibt. */
+@media (hover: hover) {
+  .register .entry,
+  .dokumente li,
+  .sprungmenu li {
+    transition: background-color 160ms ease-out;
+  }
+  .register .entry:hover,
+  .dokumente li:hover,
+  .sprungmenu li:hover {
+    background: var(--hauch);
+  }
+}
+
+/* ================= Hinweis, Kontaktliste ================= */
+
+.note {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  padding: var(--s1) var(--s2);
+  margin: var(--s3) 0 0;
+  max-width: var(--measure);
+  font-family: var(--sans);
+  font-size: 0.94rem;
+  color: var(--muted);
+}
+.note p { margin: 0; }
+.note strong { color: var(--ink); }
+
+/* Faktenliste fuer Gerichte, Kliniken und Behoerden: Begriff links,
+   Antwort rechts, damit sich die gesuchte Zeile im Ueberfliegen findet. */
+.fakten {
+  margin: var(--s2) 0 var(--s2);
+  max-width: var(--measure);
+  border-top: 1px solid var(--line);
+}
+.fakten dt {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  font-weight: 600;
+  padding-top: var(--s1);
+}
+.fakten dd {
+  margin: 0.25rem 0 0;
+  padding-bottom: var(--s1);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 52rem) {
+  .fakten {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    column-gap: var(--s2);
+  }
+  .fakten dd { margin-top: 0; padding-top: var(--s1); }
+}
+
+/* Geschwister von .note — gleiche Bauform, andere Aussage. .note warnt
+   oder schraenkt ein, .gut entlastet. Mehr als eine Handvoll pro Website
+   waere zu viel; dann verliert die Farbe ihre Bedeutung. */
+.gut {
+  background: var(--gut-flaeche);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gut);
+  padding: var(--s1) var(--s2);
+  margin: var(--s2) 0;
+  max-width: var(--measure);
+  font-family: var(--sans);
+  font-size: 0.96rem;
+  color: var(--body);
+}
+.gut p { margin: 0; }
+.gut p + p { margin-top: var(--s0); }
+.gut strong { color: var(--gut-ink); }
+
+dl.contact {
+  margin: var(--s2) 0 0;
+  padding: var(--s1) var(--s2);
+  background: var(--surface);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  max-width: var(--measure);
+}
+dl.contact dt {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+dl.contact dd { margin: 0 0 var(--s1); color: var(--ink); }
+dl.contact dd:last-child { margin-bottom: 0; }
+
+/* Impressum und Datenschutz stehen nur noch hier und in der Kolumne.
+   § 5 DDG verlangt "leicht erkennbar, unmittelbar erreichbar, staendig
+   verfuegbar" — der Fuss steht auf jeder Seite, die Verweise heissen
+   woertlich Impressum und Datenschutz und brauchen kein JavaScript.
+   Deshalb bleiben sie hier auch im Kontrast des Fliesstextes, nicht
+   schwaecher. */
+.sheet-foot {
+  margin-top: var(--s4);
+  padding-top: var(--s1);
+  border-top: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: var(--measure);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem var(--s2);
+  justify-content: space-between;
+}
+.sheet-foot .foot-recht a {
+  color: var(--body);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-foot .foot-recht a:hover { border-bottom-color: var(--accent); }
+
+/* ================= Sprungmenue der Fachseite ================= */
+
+/* Die Fachseite ist lang und wird nicht gelesen, sondern angesteuert.
+   Das Menue ist deshalb kein Inhaltsverzeichnis in Kleinschrift, sondern
+   ein Register mit Ziffern: dieselbe Bauform wie die Aufgabenbereiche,
+   damit die Seite eine Formensprache behaelt. */
+.sprungmenu {
+  margin: var(--s3) 0;
+  max-width: var(--measure);
+  background: var(--surface);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  padding: var(--s1) var(--s2) var(--s1);
+}
+
+.sprung-marke {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent-ink);
+  margin: 0 0 var(--s0);
+}
+
+.sprungmenu ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;                       /* die Haarlinien entstehen aus dem Grund */
+  background: var(--line);
+}
+.sprungmenu li { background: var(--surface); }
+
+.sprungmenu a {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0 var(--s0);
+  padding: 0.62rem 0;
+  text-decoration: none;
+  color: var(--ink);
+}
+.sprungmenu a:hover .was { text-decoration: underline; }
+
+.sprungmenu .nr {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--accent-ink);
+}
+.sprungmenu .was { font-weight: 600; }
+.sprungmenu .dazu {
+  grid-column: 2;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+
+@media (min-width: 46rem) {
+  /* Breit genug: Titel und Stichworte nebeneinander statt untereinander */
+  .sprungmenu a { grid-template-columns: 2rem minmax(0, 15rem) minmax(0, 1fr); }
+  .sprungmenu .dazu { grid-column: 3; grid-row: 1; margin-top: 0; }
+}
+
+/* Angesteuerte Ueberschrift nicht unter den oberen Rand rutschen lassen */
+.sheet [id] { scroll-margin-top: var(--s2); }
+
+/* ================= Exkurs: der Name ================= */
+
+/* Ein abgesetzter Einschub im Satzspiegel — anderer Grund, Bernsteinrahmen
+   oben und unten, damit er als Einschub gelesen wird und nicht als
+   Fortsetzung des Haupttextes. Die beiden Woerter stehen nebeneinander
+   wie in einem Woerterbuch. */
+.exkurs {
+  margin: var(--s3) 0;
+  max-width: var(--measure);
+  background: var(--surface);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  padding: var(--s2) var(--s2) var(--s2);
+}
+
+.exkurs h2 {
+  margin: 0 0 var(--s1);
+  font-size: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
+}
+.exkurs h2::after { content: none; }
+.exkurs p { font-size: 1rem; }
+.exkurs p:last-child { margin-bottom: 0; }
+
+.woerter {
+  display: grid;
+  gap: var(--s2);
+  margin: var(--s2) 0;
+  padding: var(--s1) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 40rem) {
+  .woerter { grid-template-columns: 1fr 1fr; gap: var(--s3); }
+  .woerter .wort + .wort {
+    border-left: 1px solid var(--line);
+    padding-left: var(--s3);
+    margin-left: calc(var(--s3) * -0.5);
+  }
+}
+
+/* Die Schriftarten des Satzspiegels decken Griechisch mit ab; fuer den
+   Fall, dass die erste nicht verfuegbar ist, folgen breiter ausgestattete
+   Systemschriften. Weiterhin keine Webfonts. */
+.wort .schrift {
+  font-family: "Noto Serif", "DejaVu Serif", "Liberation Serif", Georgia, serif;
+  font-size: clamp(1.7rem, 1.4rem + 1.4vw, 2.3rem);
+  line-height: 1.15;
+  color: var(--accent-ink);
+  margin: 0;
+}
+.wort .umschrift {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin: 0.15rem 0 0;
+}
+.wort .gramm {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: var(--s0) 0 0;
+}
+.wort .bedeutung {
+  color: var(--ink);
+  margin: var(--s0) 0 0;
+  font-size: 1.05rem;
+}
+
+/* ================= Gesetzeszitat ================= */
+
+.zitat {
+  margin: var(--s2) 0;
+  max-width: var(--measure);
+  padding-left: var(--s2);
+  border-left: 3px solid var(--accent);
+}
+.zitat p {
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 var(--s0);
+}
+.zitat cite {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* ================= Zwei Anbieter nebeneinander ================= */
+
+/* Im Impressum stehen zwei eigenstaendige Freiberufler. Sie nebeneinander
+   zu setzen macht sichtbar, dass es zwei getrennte Diensteanbieter sind
+   und keine Gesellschaft. */
+.anbieter {
+  margin: var(--s2) 0;
+  max-width: var(--measure);
+  border-top: 1px solid var(--line);
+}
+.anbieter > div {
+  padding: var(--s1) 0;
+  border-bottom: 1px solid var(--line);
+}
+.anbieter h3 {
+  margin: 0 0 var(--s0);
+  color: var(--accent-ink);
+}
+.anbieter p { font-size: 0.97rem; }
+.anbieter p:last-child { margin-bottom: 0; }
+
+@media (min-width: 46rem) {
+  .anbieter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--s2);
+  }
+}
+
+/* ================= Dokumente und Verweise nach aussen ================= */
+
+/* Jeder Verweis nennt Herausgeber und Stand. Das ist hier keine Zierde:
+   ein Vordruck fuer eine Vorsorgevollmacht veraltet mit dem Gesetz, und
+   der Leser muss auf einen Blick sehen koennen, wie alt er ist. */
+.dokumente {
+  list-style: none;
+  margin: var(--s2) 0;
+  padding: 0;
+  max-width: var(--measure);
+  border-top: 1px solid var(--line);
+}
+.dokumente li {
+  padding: var(--s1) 0;
+  border-bottom: 1px solid var(--line);
+}
+.dokumente .titel {
+  display: inline-block;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+.dokumente .titel::after { content: " \2197"; font-size: 0.85em; }
+.dokumente .titel:hover { text-decoration: underline; }
+.dokumente .quelle {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+.dokumente .quelle b { color: var(--body); font-weight: 600; }
+.dokumente p {
+  margin: 0.4rem 0 0;
+  font-size: 0.97rem;
+  color: var(--muted);
+}
+
+.hinweis-extern {
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  color: var(--muted);
+  max-width: var(--measure);
+  margin-top: var(--s2);
+}
+
+/* ================= Leichte Sprache ================= */
+
+/* Eigene Typografie nach den Regeln fuer Leichte Sprache: Groteskschrift
+   statt Serife, grosser Schriftgrad, kurze Zeilen, linksbuendig, keine
+   Silbentrennung, ein Satz je Zeile (im Markup mit <br>), grosse Abstaende
+   zwischen den Absaetzen. Die Kolumne bleibt unveraendert, damit die Seite
+   erkennbar zum selben Buero gehoert. */
+
+.ls .sheet { font-family: var(--sans); }
+.ls .sheet > * { max-width: 34rem; }
+
+.ls .sheet p,
+.ls .sheet li,
+.ls .sheet dd {
+  font-size: 1.24rem;
+  line-height: 1.8;
+  text-align: left;
+  hyphens: none;
+  -webkit-hyphens: none;
+  text-wrap: pretty;
+}
+
+.ls .sheet p { margin: 0 0 var(--s2); }
+
+.ls h1 {
+  font-family: var(--sans);
+  font-size: clamp(1.75rem, 1.4rem + 1.8vw, 2.4rem);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+
+.ls h2 {
+  font-family: var(--sans);
+  font-size: 1.42rem;
+  line-height: 1.32;
+  letter-spacing: 0;
+  margin: var(--s4) 0 var(--s1);
+}
+
+.ls .lead {
+  font-size: 1.36rem;
+  line-height: 1.7;
+  margin: var(--s2) 0 var(--s3);
+}
+
+/* Auf dieser Seite keine Initiale — sie erschwert das Lesen. */
+.ls .sheet .lead::first-letter {
+  float: none;
+  font-size: inherit;
+  line-height: inherit;
+  padding: 0;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.ls-liste {
+  list-style: none;
+  margin: 0 0 var(--s2);
+  padding: 0;
+  max-width: 34rem;
+}
+.ls-liste li {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  padding: var(--s1) var(--s2);
+  margin-bottom: var(--s1);
+}
+.ls-liste strong { color: var(--ink); }
+
+/* Jeder Aufgabenbereich bekommt eine eigene Farbe. Auf dieser Seite ist
+   das kein Schmuck: wer schwer liest, findet die Stelle am Farbstreifen
+   wieder, ohne noch einmal lesen zu muessen. */
+.ls-liste li:nth-child(1) { border-left-color: var(--st-1); }
+.ls-liste li:nth-child(2) { border-left-color: var(--st-2); }
+.ls-liste li:nth-child(3) { border-left-color: var(--st-3); }
+.ls-liste li:nth-child(4) { border-left-color: var(--st-4); }
+.ls-liste li:nth-child(5) { border-left-color: var(--st-5); }
+
+.ls-liste li:nth-child(1) strong { color: var(--st-1); }
+.ls-liste li:nth-child(2) strong { color: var(--st-2); }
+.ls-liste li:nth-child(3) strong { color: var(--st-3); }
+.ls-liste li:nth-child(4) strong { color: var(--st-4); }
+.ls-liste li:nth-child(5) strong { color: var(--st-5); }
+
+/* Hervorgehobener Merksatz — in Leichter Sprache gehoert das Wichtige
+   sichtbar abgesetzt, nicht nur fett. */
+.ls-wichtig {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  padding: var(--s1) var(--s2);
+  margin: var(--s2) 0 var(--s3);
+  max-width: 34rem;
+}
+.ls-wichtig p { margin: 0; }
+.ls-wichtig strong { color: var(--accent-ink); }
+
+.ls-links {
+  list-style: none;
+  margin: 0 0 var(--s2);
+  padding: 0;
+  max-width: 34rem;
+}
+.ls-links li {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  padding: var(--s1) var(--s2);
+  margin-bottom: var(--s1);
+}
+.ls-links > li > a {
+  font-size: 1.24rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+  text-underline-offset: 0.2em;
+}
+.ls-links .wer {
+  display: block;
+  font-size: 1rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+.ls-links p { margin: var(--s0) 0 0; }
+
+.ls-weiter a {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--paper);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.7rem var(--s2);
+  border-radius: 6px;
+}
+
+.ls dl.contact dt { font-size: 0.85rem; }
+.ls dl.contact dd { font-size: 1.24rem; }
+
+/* Verweis auf die Leichte Sprache in der Kolumne */
+.rail-ls { margin: 0 0 var(--s1); }
+.rail-ls a {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--on-carrier);
+  text-decoration: none;
+  border: 1px solid var(--carrier-line);
+  border-radius: 999px;
+  padding: 0.32rem 0.85rem;
+  transition: border-color 120ms linear;
+}
+.rail-ls a:hover { border-color: var(--accent-on-carrier); }
+.rail-ls a[aria-current="page"] {
+  border-color: var(--accent-on-carrier);
+  color: var(--accent-on-carrier);
+  font-weight: 600;
+}
+
+/* ================= Anrufleiste am Telefon ================= */
+
+.callbar { display: none; }
+
+@media (max-width: 60rem) {
+  .shell { grid-template-columns: 1fr; }
+
+  /* Am Telefon wird aus der stehenden Kolumne ein schmales Kopfband:
+     Signet, Name, Rolle, darunter eine Navigationszeile. Ornament,
+     Kontaktblock und Rechtszeile entfallen — der Kontakt steht in der
+     Anrufleiste, die Rechtstexte in Navigation und Seitenfuss. Damit
+     beginnt die Ueberschrift im ersten Bildschirmdrittel statt erst
+     nach der halben Seite. */
+  .rail { padding: var(--s1) var(--s2) 0; }
+  .rail-brand { gap: 0.55rem; }
+  .rail-brand .leaf { width: 1.45rem; height: 1.45rem; }
+  .rail-name { font-size: 1.12rem; line-height: 1.3; }
+
+  .rail-role {
+    margin: 0.35rem 0 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+  .rail-role span { display: inline; }
+  .rail-role span + span::before { content: " · "; }
+
+  .rail-ornament { display: none; }
+  .rail-spacer { display: none; }
+  .rail-contact { display: none; }   /* steht unten in der Anrufleiste */
+  .rail-legal { display: none; }     /* steht in der Navigation und im Fuss */
+
+  .rail nav { margin-top: var(--s0); }
+  .rail nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    border-top: 1px solid var(--carrier-line);
+  }
+  .rail nav li { display: flex; align-items: baseline; }
+  .rail nav li + li::before {
+    content: "·";
+    color: var(--carrier-line);
+    padding: 0 0.62rem;
+  }
+  .rail nav a {
+    border-bottom: 0;
+    padding: 0.62rem 0;     /* ~45 px Antippflaeche */
+    font-size: 0.92rem;
+  }
+  /* Der Fachkreis-Verweis bekommt am Telefon eine eigene Zeile. */
+  .rail nav li.fach { flex-basis: 100%; margin-top: 0; }
+  .rail nav li.fach::before { content: none; }
+  .rail nav li.fach a { padding-top: 0.1rem; }
+
+  .sheet { padding: var(--s2) var(--s2) 7rem; }
+
+  .callbar {
+    display: flex;
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 20;
+    background: var(--carrier);
+    border-top: 1px solid var(--carrier-line);
+    padding: 0.6rem var(--s1);
+    padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.6rem;
+    font-family: var(--sans);
+  }
+  .callbar a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.7rem 0.5rem;
+    border-radius: 6px;
+  }
+  .callbar .tel { background: var(--accent-on-carrier); color: var(--carrier); }
+  .callbar .mail { color: var(--on-carrier); border: 1px solid var(--carrier-line); }
+}
+
+/* Ab etwa 2000 px waechst die Seite proportional mit, damit sie auf
+   4K-Schirmen nicht verloren wirkt. Zeilenlaenge bleibt unveraendert,
+   weil Satzbreite und Schriftgrad beide in rem stehen. */
+@media (min-width: 125rem) {
+  html { font-size: 17.5px; }
+}
+
+/* ================= Bedienbarkeit, Bewegung, Druck ================= */
+
+/* Sprunglink: erst beim Tabben sichtbar, dann deutlich. */
+.skip {
+  position: absolute;
+  left: var(--s1);
+  top: -4rem;
+  z-index: 40;
+  background: var(--accent);
+  /* var(--paper) statt Weiss: im Hellen heller Grund auf Bernstein
+     (5,7:1), im Dunkeln dunkler Grund auf hellem Bernstein (7,5:1).
+     Festes #fff faellt im Dunkelmodus auf 2,5:1 und waere zu schwach. */
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  text-decoration: none;
+  padding: 0.65rem var(--s1);
+  border-radius: 0 0 4px 4px;
+  transition: top 120ms ease-out;
+}
+.skip:focus { top: 0; }
+
+a:focus-visible, .rail nav a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes zieh-linie { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  h1::after { animation: none; transform: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+@media print {
+  .shell { display: block; }
+  .rail { background: none; color: #000; padding: 0 0 1rem; border-bottom: 1pt solid #000;
+          box-shadow: none; position: static; height: auto; overflow: visible; }
+  .rail nav, .rail-legal, .rail-ornament, .callbar { display: none; }
+  .rail-name, .rail-contact dd, .rail-contact dd a { color: #000; }
+  .rail-role, .rail-contact dt { color: #333; }
+  .sheet { padding: 1rem 0; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  h1::after { animation: none; transform: none; background: #000; }
+  a { color: #000; }
+  .note, .gut, dl.contact { background: none; }
+  .sheet a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+  .portrait { float: none; width: 12rem; }
+  .orte { columns: 2; }
+}
