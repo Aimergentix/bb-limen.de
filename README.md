@@ -6,7 +6,7 @@ Verzeichnis liegt.
 
     index.html        Startseite, Einzugsgebiet, Kontakt
     buero.html        Das Büro, Exkurs zum Namen, Haltung nach § 1821 BGB
-    leistungen.html   Aufgabenkreise, Ablauf, Kosten
+    leistungen.html   Aufgabenbereiche, Ablauf, Kosten
     vorsorge.html     Vollmacht, Betreuungs- und Patientenverfügung
     fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte
     leichte-sprache.html  dieselben Inhalte in Leichter Sprache
@@ -160,11 +160,15 @@ stehen im Block PALETTE in `style.css`; ein Rückbau ist immer dieser
 eine Block, nie eine Suche durchs Stylesheet.
 
 - **Bernstein** (`--accent`) — Ordnung: Rubriken, Ziffern, Zierlinien.
-- **Salbei** (`--gut`) — Entlastung. Nur für den Block `.gut`, und nur
-  dort, wo die Nachricht wirklich entlastet: keine Entmündigung, eigene
-  Wahl des Betreuers, keine Kosten bei Mittellosigkeit, der Weg zurück.
-  **Vier Stellen auf der ganzen Website.** Wer mehr hinzufügt, nimmt der
-  Farbe ihre Bedeutung.
+- **Salbei** (`--gut`) — Entlastung. Im Fließtext nur für den Block
+  `.gut`, und nur dort, wo die Nachricht wirklich entlastet: keine
+  Entmündigung, eigene Wahl des Betreuers, keine Kosten bei
+  Mittellosigkeit, der Weg zurück. **Vier Stellen auf der ganzen
+  Website** (`index` 1, `buero` 1, `leistungen` 2). Wer mehr hinzufügt,
+  nimmt der Farbe ihre Bedeutung. Eine einzige Ausnahme: die Blattkontur
+  des Signets in der Kolumne (`.rail-brand .leaf .blatt`) steht ebenfalls
+  in Salbei — sie ist kein Text, sondern das Zeichen selbst. Auch `--st-2`
+  der Leichte-Sprache-Liste hat denselben Wert.
 - **Papierwärme** (`--paper`, `--surface`) — keine Farbe, die man sieht,
   sondern eine Temperatur. `#fbfaf7` statt neutralem Grau.
 
@@ -223,9 +227,10 @@ Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
 
 - Die beiden offenen Angaben aus Abschnitt 2 eingetragen.
 - Registrierung nach § 23 BtOG noch nicht erteilt: Der Hinweis auf den
-  Gründungsstand steht auf Startseite, Aufgabenseite und im Impressum. Nach
-  Erteilung Registrierungsnummer eintragen, das Datum im Impressum
-  aktualisieren und die Hinweisblöcke entfernen.
+  Gründungsstand steht auf allen fünf Inhaltsseiten (`index`, `buero`,
+  `leistungen`, `vorsorge`, `fachkreise`) und im Impressum. Nach Erteilung
+  Registrierungsnummer eintragen, das Datum im Impressum aktualisieren und
+  die Hinweisblöcke entfernen.
 - Impressum und Datenschutzerklärung stehen bewusst nicht mehr in der
   Hauptnavigation, sondern im Seitenfuß jeder Seite und in der Kolumne.
   § 5 DDG verlangt „leicht erkennbar, unmittelbar erreichbar und ständig

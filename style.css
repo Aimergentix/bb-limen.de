@@ -7,13 +7,15 @@
    Kontakt. Sie bleibt beim Scrollen stehen, damit die Telefonnummer auf
    jedem Bildschirmzentimeter erreichbar ist. Rechts der Satzspiegel im
    Stil eines gesetzten Buches: Serifenschrift, Rubriken in Bernstein,
-   Aufgabenkreise als Register mit römischen Ziffern.
+   Aufgabenbereiche als Register mit römischen Ziffern.
 
    Proportion
    ----------
-   Abstände sind Potenzen des Goldenen Schnitts (phi = 1.618), Schriftgrade
-   Schritte von phi^(1/4). Die Kolumne verhält sich zum Satzspiegel
-   annähernd wie 1 : phi.
+   Die Abstandsleiter folgt Potenzen des Goldenen Schnitts (phi = 1.618),
+   die Schriftgrade steigen in ähnlich engen Schritten. Beide Leitern sind
+   an einigen Stellen bewusst gebrochen, wo das Auge einen anderen Wert
+   verlangte; sie sind Ausgangspunkt, nicht Gesetz. Die Kolumne verhält
+   sich zum Satzspiegel etwa wie 1 : 1,9.
 
    Palette C — Graphit & Bernstein
    -------------------------------
@@ -268,12 +270,6 @@ a { color: var(--accent-ink); text-underline-offset: 0.18em; }
   color: var(--on-carrier-dim);
   margin-top: 0.02rem;
 }
-.rail-contact dd.hint {
-  font-weight: 400;
-  font-size: 0.82rem;
-  color: var(--on-carrier-dim);
-  margin-top: 0.1rem;
-}
 .rail-contact dd a {
   color: var(--on-carrier);
   text-decoration: none;
@@ -289,7 +285,7 @@ a { color: var(--accent-ink); text-underline-offset: 0.18em; }
   flex-wrap: wrap;
   font-size: 0.78rem;
 }
-.rail-legal a { color: var(--on-carrier-dim); text-decoration: none; }
+.rail-legal a { color: var(--on-carrier-dim); text-decoration: underline; text-underline-offset: 0.18em; }
 .rail-legal a:hover { color: var(--on-carrier); }
 
 /* ================= Satzspiegel ================= */
@@ -383,7 +379,7 @@ p:last-child { margin-bottom: 0; }
 }
 .ornament span { font-size: 0.95rem; color: var(--accent); }
 
-/* ================= Register der Aufgabenkreise ================= */
+/* ================= Register der Aufgabenbereiche ================= */
 
 .register {
   border-top: 1px solid var(--line);
@@ -412,39 +408,6 @@ p:last-child { margin-bottom: 0; }
 
 .register h3 { margin: 0 0 0.2rem; }
 .register p { margin: 0; color: var(--muted); font-size: 0.98rem; }
-
-/* ================= Portrait ================= */
-
-/* Im Buchsatz laeuft der Text um das Bild. Unterhalb von 56rem steht das
-   Portrait ueber dem Text, damit die Zeilen nicht zu kurz werden. */
-.portrait {
-  margin: 0 0 var(--s2);
-  max-width: 18rem;
-}
-.portrait img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
-.portrait figcaption {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  margin-top: var(--s0);
-  padding-top: var(--s0);
-  border-top: 1px solid var(--accent);
-}
-
-@media (min-width: 56rem) {
-  .portrait {
-    float: right;
-    width: 15rem;
-    margin: 0.4rem 0 var(--s1) var(--s2);
-  }
-}
 
 /* ================= Ortsliste des Einzugsgebiets ================= */
 
@@ -615,7 +578,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .sheet-foot .foot-recht a {
   color: var(--body);
   text-decoration: none;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--muted);
 }
 .sheet-foot .foot-recht a:hover { border-bottom-color: var(--accent); }
 
@@ -709,7 +672,6 @@ dl.contact dd:last-child { margin-bottom: 0; }
   margin: 0 0 var(--s1);
   font-size: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
 }
-.exkurs h2::after { content: none; }
 .exkurs p { font-size: 1rem; }
 .exkurs p:last-child { margin-bottom: 0; }
 
@@ -723,7 +685,20 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 
 @media (min-width: 40rem) {
-  .woerter { grid-template-columns: 1fr 1fr; gap: var(--s3); }
+  /* Subgrid, damit Schrift, Umschrift, Grammatik und Bedeutung in beiden
+     Spalten auf derselben Zeile sitzen. Ohne das rutscht die Bedeutung
+     rechts eine Zeile tiefer, sobald "Genitiv λιμένος" umbricht. */
+  .woerter {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, auto);
+    gap: 0 var(--s3);
+  }
+  .woerter .wort {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    align-content: start;
+  }
   .woerter .wort + .wort {
     border-left: 1px solid var(--line);
     padding-left: var(--s3);
@@ -906,16 +881,6 @@ dl.contact dd:last-child { margin-bottom: 0; }
   margin: var(--s2) 0 var(--s3);
 }
 
-/* Auf dieser Seite keine Initiale — sie erschwert das Lesen. */
-.ls .sheet .lead::first-letter {
-  float: none;
-  font-size: inherit;
-  line-height: inherit;
-  padding: 0;
-  color: inherit;
-  font-weight: inherit;
-}
-
 .ls-liste {
   list-style: none;
   margin: 0 0 var(--s2);
@@ -1021,7 +986,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 .callbar { display: none; }
 
-@media (max-width: 60rem) {
+@media screen and (max-width: 60rem) {
   .shell { grid-template-columns: 1fr; }
 
   /* Am Telefon wird aus der stehenden Kolumne ein schmales Kopfband:
@@ -1056,11 +1021,16 @@ dl.contact dd:last-child { margin-bottom: 0; }
     border-top: 1px solid var(--carrier-line);
   }
   .rail nav li { display: flex; align-items: baseline; }
-  .rail nav li + li::before {
+  /* Der Trenner haengt hinten am Eintrag, nicht vorn. Vorn angesetzt
+     beginnt eine umgebrochene Zeile (bei 320 px) mit einem verwaisten
+     Punkt. */
+  .rail nav li::after {
     content: "·";
     color: var(--carrier-line);
     padding: 0 0.62rem;
   }
+  .rail nav li:last-child::after,
+  .rail nav li:has(+ li.fach)::after { content: none; }
   .rail nav a {
     border-bottom: 0;
     padding: 0.62rem 0;     /* ~45 px Antippflaeche */
@@ -1068,7 +1038,6 @@ dl.contact dd:last-child { margin-bottom: 0; }
   }
   /* Der Fachkreis-Verweis bekommt am Telefon eine eigene Zeile. */
   .rail nav li.fach { flex-basis: 100%; margin-top: 0; }
-  .rail nav li.fach::before { content: none; }
   .rail nav li.fach a { padding-top: 0.1rem; }
 
   .sheet { padding: var(--s2) var(--s2) 7rem; }
@@ -1133,6 +1102,11 @@ a:focus-visible, .rail nav a:focus-visible {
   border-radius: 2px;
 }
 
+/* Auf dem Graphit der Kolumne traegt Bernstein nur 2,76:1 und bleibt
+   damit unter den 3:1, die WCAG 2.2 SC 1.4.11 fuer Nicht-Text fordert.
+   Dort ruht der Ring deshalb auf der hellen Schriftfarbe. */
+.rail a:focus-visible, .callbar a:focus-visible { outline-color: var(--on-carrier); }
+
 @view-transition { navigation: auto; }
 ::view-transition-old(root), ::view-transition-new(root) {
   animation-duration: 240ms;
@@ -1152,7 +1126,10 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
   .shell { display: block; }
   .rail { background: none; color: #000; padding: 0 0 1rem; border-bottom: 1pt solid #000;
           box-shadow: none; position: static; height: auto; overflow: visible; }
-  .rail nav, .rail-legal, .rail-ornament, .callbar { display: none; }
+  .rail nav, .rail-legal, .rail-ornament, .rail-ls, .rail-spacer, .callbar { display: none; }
+  /* Kontaktblock bleibt: ein Ausdruck ohne Telefon und Anschrift ist
+     fuer die Leser, die ausdrucken, wertlos. */
+  .rail-contact { display: block; }
   .rail-name, .rail-contact dd, .rail-contact dd a { color: #000; }
   .rail-role, .rail-contact dt { color: #333; }
   .sheet { padding: 1rem 0; }
@@ -1165,6 +1142,5 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
     font-size: 0.85em;
     word-break: break-all;
   }
-  .portrait { float: none; width: 12rem; }
   .orte { columns: 2; }
 }

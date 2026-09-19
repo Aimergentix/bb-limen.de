@@ -13,7 +13,8 @@ Kontaktlisten und Ortsliste.
 import io, re, sys, glob
 
 ZIEL_MITTEL, ZIEL_MAX = 15.0, 25
-ABK = r"(§+\s?\d+[a-z]?|Abs|Nr|Art|ff|lit|bzw|ca|vgl|Dr|zum Beispiel|z|B|u|a|S|Tel)\."
+ABK = (r"(?<![\wäöüßÄÖÜ])(z\.\s?B|u\.\s?a|§+\s?\d+[a-z]?"
+       r"|Abs|Nr|Art|ff|lit|bzw|ca|vgl|Dr|S|Tel)\.")
 
 def fliesstext(datei):
     h = io.open(datei, encoding="utf-8").read()
