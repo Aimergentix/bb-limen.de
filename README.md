@@ -17,9 +17,11 @@ Verzeichnis liegt.
     style.css         gemeinsames Stylesheet
     robots.txt        Indexierungsregeln
     sitemap.xml       Seitenverzeichnis für Suchmaschinen
+    _redirects        Weiterleitung von www auf die kanonische Hauptdomain
 
     partials/         die Bausteine, die auf jeder Seite gleich sind
     build.sh          setzt diese Bausteine in die acht Seiten ein
+    tests/            Regressionstests für Build, Sprache und Seitenstruktur
     docs/             Quellenmaterial, nicht Teil der Website (.gitignore)
 
 ## 1. Gemeinsame Bausteine ändern
@@ -35,18 +37,25 @@ Also: in `partials/` ändern, dann
     ./build.sh
 
 Das Skript überschreibt ausschließlich den Bereich zwischen den Marken und
-setzt `aria-current="page"` auf den jeweils eigenen Navigationspunkt. Es
-braucht nur `sh` und `awk`. Die Seiten bleiben dabei vollständiges HTML und
-lassen sich jederzeit direkt im Browser öffnen — der Build ist kein
-Zwischenschritt, sondern nur ein Abgleich.
+setzt `aria-current="page"` auf den jeweils eigenen Navigationspunkt. Vor dem
+Schreiben prüft es alle Seiten, Marken und Partials. Alle Ergebnisse entstehen
+zuerst in einem Arbeitsverzeichnis; ein Fehler an einer späteren Seite lässt
+die Originaldateien unverändert. Benötigt werden nur übliche Unix-Werkzeuge
+(`sh`, `awk`, `sed`, `grep`, `cmp`, `mktemp`, `cp`, `mv`, `rm`). Die Seiten bleiben dabei
+vollständiges HTML und lassen sich jederzeit direkt im Browser öffnen — der
+Build ist kein Zwischenschritt, sondern nur ein Abgleich.
 
 Seitentitel, Beschreibung und `canonical` stehen dagegen einzeln in jeder
 Seite, weil sie sich unterscheiden.
 
 ## 2. Noch offen
 
-Suche im Projekt nach `[` — solange dort etwas gefunden wird, ist die Seite
-nicht veröffentlichungsfertig. Offen sind:
+Suche in den ausgelieferten HTML-Dateien und Partials nach `[` — solange dort
+etwas gefunden wird, ist die Seite nicht veröffentlichungsfertig:
+
+    rg -n '\[[A-ZÄÖÜ]' -- *.html partials/*.html
+
+Offen sind:
 
 **Im Impressum** (zwei Angaben, beide brauchen eine Entscheidung):
 
@@ -58,12 +67,13 @@ nicht veröffentlichungsfertig. Offen sind:
   Versicherung ist ohnehin Voraussetzung der Registrierung nach
   § 23 Abs. 1 Nr. 3 BtOG.
 
-**Telefonnummer von Mika Möller** — der Platzhalter steht an vier
-Stellen: `partials/rail.html`, `index.html`, `fachkreise.html`,
-`leichte-sprache.html` und im Impressum. Achtung: es ist bewusst **kein**
-`tel:`-Link, sondern reiner Text — ein leeres `href="tel:"` war schon
-einmal der schwerste Fehler dieser Seite. Beim Eintragen die Nummer
-zugleich verlinken.
+**Telefonnummer von Mika Möller** — die maßgebliche Stelle ist
+`partials/rail.html`; nach dem Build steht deren Kopie in allen acht Seiten.
+Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
+`fachkreise.html`, `leichte-sprache.html` und im Impressum. Achtung: Der
+Platzhalter ist bewusst **kein** `tel:`-Link — ein leeres `href="tel:"` war
+schon einmal der schwerste Fehler dieser Seite. Beim Eintragen die Nummer an
+allen direkten Kontaktstellen zugleich verlinken und anschließend bauen.
 
 **Registrierungen.** Beide Personen sind freiberuflich und einzeln
 registrierungspflichtig (§ 23 BtOG, personenbezogen, nicht bürobezogen).
@@ -87,12 +97,15 @@ ist lizenziert und setzt die Prüfung voraus.
 
 **Vereinbarung nach Art. 26 DSGVO.** Die Datenschutzerklärung nennt
 Aranda Möller und Mika Möller als *gemeinsam Verantwortliche* für diese
-Website — das ist bei zwei getrennten Freiberuflern mit einer
-gemeinsamen Seite die zutreffende Einordnung. Art. 26 Abs. 1 DSGVO
-verlangt dafür eine Vereinbarung zwischen beiden, wer welche Pflichten
-erfüllt. Sie muss nicht veröffentlicht werden, sollte aber schriftlich
-vorliegen. Das ist kein Website-Problem, aber es gehört in denselben
-Ordner.
+Website. Diese Einordnung passt nur, wenn beide tatsächlich gemeinsam Zwecke
+und Mittel der Verarbeitung festlegen. Art. 26 Abs. 1 DSGVO verlangt dann eine
+Vereinbarung zwischen beiden, wer welche Pflichten erfüllt. Die vollständige
+Vereinbarung muss nicht veröffentlicht werden.
+Ihr wesentlicher Inhalt muss betroffenen Personen aber zugänglich sein.
+`datenschutz.html` enthält deshalb einen offenen Block für die tatsächliche
+Verteilung von Informationspflichten, Betroffenenanfragen und technischem
+Betrieb. Diesen Block erst nach Abschluss der wirklichen Vereinbarung
+ausfüllen; keine Zuständigkeiten erfinden.
 
 ## 2a. Verweise nach außen pflegen
 
@@ -121,9 +134,10 @@ mitziehen — sonst steht dort eine Jahreszahl, die nicht mehr gilt.
 Die Seite hat drei Sprachebenen. Wer Text ändert, sollte wissen, auf
 welcher er sich befindet:
 
-- **`leichte-sprache.html`** — Leichte Sprache (etwa A1). Kurze Sätze,
+- **`leichte-sprache.html`** — Leichte Sprache. Kurze Sätze,
   ein Satz je Zeile, Binde-Striche in zusammengesetzten Wörtern, schwere
-  Wörter erklärt. Eigene Typografie über `body class="ls"`.
+  Wörter erklärt. Eigene Typografie über `body class="ls"`. Kurze Sätze sind
+  eine redaktionelle Hilfe, aber keine numerische A1-Zertifizierung.
 - **`fachkreise.html`** — Fachsprache für Gerichte, Behörden, Kliniken
   und Ärzte. Paragraphen ohne Erklärung der Grundlagen. Hier ist
   Genauigkeit wichtiger als Einfachheit. Das Sprungmenü oben muss zu den
@@ -145,13 +159,21 @@ Standarddeutsch. Art. 12 DSGVO verlangt zwar Verständlichkeit, aber eine
 vereinfachte Datenschutzerklärung wird schnell unvollständig — und
 Unvollständigkeit ist der teurere Fehler.
 
-Messen lässt sich der mechanische Teil davon:
+Messen lässt sich ein Teil davon:
 
     ./pruefe-sprache.py                 alle Seiten
     ./pruefe-sprache.py vorsorge.html   mit den zu langen Sätzen
 
-Ziel für die Inhaltsseiten: im Mittel höchstens 15 Wörter je Satz, kein
-Satz über 25. Das ersetzt kein Sprachgefühl, es findet nur die Ausreißer.
+Der Parser betrachtet nur den Fließtext in `main`; Überschriften,
+Beschriftungen, Kontakt- und Ortslisten werden getrennt gehalten. `<br>` ist
+ein Layoutumbruch und kein Satzende. Das A2/B1-Ziel — im Mittel höchstens 15
+Wörter je Satz, kein Satz über 25 — gilt für `index`, `buero`, `leistungen`
+und `vorsorge`. Fachseite, Pflichttexte und Leichte Sprache werden separat als
+Statistik ausgegeben. Das ersetzt weder Sprachgefühl noch die Prüfgruppe.
+
+Regressionstests für Build und Sprachmessung:
+
+    python3 -m unittest discover -s tests -v
 
 ## 2c. Farbe
 
@@ -197,13 +219,26 @@ in der festen Anrufleiste am unteren Rand.
 
 ## 4. Bei Codeberg veröffentlichen
 
-1. Konto auf codeberg.org anlegen, Repository `pages` erstellen.
-2. Lokal: `git init`, `git add .`, `git commit -m "Website"`, Remote
-   hinzufügen, pushen. Die Seite erscheint unter
-   `https://BENUTZERNAME.codeberg.page/`.
-3. Eigene Domain — **das Verfahren hat sich geändert.** Eine Datei
-   `.domains` wird nicht mehr gebraucht; die Autorisierung läuft jetzt über
-   DNS. Bei inwx einzutragen:
+Die Website verwendet `https://bb-limen.de/` als kanonische Adresse. Für das
+aktuelle Webhook-Verfahren von Codeberg Pages sind Branch, Webhook und
+Zieladresse ausdrücklich einzurichten; ein Push allein veröffentlicht noch
+nichts.
+
+1. Auf codeberg.org ein öffentliches Repository `pages` anlegen. Im Repository
+   muss ein Branch namens `pages` vorhanden sein. Den aktuellen lokalen Stand
+   zum Beispiel so dorthin übertragen:
+
+       git remote add codeberg https://codeberg.org/BENUTZERNAME/pages.git
+       git push codeberg main:pages
+
+2. Optional für eine zusätzliche Codeberg-Unterdomain: Unter
+   **Einstellungen → Webhooks → Webhook hinzufügen → Forgejo** einen
+   Webhook anlegen. Für die Codeberg-Unterdomain lautet die Zieladresse
+   `https://BENUTZERNAME.codeberg.page/`; der Branchfilter lautet `pages`.
+   Die Schaltfläche „Test delivery“ ist dafür nicht geeignet. Mit einem Push
+   in den Branch `pages` testen und anschließend die Webhook-Auslieferung
+   kontrollieren.
+3. Für die eigene Domain läuft die Autorisierung über DNS. Bei inwx eintragen:
 
        www.bb-limen.de                         CNAME  codeberg.page.
        bb-limen.de                             ALIAS  codeberg.page
@@ -217,8 +252,20 @@ in der festen Anrufleiste am unteren Rand.
    Die MX- und TXT-Einträge für mailbox.org bleiben unverändert. Falls
    CAA-Einträge gesetzt sind, muss `letsencrypt.org` darin erlaubt sein.
 
-4. Die aktuelle Codeberg-Dokumentation vorher gegenlesen, das Verfahren
-   wird gelegentlich geändert:
+4. Für die Hauptdomain einen eigenen Webhook mit Branchfilter `pages` anlegen.
+   Die Zieladresse muss beim **ersten** Deployment `http://bb-limen.de/`
+   lauten. Nach dem ersten erfolgreichen Lauf auf `https://bb-limen.de/`
+   umstellen.
+5. Auch `www.bb-limen.de` muss separat deployt werden: zweiter Webhook,
+   ebenfalls zunächst mit `http://www.bb-limen.de/`, danach HTTPS. Die Datei
+   `_redirects` leitet diese Variante bewusst auf die kanonische Hauptdomain
+   um. Soll die Codeberg-Unterdomain zusätzlich erreichbar sein, braucht auch
+   sie den optionalen eigenen Webhook aus Schritt 2.
+6. Die aktuelle Codeberg-Dokumentation vor jeder Einrichtung gegenlesen, da
+   sich das Verfahren ändern kann:
+
+   <https://docs.codeberg.org/codeberg-pages/>
+
    <https://docs.codeberg.org/codeberg-pages/using-custom-domain/>
 
 Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
@@ -239,10 +286,11 @@ Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
   funktionieren. Beim Umbau der Navigation nicht antasten.
 - Das Datum in `impressum.html`, `datenschutz.html` und `sitemap.xml`
   stimmt noch.
-- Die Vergütungsangaben in `leistungen.html` (sechzehn Fallpauschalen,
-  98 bis 427 Euro, Schonvermögen 10.000 Euro) gelten nach dem zum
-  1. Januar 2026 geänderten VBVG. Bei der nächsten Anpassung des Gesetzes
-  nachziehen.
+- Die Vergütungsangaben in `leistungen.html` (sechzehn reguläre
+  Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
+  Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG. Der
+  Geldbetrag von grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
+  Vermögens. Bei der nächsten Anpassung der Gesetze alle Angaben nachziehen.
 - Das Einzugsgebiet umfasst die Landkreise Lörrach (35 Gemeinden) und
   Waldshut (32 Gemeinden). Die Liste steht an genau zwei Stellen in
   `index.html`: im Abschnitt „Wo ich arbeite" und im JSON-LD unter

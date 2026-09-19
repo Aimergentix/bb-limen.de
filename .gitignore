@@ -12,5 +12,6 @@ docs/
 .agents/
 .codex/
 tmp/
+.build.*/
 *.neu
 __pycache__/
