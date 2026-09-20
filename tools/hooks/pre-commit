@@ -1,0 +1,50 @@
+#!/bin/sh
+# Laeuft vor jedem Commit. Einmalig einschalten mit:
+#
+#     tools/einrichten.sh
+#
+# Er macht dasselbe wie die CI, nur sofort: Bausteine einsetzen, Tests,
+# Satzlaengen. Der Unterschied ist der Zeitpunkt — ein Fehler faellt hier
+# auf, bevor er in der Geschichte steht.
+#
+# Grenze, die man kennen sollte: geprueft wird der Arbeitsbaum, nicht der
+# Index. Wer nur einen Teil seiner Aenderungen vormerkt, laesst hier auch
+# den Rest mitpruefen. Fuer ein Projekt mit einer Handvoll Dateien ist das
+# die nuetzlichere Variante.
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+
+fehlschlag() {
+  echo >&2
+  echo "  Commit abgebrochen: $1" >&2
+  echo "  Mit --no-verify liesse sich das uebergehen — dann faellt es in der CI auf." >&2
+  exit 1
+}
+
+# 1. Bausteine einsetzen. Weicht eine Seite von partials/ ab, wird sie
+#    berichtigt und gleich mit vorgemerkt: genau der Fehler, den dieser
+#    Hook verhindern soll, braucht dann keinen zweiten Anlauf.
+vorher=$(git diff --name-only -- '*.html'; git diff --cached --name-only -- '*.html')
+tools/build.sh >/dev/null || fehlschlag "tools/build.sh ist fehlgeschlagen."
+nachher=$(git diff --name-only -- '*.html'; git diff --cached --name-only -- '*.html')
+
+if [ "$vorher" != "$nachher" ]; then
+  git add -- *.html
+  echo "  Bausteine waren nicht eingesetzt — die Seiten wurden berichtigt und vorgemerkt."
+fi
+
+# 2. Tests
+python3 -m unittest discover -s tests >/dev/null 2>&1 \
+  || { python3 -m unittest discover -s tests; fehlschlag "Regressionstests"; }
+
+# 3. Satzlaengen der Inhaltsseiten
+python3 tools/pruefe-sprache.py >/dev/null \
+  || { python3 tools/pruefe-sprache.py; fehlschlag "Satzlaengen verfehlen das A2/B1-Ziel"; }
+
+# 4. Platzhalter: nur ein Hinweis, kein Abbruch. Solange das Buero in
+#    Gruendung ist, sind diese Stellen offen.
+if offen=$(grep -rno '\[[A-ZÄÖÜ][^]]*\]' -- *.html partials/ 2>/dev/null); then
+  echo "  Hinweis: $(printf '%s\n' "$offen" | wc -l) offene Platzhalter — vor der Veroeffentlichung eintragen."
+fi
+
+echo "  Geprueft: Bausteine, Tests, Satzlaengen."
