@@ -9,8 +9,8 @@ Verzeichnis liegt.
 > Form. Dieses README erklärt sie: es ist das Handbuch, `AGENTS.md` ist der
 > Vertrag.
 
-    index.html        Startseite, Einzugsgebiet, Kontakt
-    buero.html        Das Büro, Exkurs zum Namen, Haltung nach § 1821 BGB
+    index.html        BB Limen, Exkurs zum Namen, Haltung nach § 1821 BGB, Kontakt
+    buero.html        Betreuung, Einordnung, Verfahren und Einzugsgebiet
     leistungen.html   Aufgabenbereiche, Ablauf, Kosten
     vorsorge.html     Vollmacht, Betreuungs- und Patientenverfügung
     fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte

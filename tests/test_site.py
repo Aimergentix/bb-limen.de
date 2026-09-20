@@ -88,6 +88,33 @@ class SiteStructureTests(unittest.TestCase):
                 data = json.loads(script)
                 self.assertNotIn("ProfessionalService", json.dumps(data))
 
+    def test_navigation_has_the_intended_names_and_order(self) -> None:
+        rail = (ROOT / "partials" / "rail.html").read_text(encoding="utf-8")
+        links = re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', rail)
+        self.assertEqual(
+            links[0:5],
+            [
+                ("leichte-sprache.html", "Leichte Sprache"),
+                ("index.html", "BB Limen"),
+                ("buero.html", "Betreuung"),
+                ("leistungen.html", "Aufgaben"),
+                ("vorsorge.html", "Vorsorge"),
+            ],
+        )
+        self.assertEqual(links[5], ("fachkreise.html", "Für Fachkreise"))
+
+    def test_footer_uses_the_short_office_name(self) -> None:
+        foot = (ROOT / "partials" / "foot.html").read_text(encoding="utf-8")
+        self.assertIn("BB Limen · A+M Möller · Berufliche Betreuung", foot)
+        self.assertNotIn("Berufliche Betreuung, Binzen", foot)
+
+    def test_mobile_contactbar_uses_direct_contact_links(self) -> None:
+        callbar = (ROOT / "partials" / "callbar.html").read_text(encoding="utf-8")
+        self.assertIn('href="tel:+4917642904270"', callbar)
+        self.assertIn('href="mailto:info@bb-limen.de"', callbar)
+        self.assertIn('aria-label="Aranda Möller unter +49 176 42904270 anrufen"', callbar)
+        self.assertIn('aria-label="E-Mail an info@bb-limen.de schreiben"', callbar)
+
 
 if __name__ == "__main__":
     unittest.main()
