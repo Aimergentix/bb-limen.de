@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("pruefe_sprache", ROOT / "pruefe-sprache.py")
+SPEC = importlib.util.spec_from_file_location("pruefe_sprache", ROOT / "tools" / "pruefe-sprache.py")
 assert SPEC and SPEC.loader
 SPRACHE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(SPRACHE)

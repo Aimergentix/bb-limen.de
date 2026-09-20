@@ -38,6 +38,7 @@ PROFILE = {
     "impressum.html": "Pflichttext, nur Statistik",
     "datenschutz.html": "Pflichttext, nur Statistik",
     "leichte-sprache.html": "Leichte Sprache, Zielgruppenpruefung bleibt noetig",
+    "404.html": "Fehlerseite, nur Statistik",
 }
 
 ABKUERZUNG = re.compile(

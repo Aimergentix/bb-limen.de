@@ -1,20 +1,23 @@
 #!/bin/sh
 # BB Limen — setzt die gemeinsamen Bausteine aus partials/ in die Seiten ein.
 #
+# Das Skript liegt in tools/, arbeitet aber im Wurzelverzeichnis: es wechselt
+# selbst dorthin und laesst sich deshalb von ueberall aufrufen.
+#
 # Die Seiten im Wurzelverzeichnis bleiben vollstaendiges, direkt im Browser
 # lesbares HTML. Dieses Skript ueberschreibt nur die Bereiche zwischen den
 # Marken <!-- #name --> und <!-- /#name -->. Wer Telefonnummer, Navigation
 # oder Anschrift aendert, aendert sie in partials/ und ruft hier auf:
 #
-#     ./build.sh
+#     tools/build.sh
 #
 # Benoetigt uebliche Unix-Werkzeuge: sh, awk, sed, grep, cmp, mktemp,
 # cp, mv und rm.
 
 set -eu
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
-SEITEN="index.html buero.html leistungen.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html"
+SEITEN="index.html buero.html leistungen.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html 404.html"
 BAUSTEINE="head skip rail foot callbar"
 
 ARBEITSVERZEICHNIS=$(mktemp -d "./.build.XXXXXX")

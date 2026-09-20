@@ -17,6 +17,7 @@ PAGES = (
     "leichte-sprache.html",
     "impressum.html",
     "datenschutz.html",
+    "404.html",
 )
 
 
@@ -24,8 +25,9 @@ class BuildTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory(prefix="bb-limen-build-test-")
         self.work = Path(self.temp.name)
-        shutil.copy2(ROOT / "build.sh", self.work / "build.sh")
-        (self.work / "build.sh").chmod(0o755)
+        (self.work / "tools").mkdir()
+        shutil.copy2(ROOT / "tools" / "build.sh", self.work / "tools" / "build.sh")
+        (self.work / "tools" / "build.sh").chmod(0o755)
         shutil.copytree(ROOT / "partials", self.work / "partials")
         for page in PAGES:
             shutil.copy2(ROOT / page, self.work / page)
@@ -35,7 +37,7 @@ class BuildTests(unittest.TestCase):
 
     def run_build(self) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            ["./build.sh"],
+            ["tools/build.sh"],
             cwd=self.work,
             text=True,
             stdout=subprocess.PIPE,

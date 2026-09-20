@@ -28,7 +28,9 @@ class PageParser(HTMLParser):
         for name, value in attrs:
             if name == "id" and value:
                 self.ids.append(value)
-            if name == "href" and value:
+            # Nur echte Verweise. <base href="/"> und <link rel="canonical">
+            # zeigen nicht auf eine Datei im Verzeichnis.
+            if name == "href" and value and tag == "a":
                 self.hrefs.append(value)
 
 

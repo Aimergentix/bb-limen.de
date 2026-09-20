@@ -1,12 +1,24 @@
-# Arbeitsmaterial, nicht Teil der Website. Codeberg Pages liefert alles
-# aus, was im Branch liegt — deshalb bleibt Quellenmaterial ausserhalb der
-# Versionierung und damit ausserhalb des Netzes.
+# Arbeitsmaterial, nicht Teil der Website.
 #
+# Zwei Schranken, die nicht verwechselt werden duerfen:
+#
+#   .gitignore       haelt Dateien aus der Versionierung heraus.
+#   _config.yml      haelt versionierte Dateien aus der Auslieferung heraus.
+#
+# Was hier steht, ist im Repository gar nicht erst vorhanden. Was in
+# _config.yml unter "exclude" steht, ist versioniert, wird aber von GitHub
+# Pages nicht veroeffentlicht — das gilt fuer partials/, tools/ und tests/.
+
 # docs/ enthaelt fremde PDF zur Betreuung in Leichter Sprache. Sie sind
 # Grundlage fuer leichte-sprache.html, aber nicht zum Weiterveroeffent-
-# lichen gedacht — das waere auch urheberrechtlich zu pruefen. Soll doch
-# etwas davon online, diese Zeile streichen.
-docs/
+# lichen gedacht — das waere auch urheberrechtlich zu pruefen.
+#
+# Ausgenommen ist allein der Reviewauftrag: er ist ein allgemeiner
+# Arbeitsauftrag ohne Befunde und gehoert zur Projektgeschichte. Die
+# Reviewberichte selbst bleiben unversioniert — sie benennen Fehler der
+# Seite und gehoeren nicht in ein oeffentliches Repository.
+docs/*
+!docs/review-prompt.md
 
 # Werkzeuge und Zwischenstaende
 .agents/
