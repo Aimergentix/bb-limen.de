@@ -377,7 +377,18 @@ p:last-child { margin-bottom: 0; }
 .ornament::before, .ornament::after {
   content: ""; flex: 1; height: 1px; background: var(--line);
 }
-.ornament span { font-size: 0.95rem; color: var(--accent); }
+/* Das Zierzeichen ist dasselbe Blatt wie die Marke der Kolumne, nur klein.
+   Frueher stand hier das Schriftzeichen U+2766. Es kommt in keiner
+   Serifenschrift des Projekts vor — weder in Noto Serif noch in Georgia
+   oder Times New Roman — und fiel deshalb auf eine Symbol- oder
+   Farb-Emoji-Schrift zurueck: auf jedem Geraet ein anderes Bild, oft ein
+   bunter Fleck neben der Bernsteinlinie. Als SVG ist es ueberall dasselbe
+   und folgt ueber currentColor der Farbe des Ornaments.
+
+   Das Verhaeltnis 24:26 des viewBox bestimmt Breite zu Hoehe; wer die
+   Breite aendert, rechnet die Hoehe mit 1,083 nach. */
+.zierblatt { width: 0.95rem; height: 1.03rem; flex: none; }
+.rail-ornament .zierblatt { width: 0.85rem; height: 0.92rem; }
 
 /* ================= Register der Aufgabenbereiche ================= */
 
