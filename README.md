@@ -95,18 +95,6 @@ solche Prüfgruppen; die Betreuungsbehörde weiß meist, wer es vor Ort
 macht. Erst danach das Europäische Leichte-Sprache-Logo verwenden — es
 ist lizenziert und setzt die Prüfung voraus.
 
-**Vereinbarung nach Art. 26 DSGVO.** Die Datenschutzerklärung nennt
-Aranda Möller und Mika Möller als *gemeinsam Verantwortliche* für diese
-Website. Diese Einordnung passt nur, wenn beide tatsächlich gemeinsam Zwecke
-und Mittel der Verarbeitung festlegen. Art. 26 Abs. 1 DSGVO verlangt dann eine
-Vereinbarung zwischen beiden, wer welche Pflichten erfüllt. Die vollständige
-Vereinbarung muss nicht veröffentlicht werden.
-Ihr wesentlicher Inhalt muss betroffenen Personen aber zugänglich sein.
-`datenschutz.html` enthält deshalb einen offenen Block für die tatsächliche
-Verteilung von Informationspflichten, Betroffenenanfragen und technischem
-Betrieb. Diesen Block erst nach Abschluss der wirklichen Vereinbarung
-ausfüllen; keine Zuständigkeiten erfinden.
-
 ## 2a. Verweise nach außen pflegen
 
 Die Seiten `vorsorge.html` und `leichte-sprache.html` verweisen auf zwölf
@@ -286,6 +274,12 @@ Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
   funktionieren. Beim Umbau der Navigation nicht antasten.
 - Das Datum in `impressum.html`, `datenschutz.html` und `sitemap.xml`
   stimmt noch.
+- Die veröffentlichte Aufgabenverteilung nach Art. 26 DSGVO entspricht der
+  tatsächlichen Vereinbarung: Aranda Möller übernimmt für die gemeinsame
+  Website die Informationspflichten, die Bearbeitung von Betroffenenanfragen
+  und die Koordination von Hosting beziehungsweise technischem Betrieb.
+  Änderungen immer zugleich in der Vereinbarung und in `datenschutz.html`
+  nachziehen.
 - Die Vergütungsangaben in `leistungen.html` (sechzehn reguläre
   Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
   Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG. Der
