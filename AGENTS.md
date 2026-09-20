@@ -122,8 +122,15 @@ dahin kein Europäisches Leichte-Sprache-Logo verwenden.
 - **`--gut` (Salbei) steht an genau vier Stellen im Fließtext**
   (`index` 1, `buero` 1, `leistungen` 2). Die Farbe bedeutet Entlastung;
   eine fünfte Stelle nimmt ihr die Bedeutung.
+- **Stahlblau bedeutet anklickbar:** `--link-ink` auf Papier,
+  `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
+  Kolumne verwenden `--meta-on-carrier`. Ausnahmen sind die Wortmarke, der
+  goldene aktuelle Standort und die goldene primäre Aktion „Anrufen“.
+- **Kein Hell-/Dunkel-Schalter.** Die Darstellung folgt ausschließlich
+  `prefers-color-scheme`; ohne JavaScript wäre die Wahl nicht verlässlich
+  über alle `.html`-Seiten haltbar.
 - Nach jeder Änderung an `PALETTE` **WCAG AA neu rechnen, hell und dunkel.**
-  Die schwächste Paarung liegt bei 4,65:1 — es ist wenig Luft.
+  Die schwächste Paarung liegt bei 4,61:1 — es ist wenig Luft.
 
 Begründung: `README.md` §2c.
 
@@ -164,7 +171,7 @@ Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
 
 ## 8. Nach jeder Änderung, ohne Ausnahme
 
-    python3 -m unittest discover -s tests -v   # 24 Tests
+    python3 -m unittest discover -s tests -v
     tools/build.sh && git diff --exit-code     # kein Drift zwischen partials/ und Seiten
     python3 tools/pruefe-sprache.py            # Satzlängen
 

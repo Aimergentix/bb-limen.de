@@ -205,14 +205,23 @@ Palette neu rendern:
 
 ## 2c. Farbe
 
-Die Seite hat drei Grundstimmen und zwei sparsam verwendete
-Wegweiserfarben. Jede bedeutet etwas. Alle Werte stehen im Block PALETTE
-in `style.css`; ein Rückbau ist immer dieser eine Block, nie eine Suche
-durchs Stylesheet.
+Die Farben benennen Funktionen, nicht einzelne Seiten. Alle Werte stehen im
+Block PALETTE in `style.css`; ein Rückbau ist immer dieser eine Block, nie
+eine Suche durchs Stylesheet.
 
 - **Gold** (`--accent`, `--accent-on-carrier`) — Ordnung: Rubriken,
-  Ziffern, Zierlinien und aktive Navigation. Auf dem hellen Papier steht
-  ein kontraststarkes Goldocker, auf Graphit eine zweite, hellere Goldstufe.
+  Ziffern, Zierlinien, aktueller Standort und die primäre Aktion „Anrufen“.
+  Auf dem hellen Papier steht ein kontraststarkes Goldocker, auf Graphit eine
+  zweite, hellere Goldstufe. In der Navigation zeigt zusätzlich eine Linie
+  den aktuellen Standort; Farbe allein trägt diese Information nicht.
+- **Stahlblau** (`--link-ink`, `--link-on-carrier`) — Bedienung. Anklickbare
+  Textstellen stehen dunkel auf Papier und hell auf Graphit. Fließtext-,
+  Kontakt- und Rechtsverweise bleiben zusätzlich unterstrichen; frei stehende
+  Verweistitel stehen in der Sans-Serif-Schrift. Die Kartuschen „Leichte
+  Sprache“ und „Für Fachkreise“ verwenden dieselbe Bedienfarbe.
+- **Warmes Steingrau** (`--meta-on-carrier`) — nicht anklickbare Nebenangaben
+  in der Kolumne: Rollenbezeichnung, Beschriftungen und Namen. So sieht ein
+  statischer Text nicht wie ein Verweis aus.
 - **Salbei** (`--gut`) — Entlastung. Im Fließtext nur für den Block
   `.gut`, und nur dort, wo die Nachricht wirklich entlastet: keine
   Entmündigung, eigene Wahl des Betreuers, keine Kosten bei
@@ -222,12 +231,8 @@ durchs Stylesheet.
   denselben Wert.
 - **Papierwärme** (`--paper`, `--surface`) — keine Farbe, die man sieht,
   sondern eine Temperatur. `#fbfaf7` statt neutralem Grau.
-- **Stahlblau** (`--fach-on-carrier`) — kennzeichnet die Kartusche für den
-  abgesetzten Weg zu den Fachkreisen. Sobald diese Seite aktiv ist,
-  wechselt der Verweis wie alle aktiven Menüpunkte zu Gold.
-- **Mint** (`--leicht-on-carrier`) — verbindet die Blattkontur des Signets
-  mit der Kartusche zur Leichten Sprache. Im aktiven Zustand wird auch
-  dieser Verweis goldfarben.
+- **Mint** (`--brand-leaf`) — gehört nur zur Blattkontur des Signets. Es ist
+  Markenfarbe, keine Bedienfarbe.
 - **Terrakotta** (`--leicht-ink`) — trägt auf der Leichte-Sprache-Seite
   Überschriften und Farbrhythmus, nicht die Navigation.
 
@@ -244,9 +249,14 @@ Dazu `--hauch` für den Farbton, der nur bei Berührung erscheint, und
 hilft Farbe an Listen und Überschriften beim Wiederfinden und ist damit
 Funktion, keine bloße Dekoration.
 
+Hell und dunkel folgen ausschließlich der Systemeinstellung über
+`prefers-color-scheme`. Einen Schalter auf der Seite gibt es bewusst nicht:
+ohne JavaScript ließe sich seine Wahl beim Wechsel zwischen den neun
+HTML-Seiten nicht verlässlich bewahren.
+
 **Jede Farbe ist gegen WCAG AA geprüft, hell und dunkel.** Nach jeder
 Änderung am PALETTE-Block neu rechnen — die schwächste Paarung liegt bei
-4,65:1, es ist also wenig Luft. Die Fachseite bleibt bewusst nüchtern.
+4,61:1, es ist also wenig Luft. Die Fachseite bleibt bewusst nüchtern.
 
 ## 3. Lokal ansehen
 

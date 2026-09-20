@@ -3,7 +3,7 @@
 Das README verlangt, nach jeder Aenderung am Block PALETTE neu zu rechnen.
 Diese Datei macht daraus eine Pruefung: sie liest die Werte aus style.css,
 bildet die Paarungen, die auf der Seite tatsaechlich vorkommen, und faellt
-unter 4,5:1. Die schwaechste Paarung liegt bei 4,65:1 — es ist wenig Luft,
+unter 4,5:1. Die schwaechste Paarung liegt bei 4,61:1 — es ist wenig Luft,
 und deshalb faellt eine Verschlechterung sofort auf.
 """
 from __future__ import annotations
@@ -33,10 +33,12 @@ PAARE = [
     ("--accent", "--surface"),
     ("--gut-ink", "--gut-flaeche"),
     ("--on-carrier", "--carrier"),
-    ("--on-carrier-dim", "--carrier"),
+    ("--meta-on-carrier", "--carrier"),
+    ("--link-ink", "--paper"),
+    ("--link-ink", "--surface"),
+    ("--link-on-carrier", "--carrier"),
     ("--accent-on-carrier", "--carrier"),
-    ("--fach-on-carrier", "--carrier"),
-    ("--leicht-on-carrier", "--carrier"),
+    ("--brand-leaf", "--carrier"),
     ("--leicht-ink", "--paper"),
     ("--st-1", "--surface"),
     ("--st-2", "--surface"),
