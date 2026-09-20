@@ -13,6 +13,7 @@
 # genau diesen Ausschluss wieder auf.
 
 exclude:
+  - .gitattributes
   - README.md
   - AGENTS.md
   - CLAUDE.md

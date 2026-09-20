@@ -1,6 +1,5 @@
-# Haelt den Bestand so, wie er ist: UTF-8, LF, zwei Leerzeichen,
-# Zeilenumbruch am Ende. Geprueft am 20.09.2026 — jede Datei erfuellte
-# das bereits; diese Angabe sorgt nur dafuer, dass es so bleibt.
+# UTF-8, LF, zwei Leerzeichen und Zeilenumbruch am Ende.
+# Visitenkarten verwenden die vom Dateiformat vorgesehenen CRLF-Umbrueche.
 root = true
 
 [*]
@@ -20,3 +19,6 @@ trim_trailing_whitespace = false
 
 [Makefile]
 indent_style = tab
+
+[*.vcf]
+end_of_line = crlf

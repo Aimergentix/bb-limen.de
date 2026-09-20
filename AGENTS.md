@@ -141,13 +141,18 @@ Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte.
 
 | Angabe | Steht in |
 | --- | --- |
-| Telefonnummer | `partials/rail.html`, `partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404` |
+| Telefonnummer | `partials/rail.html`, `partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404`, `bb-limen.vcf` |
 | Einzugsgebiet (67 Gemeinden) | im Fließtext von `index`, `betreuung` und `fachkreise` **und** in `index.html` im JSON-LD unter `areaServed` |
-| Anschrift | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address` |
+| Anschrift | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address`, `bb-limen.vcf` |
 | Sprechzeiten | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache` |
-| Datum des Stands | `impressum.html`, `datenschutz.html`, `sitemap.xml` |
+| Datum des Stands | `impressum.html`, `datenschutz.html`, `sitemap.xml`; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
 
 Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
+
+`bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte. Name, Telefonnummer,
+E-Mail, Anschrift und Website müssen mit dem JSON-LD der Startseite
+übereinstimmen. Die Datei bleibt in UTF-8 mit CRLF-Zeilenenden;
+`.editorconfig` und `.gitattributes` sichern das beim Bearbeiten und in Git.
 
 ---
 
@@ -207,6 +212,7 @@ ein schmales Kopfband:
 
     *.html          acht Inhaltsseiten und 404.html — das ist die Website
     style.css       ein Stylesheet, keine Abhängigkeiten
+    bb-limen.vcf    gemeinsame Bürovisitenkarte zum öffentlichen Download
     vorschau.png    Open-Graph-Bild, erzeugt aus tools/vorschau.svg
     partials/       Bausteine für build.sh, nicht ausgeliefert
     tools/          Werkzeuge, nicht ausgeliefert

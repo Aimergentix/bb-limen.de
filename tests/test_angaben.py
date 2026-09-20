@@ -114,6 +114,35 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(org["telephone"], TELEFON_TECHNISCH)
         self.assertEqual(org["email"], EMAIL)
 
+    def test_visitenkarte_stimmt_mit_dem_buero_ueberein(self) -> None:
+        org = organisation()
+        zeilen = (ROOT / "bb-limen.vcf").read_text(encoding="utf-8").splitlines()
+        werte = {}
+        for zeile in zeilen:
+            name, wert = zeile.split(":", 1)
+            werte.setdefault(name.split(";", 1)[0], []).append(wert)
+
+        self.assertEqual(werte["FN"], [org["name"]])
+        self.assertEqual(werte["ORG"], [org["name"]])
+        self.assertEqual(werte["TEL"], [org["telephone"]])
+        self.assertEqual(werte["EMAIL"], [org["email"]])
+        self.assertEqual(werte["URL"], [org["url"]])
+        anschrift = org["address"]
+        self.assertEqual(werte["ADR"], [";".join([
+            "", "", anschrift["streetAddress"], anschrift["addressLocality"],
+            anschrift["addressRegion"], anschrift["postalCode"],
+            anschrift["addressCountry"],
+        ])])
+
+    def test_visitenkarte_behaelt_das_austauschformat(self) -> None:
+        roh = (ROOT / "bb-limen.vcf").read_bytes()
+        self.assertNotIn(b"\n", roh.replace(b"\r\n", b""))
+        self.assertTrue(roh.startswith(b"BEGIN:VCARD\r\nVERSION:3.0\r\n"))
+        self.assertTrue(roh.endswith(b"END:VCARD\r\n"))
+        self.assertIn(b"\r\nN:;;;;\r\n", roh)
+        for zeile in roh.split(b"\r\n"):
+            self.assertLessEqual(len(zeile), 75)
+
     def test_einzugsgebiet_ist_vollstaendig_und_widerspruchsfrei(self) -> None:
         gebiet = organisation()["areaServed"]
         kreise = [a["name"] for a in gebiet if a["@type"] == "AdministrativeArea"]

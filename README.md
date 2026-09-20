@@ -20,6 +20,7 @@ Verzeichnis liegt.
     datenschutz.html  Information nach Art. 13 DSGVO
     404.html          Fehlerseite, nicht in der sitemap.xml
     style.css         gemeinsames Stylesheet
+    bb-limen.vcf      gemeinsame Bürovisitenkarte zum Download
     vorschau.png      Vorschaubild für geteilte Verweise (Open Graph)
     favicon.ico       Symbol in der Browserleiste
     apple-touch-icon.png  Symbol auf dem iOS-Startbildschirm
@@ -111,6 +112,29 @@ Seiten. Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
 `fachkreise.html`, `leichte-sprache.html`, `impressum.html` und
 `datenschutz.html`. Eine zweite persönliche Telefonnummer und ein leeres
 `href="tel:"` dürfen nicht hinzukommen.
+
+**Bürovisitenkarte** — `bb-limen.vcf` wird öffentlich ausgeliefert und ist
+im Kontaktabschnitt der Startseite und der Fachseite verlinkt. Sie enthält
+den gemeinsamen Bürokontakt, keine persönliche Telefonnummer. Name,
+Telefonnummer, E-Mail, Anschrift und Website stimmen mit dem JSON-LD der
+Startseite überein; `tests/test_angaben.py` prüft diesen Abgleich.
+Die Datei verwendet vCard 3.0, UTF-8 und CRLF-Zeilenenden. `.editorconfig`
+bewahrt die Zeilenenden beim Bearbeiten, `.gitattributes` verhindert eine
+Umwandlung durch Git und wird selbst nicht ausgeliefert. Bei einer Änderung
+der Kontaktdaten auch die Visitenkarte aktualisieren.
+
+**Rückrufe und Abwesenheit** — Laut Betreiberangabe vom 20.09.2026 noch
+nicht geregelt. Die Fachseite nennt diesen offenen Stand im Kontaktabschnitt;
+sie verspricht keine feste Rückruffrist und keine telefonische Erreichbarkeit
+außerhalb der Sprechzeiten. Sobald die Abläufe feststehen, Beschreibung und
+Prüfdatum dort gemeinsam aktualisieren. Dieses Datum bezieht sich nur auf
+die Rückruf- und Abwesenheitsregelung, nicht auf eine Prüfung aller Fachtexte.
+
+**Externe Profile** — Laut Betreiberangabe vom 20.09.2026 bestehen noch
+keine öffentlichen Profile für BB Limen, Aranda Möller oder Mika Möller.
+Deshalb gibt es derzeit keine Profil-Links und kein `sameAs`. Wenn Profile
+hinzukommen, die genaue URL und Identität prüfen: persönliche Profile der
+jeweiligen Person zuordnen, gemeinsame Büroprofile dem Büro.
 
 **Registrierungen.** Beide Personen sind freiberuflich und einzeln
 registrierungspflichtig (§ 23 BtOG, personenbezogen, nicht bürobezogen).
