@@ -1058,7 +1058,9 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .callbar { display: none; }
 
 @media screen and (max-width: 60rem) {
-  .shell { grid-template-columns: 1fr; }
+  /* Beim Anspringen eines Links bleibt Platz ueber der festen Anrufleiste. */
+  html { scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
+  .shell { grid-template-columns: minmax(0, 1fr); }
 
   /* Am Telefon wird aus der stehenden Kolumne ein schmales Kopfband:
      Signet, Name, Rolle, Blatttrenner und darunter die Navigation.
@@ -1120,7 +1122,13 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail nav li.fach { flex-basis: 100%; margin: 0.3rem 0 0.75rem; }
   .rail nav li.fach a { padding: 0.32rem 0.85rem; font-size: 0.8rem; }
 
-  .sheet { padding: var(--s2) var(--s2) 7rem; }
+  .sheet {
+    min-width: 0;
+    /* Silbentrennung, mit Umbruch als Rueckfall ohne Browser-Woerterbuch. */
+    hyphens: auto;
+    overflow-wrap: anywhere;
+    padding: var(--s2) var(--s2) calc(7rem + env(safe-area-inset-bottom, 0px));
+  }
 
   .callbar {
     display: flex;
@@ -1188,7 +1196,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 .skip:focus { top: 0; }
 
-a:focus-visible, .rail nav a:focus-visible {
+a:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
