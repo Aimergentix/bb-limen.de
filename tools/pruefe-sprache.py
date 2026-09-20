@@ -29,8 +29,8 @@ ZIEL_MAX = 25
 
 EINFACHE_SPRACHE = {
     "index.html",
-    "buero.html",
-    "leistungen.html",
+    "betreuung.html",
+    "aufgaben.html",
     "vorsorge.html",
 }
 PROFILE = {

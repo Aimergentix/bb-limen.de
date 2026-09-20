@@ -21,7 +21,7 @@ ZIEL=$(mkdir -p "${1:?Zielordner fehlt}" && cd "$1" && pwd)
 PORT=${2:-8392}
 QUELLE=${3:-$WURZEL}
 cd "$QUELLE"
-SEITEN="index.html buero.html leistungen.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html 404.html"
+SEITEN="index.html betreuung.html aufgaben.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html 404.html"
 
 python3 -m http.server "$PORT" >/dev/null 2>&1 &
 SERVER=$!

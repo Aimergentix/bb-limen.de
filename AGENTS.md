@@ -119,7 +119,7 @@ dahin kein Europäisches Leichte-Sprache-Logo verwenden.
 - Alle Werte stehen im Block `PALETTE` in `style.css`. Ein Rückbau ist immer
   dieser eine Block, nie eine Suche durchs Stylesheet.
 - **`--gut` (Salbei) steht an genau vier Stellen im Fließtext**
-  (`index` 1, `buero` 1, `leistungen` 2). Die Farbe bedeutet Entlastung;
+  (`index` 1, `betreuung` 1, `aufgaben` 2). Die Farbe bedeutet Entlastung;
   eine fünfte Stelle nimmt ihr die Bedeutung.
 - **Stahlblau bedeutet anklickbar:** `--link-ink` auf Papier,
   `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
@@ -159,8 +159,13 @@ Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
   die Verweise wörtlich *Impressum* und *Datenschutz* heißen, auf jeder
   Seite stehen und ohne JavaScript funktionieren. Beim Umbau der Navigation
   nicht anfassen.
-- **Die Adressen bleiben bei `.html`.** Keine Verzeichnisform, keine
-  Umbenennung. Entschieden am 20.09.2026.
+- **Die Adressen bleiben bei `.html`.** Der Dateiname bezeichnet das
+  Sachthema in Kleinbuchstaben; mehrere Wörter werden mit Bindestrichen
+  verbunden. Menütexte dürfen eine grammatische Ergänzung enthalten, aber
+  kein anderes Sachthema verwenden. `index.html` ist die technische
+  Startdatei für `https://bb-limen.de/`. Keine Verzeichnisform und keine
+  spätere Umbenennung ohne Entscheidung über bestehende Verweise.
+  Entschieden am 20.09.2026.
 - **Der Gründungshinweis** steht auf allen fünf Inhaltsseiten und im
   Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
   verschwindet erst mit der Registrierungsnummer, und dann überall

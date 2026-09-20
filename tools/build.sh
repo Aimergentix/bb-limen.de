@@ -17,7 +17,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 
-SEITEN="index.html buero.html leistungen.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html 404.html"
+SEITEN="index.html betreuung.html aufgaben.html vorsorge.html fachkreise.html leichte-sprache.html impressum.html datenschutz.html 404.html"
 BAUSTEINE="head skip rail foot callbar"
 
 ARBEITSVERZEICHNIS=$(mktemp -d "./.build.XXXXXX")

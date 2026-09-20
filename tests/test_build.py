@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = (
     "index.html",
-    "buero.html",
-    "leistungen.html",
+    "betreuung.html",
+    "aufgaben.html",
     "vorsorge.html",
     "fachkreise.html",
     "leichte-sprache.html",

@@ -10,8 +10,8 @@ Verzeichnis liegt.
 > Vertrag.
 
     index.html        BB Limen, Exkurs zum Namen, Haltung nach § 1821 BGB, Kontakt
-    buero.html        Betreuung, Einordnung, Verfahren und Einzugsgebiet
-    leistungen.html   Aufgabenbereiche, Ablauf, Kosten
+    betreuung.html    Betreuung, Einordnung, Verfahren und Einzugsgebiet
+    aufgaben.html     Aufgabenbereiche, Ablauf, Kosten
     vorsorge.html     Vollmacht, Betreuungs- und Patientenverfügung
     fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte
     leichte-sprache.html  dieselben Inhalte in Leichter Sprache
@@ -75,6 +75,12 @@ Build ist kein Zwischenschritt, sondern nur ein Abgleich.
 
 Seitentitel, Beschreibung und `canonical` stehen dagegen einzeln in jeder
 Seite, weil sie sich unterscheiden.
+
+Die öffentlichen Adressen bleiben klassische `.html`-Adressen. Der Dateiname
+bezeichnet das eindeutige Sachthema der Seite in Kleinbuchstaben; mehrere
+Wörter werden mit Bindestrichen verbunden. Menütexte dürfen eine grammatische
+Ergänzung enthalten, aber kein anderes Sachthema verwenden. `index.html` ist
+die technische Startdatei für die öffentliche Adresse `https://bb-limen.de/`.
 
 ## 2. Noch offen
 
@@ -165,7 +171,7 @@ Betreuer *einen* Aufgabenkreis, und der besteht aus einem oder mehreren
 *Aufgabenbereichen* (§ 1815 Abs. 1 BGB). Der Plural „Aufgabenkreise" ist
 die alte Fassung und sollte nirgends mehr auftauchen. Eine abschließende
 Liste der Aufgabenbereiche gibt es nicht — Register VI auf
-`leistungen.html` sagt das ausdrücklich.
+`aufgaben.html` sagt das ausdrücklich.
 - **alle übrigen Inhaltsseiten** — Einfache Sprache (etwa A2 bis B1).
   Kurze Sätze, aktiv statt passiv, Verben statt Substantivierungen,
   Fachwörter bei der ersten Nennung erklärt. Aber mit Rhythmus: Sätze
@@ -184,7 +190,7 @@ Messen lässt sich ein Teil davon:
 Der Parser betrachtet nur den Fließtext in `main`; Überschriften,
 Beschriftungen, Kontakt- und Ortslisten werden getrennt gehalten. `<br>` ist
 ein Layoutumbruch und kein Satzende. Das A2/B1-Ziel — im Mittel höchstens 15
-Wörter je Satz, kein Satz über 25 — gilt für `index`, `buero`, `leistungen`
+Wörter je Satz, kein Satz über 25 — gilt für `index`, `betreuung`, `aufgaben`
 und `vorsorge`. Fachseite, Pflichttexte und Leichte Sprache werden separat als
 Statistik ausgegeben. Das ersetzt weder Sprachgefühl noch die Prüfgruppe.
 
@@ -227,7 +233,7 @@ eine Suche durchs Stylesheet.
   `.gut`, und nur dort, wo die Nachricht wirklich entlastet: keine
   Entmündigung, eigene Wahl des Betreuers, keine Kosten bei
   Mittellosigkeit, der Weg zurück. **Vier Stellen auf der ganzen
-  Website** (`index` 1, `buero` 1, `leistungen` 2). Wer mehr hinzufügt,
+  Website** (`index` 1, `betreuung` 1, `aufgaben` 2). Wer mehr hinzufügt,
   nimmt der Farbe ihre Bedeutung. `--st-2` der Leichte-Sprache-Liste hat
   denselben Wert.
 - **Papierwärme** (`--paper`, `--surface`) — keine Farbe, die man sieht,
@@ -376,8 +382,8 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
 
 - Die beiden offenen Angaben aus Abschnitt 2 eingetragen.
 - Registrierung nach § 23 BtOG noch nicht erteilt: Der Hinweis auf den
-  Gründungsstand steht auf allen fünf Inhaltsseiten (`index`, `buero`,
-  `leistungen`, `vorsorge`, `fachkreise`) und im Impressum. Nach Erteilung
+  Gründungsstand steht auf allen fünf Inhaltsseiten (`index`, `betreuung`,
+  `aufgaben`, `vorsorge`, `fachkreise`) und im Impressum. Nach Erteilung
   Registrierungsnummer eintragen, das Datum im Impressum aktualisieren und
   die Hinweisblöcke entfernen.
 - Impressum und Datenschutzerklärung stehen bewusst nicht mehr in der
@@ -394,7 +400,7 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   und die Koordination von Hosting beziehungsweise technischem Betrieb.
   Änderungen immer zugleich in der Vereinbarung und in `datenschutz.html`
   nachziehen.
-- Die Vergütungsangaben in `leistungen.html` (sechzehn reguläre
+- Die Vergütungsangaben in `aufgaben.html` (sechzehn reguläre
   Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
   Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG. Der
   Geldbetrag von grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
@@ -402,7 +408,7 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
 - Das Einzugsgebiet umfasst die Landkreise Lörrach (35 Gemeinden) und
   Waldshut (32 Gemeinden). Die Liste steht an genau einer Stelle im JSON-LD unter
   `areaServed`. Bei einer Gebietsänderung bitte anpassen. Die Kurzfassung
-  steht in `partials/rail.html` und in `leistungen.html`.
+  steht in `partials/rail.html` und in `aufgaben.html`.
 - Keine externen Schriften, Skripte oder Karten nachträglich einbauen. Die
   Datenschutzerklärung behauptet, dass es keine gibt — und die
   Content-Security-Policy in `partials/head.html` setzt das durch. Wer sie

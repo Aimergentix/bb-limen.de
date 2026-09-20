@@ -10,7 +10,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 
-SEITEN="index.html buero.html leistungen.html vorsorge.html fachkreise.html leichte-sprache.html"
+SEITEN="index.html betreuung.html aufgaben.html vorsorge.html fachkreise.html leichte-sprache.html"
 
 {
   echo '<?xml version="1.0" encoding="UTF-8"?>'

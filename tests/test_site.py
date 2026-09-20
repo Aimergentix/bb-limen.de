@@ -10,6 +10,17 @@ from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_PAGE_NAMES = {
+    "404.html",
+    "aufgaben.html",
+    "betreuung.html",
+    "datenschutz.html",
+    "fachkreise.html",
+    "impressum.html",
+    "index.html",
+    "leichte-sprache.html",
+    "vorsorge.html",
+}
 PAGES = sorted(ROOT.glob("*.html"))
 
 
@@ -45,6 +56,19 @@ class SiteStructureTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.parsed = {path.name: parse_page(path) for path in PAGES}
+
+    def test_public_page_inventory_uses_the_intended_names(self) -> None:
+        self.assertEqual({path.name for path in PAGES}, EXPECTED_PAGE_NAMES)
+
+    def test_canonical_and_og_urls_follow_page_names(self) -> None:
+        for path in PAGES:
+            if path.name == "404.html":
+                continue
+            address = "https://bb-limen.de/" if path.name == "index.html" else f"https://bb-limen.de/{path.name}"
+            source = path.read_text(encoding="utf-8")
+            with self.subTest(page=path.name):
+                self.assertIn(f'<link rel="canonical" href="{address}">', source)
+                self.assertIn(f'<meta property="og:url" content="{address}">', source)
 
     def test_each_page_has_one_main_and_one_h1(self) -> None:
         for name, page in self.parsed.items():
@@ -96,8 +120,8 @@ class SiteStructureTests(unittest.TestCase):
             [
                 ("leichte-sprache.html", "Leichte Sprache"),
                 ("index.html", "BB Limen"),
-                ("buero.html", "Betreuung"),
-                ("leistungen.html", "Aufgaben"),
+                ("betreuung.html", "Betreuung"),
+                ("aufgaben.html", "Aufgaben"),
                 ("vorsorge.html", "Vorsorge"),
             ],
         )
