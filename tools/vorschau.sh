@@ -10,11 +10,12 @@
 # Braucht chromium und python3. Die erzeugten Dateien sind versioniert,
 # damit die Website ohne Werkzeugkette auslieferbar bleibt.
 set -eu
+. "$(dirname "$0")/browser.sh"
 cd "$(dirname "$0")/.."
 
 rendere() {
   # $1 Quelle, $2 Ziel, $3 Breite, $4 Hoehe
-  chromium --headless --no-sandbox --disable-gpu --hide-scrollbars \
+  "$BROWSER" --headless --no-sandbox --disable-gpu --hide-scrollbars \
     --force-device-scale-factor=1 --window-size="$3,$4" \
     --screenshot="$2" "file://$PWD/$1" 2>/dev/null
   echo "  $2  $(stat -c%s "$2") B"

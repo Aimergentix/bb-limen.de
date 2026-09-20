@@ -164,12 +164,23 @@ Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
 
 ## 8. Nach jeder Änderung, ohne Ausnahme
 
-    python3 -m unittest discover -s tests -v   # 14 Tests
+    python3 -m unittest discover -s tests -v   # 24 Tests
     tools/build.sh && git diff --exit-code     # kein Drift zwischen partials/ und Seiten
     python3 tools/pruefe-sprache.py            # Satzlängen
 
-Alle drei laufen auch in der CI (`.github/workflows/pruefung.yml`). Wer sie
-vorher lokal ausführt, erfährt dasselbe nur früher.
+**Einmal einrichten und nie wieder daran denken:**
+
+    tools/einrichten.sh
+
+Danach laufen diese Prüfungen vor jedem Commit von selbst, und eine
+vergessene Bausteinübertragung wird gleich berichtigt und mit vorgemerkt.
+Dieselben Prüfungen laufen bei jedem Push in der CI, dazu die
+HTML-Validierung und ein Bildvergleich zum Vorgängerstand.
+
+Die Tests prüfen nach, was diese Datei fordert: `test_angaben.py` zählt die
+doppelt gepflegten Angaben aus §6, `test_begriffe.py` hält die Verbote aus
+§2 und §3 fest, `test_kontrast.py` rechnet die Paarungen aus §5 durch. Wer
+eine Regel hier ändert, ändert dort mit.
 
 Ansehen — unbedingt auch am Telefon, dort wird aus der stehenden Kolumne
 ein schmales Kopfband:

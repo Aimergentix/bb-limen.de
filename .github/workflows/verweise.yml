@@ -1,0 +1,80 @@
+# Prueft die Verweise nach aussen. Monatlich, und auf Zuruf.
+#
+# Die Seiten vorsorge.html und leichte-sprache.html verweisen auf Ministerien,
+# Behoerden, die Bundesnotarkammer, Lebenshilfe und KVJS. README §2a sagt,
+# das sei zweimal im Jahr von Hand zu pruefen — das hier nimmt die Handarbeit
+# ab und legt bei einem toten Verweis ein Issue an.
+#
+# Was es NICHT prueft: ob der genannte Stand eines Dokuments noch stimmt.
+# Ein Ministerium kann dieselbe Adresse behalten und den Inhalt austauschen.
+# Das bleibt Handarbeit.
+
+name: Verweise nach außen
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"   # am Ersten jedes Monats, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verweise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Abrufen
+        id: pruefen
+        run: |
+          grep -ho 'href="https\?://[^"]*"' -- *.html \
+            | sed 's/href="//; s/"$//; s/&amp;/\&/g' \
+            | grep -v 'bb-limen\.de' | sort -u > adressen.txt
+
+          echo "Geprüfte Adressen: $(wc -l < adressen.txt)"
+          : > tot.txt
+
+          while read -r adresse; do
+            status=$(curl -sSL --max-time 30 --retry 2 --retry-delay 5 \
+              -o /dev/null -w '%{http_code}' \
+              -A 'bb-limen.de Linkpruefung (+https://bb-limen.de/)' \
+              "$adresse" || echo "000")
+            printf '  %s  %s\n' "$status" "$adresse"
+            case "$status" in
+              2*|3*) ;;
+              *) printf '- `%s` → HTTP %s\n' "$adresse" "$status" >> tot.txt ;;
+            esac
+          done < adressen.txt
+
+          if [ -s tot.txt ]; then
+            echo "tot=ja" >> "$GITHUB_OUTPUT"
+            { echo "## Nicht erreichbare Verweise"; echo; cat tot.txt; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "tot=nein" >> "$GITHUB_OUTPUT"
+            echo "Alle Verweise erreichbar." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Issue anlegen
+        if: steps.pruefen.outputs.tot == 'ja'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Die monatliche Prüfung hat Verweise gefunden, die nicht mehr erreichbar sind."
+            echo
+            cat tot.txt
+            echo
+            echo "Bitte die betroffene Stelle auf der herausgebenden Seite suchen und"
+            echo "Adresse **und** Standangabe in \`vorsorge.html\` bzw."
+            echo "\`leichte-sprache.html\` nachziehen. Ein veralteter Stand ist"
+            echo "schlimmer als kein Stand — siehe README §2a."
+          } > meldung.md
+
+          gh issue create \
+            --title "Tote Verweise nach außen ($(date +%d.%m.%Y))" \
+            --body-file meldung.md \
+            --label "" || gh issue create \
+            --title "Tote Verweise nach außen ($(date +%d.%m.%Y))" \
+            --body-file meldung.md

@@ -37,9 +37,13 @@ Verzeichnis liegt.
     tools/pruefe-sprache.py  misst die Satzlänge im Fließtext
     tools/sitemap.sh  schreibt sitemap.xml aus der Git-Historie
     tools/vorschau.sh rendert Vorschaubild und Symbole aus zwei SVG
-    tests/            Regressionstests für Build, Sprache und Seitenstruktur
+    tools/ansicht.sh  rendert alle Seiten in einen Ordner
+    tools/vergleiche.py  vergleicht zwei solche Ordner Bild für Bild
+    tools/hooks/      läuft vor jedem Commit — tools/einrichten.sh schaltet es an
+    tests/            Regressionstests: Build, Sprache, Struktur, Angaben,
+                      Begriffe, Kontraste
     docs/             Quellenmaterial, grösstenteils unversioniert
-    .github/          die Prüfung, die bei jedem Push läuft
+    .github/          die Prüfungen, die bei jedem Push laufen
     LICENSE           alle Rechte vorbehalten
     .editorconfig     UTF-8, LF, zwei Leerzeichen
 
@@ -183,7 +187,8 @@ Wörter je Satz, kein Satz über 25 — gilt für `index`, `buero`, `leistungen`
 und `vorsorge`. Fachseite, Pflichttexte und Leichte Sprache werden separat als
 Statistik ausgegeben. Das ersetzt weder Sprachgefühl noch die Prüfgruppe.
 
-Regressionstests für Build, Sprachmessung und Seitenstruktur:
+Regressionstests für Build, Sprachmessung, Seitenstruktur, doppelt
+gepflegte Angaben, bekannte Fehlformulierungen und die WCAG-Kontraste:
 
     python3 -m unittest discover -s tests -v
 
@@ -247,6 +252,49 @@ Das legt PNG unter `~/bb-shots` ab; der Server muss auf Port 8391 laufen.
 Chromium im Snap darf nicht nach `/tmp` schreiben — deshalb der Home-Pfad. Unbedingt auch am Telefon ansehen: dort
 wird aus der stehenden Kolumne ein schmales Kopfband, und der Kontakt steht
 in der festen Anrufleiste am unteren Rand.
+
+## 3a. Was von selbst läuft
+
+Drei Ebenen, von früh nach spät:
+
+**Vor jedem Commit** — einmalig einschalten mit
+
+    tools/einrichten.sh
+
+Danach setzt `tools/hooks/pre-commit` die Bausteine ein, merkt eine dabei
+berichtigte Seite gleich mit vor, lässt die Tests laufen und misst die
+Satzlängen. Wer `partials/` ändert und `tools/build.sh` vergisst, merkt es
+hier statt zwei Tage später. Notausgang: `git commit --no-verify` — dann
+fällt es in der CI auf.
+
+**Bei jedem Push** (`.github/workflows/pruefung.yml`), drei Aufgaben:
+
+- dieselben Prüfungen wie der Hook, dazu der Abgleich, dass die Seiten
+  wirklich zu `partials/` passen,
+- **HTML-Validierung** der neun Seiten mit dem W3C-Validator,
+- **Bildvergleich**: der Stand vor und nach dem Push wird gerendert und Bild
+  für Bild verglichen. Das Ergebnis steht in der Zusammenfassung des Laufs,
+  die Bilder liegen vierzehn Tage als Artefakt bereit. Er bricht nie ab — er
+  zeigt nur, was sich in der Ansicht geändert hat, auch das Unbeabsichtigte.
+
+  Verglichen wird gegen den Vorgängerstand, nicht gegen hinterlegte
+  Vorlagenbilder. Beide Stände entstehen dadurch in derselben Umgebung;
+  Vorlagen von einem anderen Rechner wären wegen Schriftglättung und
+  Chromium-Fassung wertlos.
+
+Dasselbe lässt sich lokal machen — nützlich vor einer größeren Änderung am
+Stylesheet:
+
+    tools/ansicht.sh ~/bb-shots/vorher
+    …Änderung…
+    tools/ansicht.sh ~/bb-shots/nachher
+    tools/vergleiche.py ~/bb-shots/vorher ~/bb-shots/nachher ~/bb-shots/diff
+
+**Einmal im Monat** (`.github/workflows/verweise.yml`) werden die zwölf
+Verweise nach außen abgerufen. Ist einer tot, entsteht ein Issue. Das
+ersetzt die halbjährliche Handarbeit aus Abschnitt 2a — aber nur deren
+mechanischen Teil: ob der genannte **Stand** eines Dokuments noch stimmt,
+sieht kein Abruf.
 
 ## 4. Bei GitHub Pages veröffentlichen
 

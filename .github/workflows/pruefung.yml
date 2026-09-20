@@ -52,3 +52,62 @@ jobs:
           else
             echo "Keine offenen Platzhalter."
           fi
+
+  markup:
+    name: HTML-Validierung
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Validator einrichten
+        run: pip install --quiet html5validator
+
+      # Geprüft werden nur die ausgelieferten Seiten. partials/ sind
+      # Bruchstücke und als Einzeldokument absichtlich unvollständig.
+      - name: Seiten prüfen
+        run: html5validator --root . --match "*.html" --blacklist partials tests tools docs --show-warnings
+
+  ansicht:
+    name: Bildvergleich
+    runs-on: ubuntu-latest
+    # Braucht einen Vorgänger zum Vergleichen.
+    if: github.event_name == 'pull_request' || github.event.before != '0000000000000000000000000000000000000000'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Schriften und Pillow (Chrome ist vorinstalliert)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-core fonts-dejavu-core
+          pip install --quiet pillow
+
+      # Beide Stände werden in DERSELBEN Umgebung gerendert. Hinterlegte
+      # Vorlagen von einem anderen Rechner wären wegen Schriftglättung und
+      # Chromium-Fassung wertlos — deshalb der Vergleich gegen den
+      # Vorgängerstand statt gegen ein Bild im Repository.
+      - name: Vorgängerstand bereitstellen
+        run: git worktree add ../vorher HEAD~1
+
+      - name: Beide Stände rendern
+        run: |
+          tools/ansicht.sh bilder/neu 8392
+          tools/ansicht.sh bilder/alt 8393 "$(cd ../vorher && pwd)"
+
+      - name: Vergleichen
+        run: |
+          tools/vergleiche.py bilder/alt bilder/neu bilder/diff | tee bericht.txt
+          { echo '## Bildvergleich zum Vorgängerstand'; echo; echo '```'; cat bericht.txt; echo '```'; } \
+            >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ansichten
+          path: bilder/
+          retention-days: 14
