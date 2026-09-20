@@ -1,8 +1,13 @@
 # bb-limen.de — statische Website
 
-Acht Seiten, ein Stylesheet, keine Abhängigkeiten, keine externen Ressourcen,
+Neun Seiten, ein Stylesheet, keine Abhängigkeiten, keine externen Ressourcen,
 kein JavaScript. Was im Browser ankommt, ist genau das, was hier im
 Verzeichnis liegt.
+
+> **Wer hier etwas ändert — Mensch oder Sprachmodell — liest zuerst
+> [`AGENTS.md`](AGENTS.md).** Dort stehen die Regeln in kurzer, prüfbarer
+> Form. Dieses README erklärt sie: es ist das Handbuch, `AGENTS.md` ist der
+> Vertrag.
 
     index.html        Startseite, Einzugsgebiet, Kontakt
     buero.html        Das Büro, Exkurs zum Namen, Haltung nach § 1821 BGB
@@ -11,30 +16,49 @@ Verzeichnis liegt.
     fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte
     leichte-sprache.html  dieselben Inhalte in Leichter Sprache
 
-    pruefe-sprache.py Misst die Satzlänge im Fließtext
     impressum.html    Pflichtangaben nach § 5 DDG
     datenschutz.html  Information nach Art. 13 DSGVO
+    404.html          Fehlerseite, nicht in der sitemap.xml
     style.css         gemeinsames Stylesheet
+    vorschau.png      Vorschaubild für geteilte Verweise (Open Graph)
+    favicon.ico       Symbol in der Browserleiste
+    apple-touch-icon.png  Symbol auf dem iOS-Startbildschirm
     robots.txt        Indexierungsregeln
     sitemap.xml       Seitenverzeichnis für Suchmaschinen
-    _redirects        Weiterleitung von www auf die kanonische Hauptdomain
+    CNAME             die kanonische Domain für GitHub Pages
+    _config.yml       was GitHub Pages **nicht** ausliefert
+
+    AGENTS.md         Arbeitsregeln für Mensch und Modell — erst lesen
+    CLAUDE.md         Einzeiler, der auf AGENTS.md verweist
 
     partials/         die Bausteine, die auf jeder Seite gleich sind
-    build.sh          setzt diese Bausteine in die acht Seiten ein
+    tools/build.sh    setzt diese Bausteine in die neun Seiten ein
+    tools/schau.sh    rendert Bildschirmfotos mit Chromium
+    tools/pruefe-sprache.py  misst die Satzlänge im Fließtext
+    tools/sitemap.sh  schreibt sitemap.xml aus der Git-Historie
+    tools/vorschau.sh rendert Vorschaubild und Symbole aus zwei SVG
     tests/            Regressionstests für Build, Sprache und Seitenstruktur
-    docs/             Quellenmaterial, nicht Teil der Website (.gitignore)
+    docs/             Quellenmaterial, grösstenteils unversioniert
+    .github/          die Prüfung, die bei jedem Push läuft
+    LICENSE           alle Rechte vorbehalten
+    .editorconfig     UTF-8, LF, zwei Leerzeichen
+
+Zwei Schranken, die nicht dasselbe tun: `.gitignore` hält Dateien aus der
+**Versionierung**, `_config.yml` hält versionierte Dateien aus der
+**Auslieferung**. `partials/`, `tools/` und `tests/` liegen im Repository,
+aber nicht im Netz.
 
 ## 1. Gemeinsame Bausteine ändern
 
 Kolumne, Navigation, Telefonnummer, Anschrift, Seitenfuß und Anrufleiste
-stehen **nur** in `partials/`. Die acht Seiten enthalten Kopien davon
+stehen **nur** in `partials/`. Die neun Seiten enthalten Kopien davon
 zwischen Marken wie
 
     <!-- #rail -->   … generierter Inhalt …   <!-- /#rail -->
 
 Also: in `partials/` ändern, dann
 
-    ./build.sh
+    tools/build.sh
 
 Das Skript überschreibt ausschließlich den Bereich zwischen den Marken und
 setzt `aria-current="page"` auf den jeweils eigenen Navigationspunkt. Vor dem
@@ -68,7 +92,7 @@ Offen sind:
   § 23 Abs. 1 Nr. 3 BtOG.
 
 **Telefonnummer von Mika Möller** — die maßgebliche Stelle ist
-`partials/rail.html`; nach dem Build steht deren Kopie in allen acht Seiten.
+`partials/rail.html`; nach dem Build steht deren Kopie in allen neun Seiten.
 Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
 `fachkreise.html`, `leichte-sprache.html` und im Impressum. Achtung: Der
 Platzhalter ist bewusst **kein** `tel:`-Link — ein leeres `href="tel:"` war
@@ -149,8 +173,8 @@ Unvollständigkeit ist der teurere Fehler.
 
 Messen lässt sich ein Teil davon:
 
-    ./pruefe-sprache.py                 alle Seiten
-    ./pruefe-sprache.py vorsorge.html   mit den zu langen Sätzen
+    python3 tools/pruefe-sprache.py                 alle Seiten
+    python3 tools/pruefe-sprache.py vorsorge.html   mit den zu langen Sätzen
 
 Der Parser betrachtet nur den Fließtext in `main`; Überschriften,
 Beschriftungen, Kontakt- und Ortslisten werden getrennt gehalten. `<br>` ist
@@ -159,9 +183,20 @@ Wörter je Satz, kein Satz über 25 — gilt für `index`, `buero`, `leistungen`
 und `vorsorge`. Fachseite, Pflichttexte und Leichte Sprache werden separat als
 Statistik ausgegeben. Das ersetzt weder Sprachgefühl noch die Prüfgruppe.
 
-Regressionstests für Build und Sprachmessung:
+Regressionstests für Build, Sprachmessung und Seitenstruktur:
 
     python3 -m unittest discover -s tests -v
+
+Dieselben Prüfungen laufen bei jedem Push in GitHub Actions
+(`.github/workflows/pruefung.yml`). Wer sie vorher lokal ausführt, erfährt
+dasselbe nur früher.
+
+Die drei Bilddateien — Vorschaubild und die beiden Symbole — entstehen aus
+zwei SVG-Quellen in `tools/` und sind versioniert, damit die Website ohne
+Werkzeugkette auslieferbar bleibt. Nach einer Änderung an Signet oder
+Palette neu rendern:
+
+    tools/vorschau.sh
 
 ## 2c. Farbe
 
@@ -182,6 +217,14 @@ eine Block, nie eine Suche durchs Stylesheet.
 - **Papierwärme** (`--paper`, `--surface`) — keine Farbe, die man sieht,
   sondern eine Temperatur. `#fbfaf7` statt neutralem Grau.
 
+Das Zierzeichen zwischen den Haarlinien ist kein Buchstabe, sondern
+dasselbe Blatt wie die Marke der Kolumne (`.zierblatt`, siehe `style.css`).
+Bis zum 20.09.2026 stand dort U+2766 ❦ — ein Zeichen, das in keiner
+Serifenschrift des Projekts vorkommt und deshalb auf eine Symbol- oder
+Farb-Emoji-Schrift zurückfiel: auf jedem Gerät ein anderes Bild. Als SVG
+ist es überall dasselbe und folgt über `currentColor` der Farbe des
+Ornaments. Schmuckzeichen also nie als Buchstabe.
+
 Dazu `--hauch` für den Farbton, der nur bei Berührung erscheint, und
 `--st-1` bis `--st-5` ausschließlich für die Leichte-Sprache-Seite: dort
 hilft Farbe beim Wiederfinden und ist damit Funktion, keine Dekoration.
@@ -196,67 +239,69 @@ hilft Farbe beim Wiederfinden und ist damit Funktion, keine Dekoration.
 
 Dann `http://localhost:8000` öffnen. Für Bilder zum Nachsehen:
 
-    ./schau.sh index.html 1280 1500 start          # hell
-    ./schau.sh index.html 390 1400 start-mobil     # Telefon
-    ./schau.sh index.html 1280 1500 start-d dunkel # Dunkelmodus
+    tools/schau.sh index.html 1280 1500 start          # hell
+    tools/schau.sh index.html 390 1400 start-mobil     # Telefon
+    tools/schau.sh index.html 1280 1500 start-d dunkel # Dunkelmodus
 
 Das legt PNG unter `~/bb-shots` ab; der Server muss auf Port 8391 laufen.
 Chromium im Snap darf nicht nach `/tmp` schreiben — deshalb der Home-Pfad. Unbedingt auch am Telefon ansehen: dort
 wird aus der stehenden Kolumne ein schmales Kopfband, und der Kontakt steht
 in der festen Anrufleiste am unteren Rand.
 
-## 4. Bei Codeberg veröffentlichen
+## 4. Bei GitHub Pages veröffentlichen
 
-Die Website verwendet `https://bb-limen.de/` als kanonische Adresse. Für das
-aktuelle Webhook-Verfahren von Codeberg Pages sind Branch, Webhook und
-Zieladresse ausdrücklich einzurichten; ein Push allein veröffentlicht noch
-nichts.
+Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
+`main` aus <https://github.com/Aimergentix/bb-limen.de>.
 
-1. Auf codeberg.org ein öffentliches Repository `pages` anlegen. Im Repository
-   muss ein Branch namens `pages` vorhanden sein. Den aktuellen lokalen Stand
-   zum Beispiel so dorthin übertragen:
+1. **Pages einschalten.** Im Repository unter **Settings → Pages**:
+   *Source* = „Deploy from a branch", *Branch* = `main`, *Folder* = `/ (root)`.
+   Ein Push nach `main` veröffentlicht danach automatisch.
 
-       git remote add codeberg https://codeberg.org/BENUTZERNAME/pages.git
-       git push codeberg main:pages
+2. **Was ausgeliefert wird**, steuert `_config.yml`. Pages veröffentlicht
+   sonst alles, was im Branch liegt — auch `tools/`, `tests/` und die
+   Bausteine aus `partials/`. Letztere sind kein vollständiges HTML; einzeln
+   aufgerufen ergäben sie ein kaputtes Dokument mit der vollen Anschrift.
+   Die `exclude`-Liste verhindert das.
 
-2. Optional für eine zusätzliche Codeberg-Unterdomain: Unter
-   **Einstellungen → Webhooks → Webhook hinzufügen → Forgejo** einen
-   Webhook anlegen. Für die Codeberg-Unterdomain lautet die Zieladresse
-   `https://BENUTZERNAME.codeberg.page/`; der Branchfilter lautet `pages`.
-   Die Schaltfläche „Test delivery“ ist dafür nicht geeignet. Mit einem Push
-   in den Branch `pages` testen und anschließend die Webhook-Auslieferung
-   kontrollieren.
-3. Für die eigene Domain läuft die Autorisierung über DNS. Bei inwx eintragen:
+   **Kein `.nojekyll` anlegen.** Das schaltet Jekyll ab und hebt damit genau
+   diesen Ausschluss wieder auf. Die Seiten enthalten keine Liquid-Syntax,
+   Jekyll reicht sie also unverändert durch.
 
-       www.bb-limen.de                         CNAME  codeberg.page.
-       bb-limen.de                             ALIAS  codeberg.page
-       _git-pages-repository.bb-limen.de       TXT    https://codeberg.org/BENUTZERNAME/pages.git
-       _git-pages-repository.www.bb-limen.de   TXT    https://codeberg.org/BENUTZERNAME/pages.git
+3. **Eigene Domain.** Die Datei `CNAME` im Wurzelverzeichnis enthält die
+   kanonische Domain (`bb-limen.de`) und wird von Pages ausgewertet. Bei
+   inwx einzutragen:
 
-   Bietet inwx für den Apex kein ALIAS, stattdessen A auf `217.197.84.141`
-   und AAAA auf `2a0a:4580:103f:c0de::2` setzen. Die TXT-Einträge sind
-   zwingend — ohne sie liefert Codeberg die eigene Domain nicht aus.
+       bb-limen.de      A      185.199.108.153
+       bb-limen.de      A      185.199.109.153
+       bb-limen.de      A      185.199.110.153
+       bb-limen.de      A      185.199.111.153
+       bb-limen.de      AAAA   2606:50c0:8000::153
+       bb-limen.de      AAAA   2606:50c0:8001::153
+       bb-limen.de      AAAA   2606:50c0:8002::153
+       bb-limen.de      AAAA   2606:50c0:8003::153
+       www.bb-limen.de  CNAME  aimergentix.github.io.
+
+   Eine eigene Weiterleitungsdatei für `www` wird nicht gebraucht: Pages
+   leitet die nicht-kanonische der beiden Varianten selbst auf die im
+   `CNAME` stehende um, sobald beide DNS-Einträge stehen.
 
    Die MX- und TXT-Einträge für mailbox.org bleiben unverändert. Falls
    CAA-Einträge gesetzt sind, muss `letsencrypt.org` darin erlaubt sein.
 
-4. Für die Hauptdomain einen eigenen Webhook mit Branchfilter `pages` anlegen.
-   Die Zieladresse muss beim **ersten** Deployment `http://bb-limen.de/`
-   lauten. Nach dem ersten erfolgreichen Lauf auf `https://bb-limen.de/`
-   umstellen.
-5. Auch `www.bb-limen.de` muss separat deployt werden: zweiter Webhook,
-   ebenfalls zunächst mit `http://www.bb-limen.de/`, danach HTTPS. Die Datei
-   `_redirects` leitet diese Variante bewusst auf die kanonische Hauptdomain
-   um. Soll die Codeberg-Unterdomain zusätzlich erreichbar sein, braucht auch
-   sie den optionalen eigenen Webhook aus Schritt 2.
-6. Die aktuelle Codeberg-Dokumentation vor jeder Einrichtung gegenlesen, da
-   sich das Verfahren ändern kann:
+4. **HTTPS.** Nach erfolgreicher DNS-Prüfung unter **Settings → Pages** den
+   Haken bei *Enforce HTTPS* setzen. Das Zertifikat holt GitHub selbst über
+   Let's Encrypt; bis es ausgestellt ist, können einige Minuten vergehen.
 
-   <https://docs.codeberg.org/codeberg-pages/>
+5. **Die IP-Adressen und das Verfahren vor der Einrichtung gegenlesen** — sie
+   ändern sich selten, aber sie ändern sich:
 
-   <https://docs.codeberg.org/codeberg-pages/using-custom-domain/>
+   <https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site>
 
-Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
+6. **Danach einmal prüfen**, dass die Werkstatt nicht mit im Netz steht:
+
+       curl -sI https://bb-limen.de/tools/build.sh      # muss 404 sein
+       curl -sI https://bb-limen.de/partials/rail.html  # muss 404 sein
+       curl -sI https://www.bb-limen.de/                # muss auf bb-limen.de umleiten
 
 ## 5. Vor dem Onlinegehen prüfen
 
@@ -291,4 +336,15 @@ Das TLS-Zertifikat holt der Pages-Server automatisch über Let's Encrypt.
   `areaServed`. Bei einer Gebietsänderung beide anpassen. Die Kurzfassung
   steht in `partials/rail.html` und in `leistungen.html`.
 - Keine externen Schriften, Skripte oder Karten nachträglich einbauen. Die
-  Datenschutzerklärung behauptet, dass es keine gibt.
+  Datenschutzerklärung behauptet, dass es keine gibt — und die
+  Content-Security-Policy in `partials/head.html` setzt das durch. Wer sie
+  lockern muss, baut gerade etwas ein, das hier nicht hingehört.
+- Das Vorschaubild `vorschau.png` zeigt noch den richtigen Anspruch. Es
+  erscheint überall dort, wo jemand den Verweis weiterschickt, und wird aus
+  `tools/vorschau.svg` erzeugt: `tools/vorschau.sh`.
+- `sitemap.xml` ist neu geschrieben: `tools/sitemap.sh`. Impressum und
+  Datenschutz stehen bewusst nicht darin — beide tragen `noindex`, weil
+  § 5 DDG Erreichbarkeit verlangt, nicht Auffindbarkeit.
+- Die Liste der offenen Platzhalter ist leer:
+
+      grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/
