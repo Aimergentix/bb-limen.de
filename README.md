@@ -379,9 +379,8 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   Geldbetrag von grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
   Vermögens. Bei der nächsten Anpassung der Gesetze alle Angaben nachziehen.
 - Das Einzugsgebiet umfasst die Landkreise Lörrach (35 Gemeinden) und
-  Waldshut (32 Gemeinden). Die Liste steht an genau zwei Stellen in
-  `index.html`: im Abschnitt „Wo ich arbeite" und im JSON-LD unter
-  `areaServed`. Bei einer Gebietsänderung beide anpassen. Die Kurzfassung
+  Waldshut (32 Gemeinden). Die Liste steht an genau einer Stelle im JSON-LD unter
+  `areaServed`. Bei einer Gebietsänderung bitte anpassen. Die Kurzfassung
   steht in `partials/rail.html` und in `leistungen.html`.
 - Keine externen Schriften, Skripte oder Karten nachträglich einbauen. Die
   Datenschutzerklärung behauptet, dass es keine gibt — und die
