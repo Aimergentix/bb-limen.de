@@ -205,22 +205,31 @@ Palette neu rendern:
 
 ## 2c. Farbe
 
-Die Seite hat drei Farbstimmen, und jede bedeutet etwas. Alle Werte
-stehen im Block PALETTE in `style.css`; ein Rückbau ist immer dieser
-eine Block, nie eine Suche durchs Stylesheet.
+Die Seite hat drei Grundstimmen und zwei sparsam verwendete
+Wegweiserfarben. Jede bedeutet etwas. Alle Werte stehen im Block PALETTE
+in `style.css`; ein Rückbau ist immer dieser eine Block, nie eine Suche
+durchs Stylesheet.
 
-- **Bernstein** (`--accent`) — Ordnung: Rubriken, Ziffern, Zierlinien.
+- **Gold** (`--accent`, `--accent-on-carrier`) — Ordnung: Rubriken,
+  Ziffern, Zierlinien und aktive Navigation. Auf dem hellen Papier steht
+  ein kontraststarkes Goldocker, auf Graphit eine zweite, hellere Goldstufe.
 - **Salbei** (`--gut`) — Entlastung. Im Fließtext nur für den Block
   `.gut`, und nur dort, wo die Nachricht wirklich entlastet: keine
   Entmündigung, eigene Wahl des Betreuers, keine Kosten bei
   Mittellosigkeit, der Weg zurück. **Vier Stellen auf der ganzen
   Website** (`index` 1, `buero` 1, `leistungen` 2). Wer mehr hinzufügt,
-  nimmt der Farbe ihre Bedeutung. Eine einzige Ausnahme: die Blattkontur
-  des Signets in der Kolumne (`.rail-brand .leaf .blatt`) steht ebenfalls
-  in Salbei — sie ist kein Text, sondern das Zeichen selbst. Auch `--st-2`
-  der Leichte-Sprache-Liste hat denselben Wert.
+  nimmt der Farbe ihre Bedeutung. `--st-2` der Leichte-Sprache-Liste hat
+  denselben Wert.
 - **Papierwärme** (`--paper`, `--surface`) — keine Farbe, die man sieht,
   sondern eine Temperatur. `#fbfaf7` statt neutralem Grau.
+- **Stahlblau** (`--fach-on-carrier`) — kennzeichnet die Kartusche für den
+  abgesetzten Weg zu den Fachkreisen. Sobald diese Seite aktiv ist,
+  wechselt der Verweis wie alle aktiven Menüpunkte zu Gold.
+- **Mint** (`--leicht-on-carrier`) — verbindet die Blattkontur des Signets
+  mit der Kartusche zur Leichten Sprache. Im aktiven Zustand wird auch
+  dieser Verweis goldfarben.
+- **Terrakotta** (`--leicht-ink`) — trägt auf der Leichte-Sprache-Seite
+  Überschriften und Farbrhythmus, nicht die Navigation.
 
 Das Zierzeichen zwischen den Haarlinien ist kein Buchstabe, sondern
 dasselbe Blatt wie die Marke der Kolumne (`.zierblatt`, siehe `style.css`).
@@ -232,7 +241,8 @@ Ornaments. Schmuckzeichen also nie als Buchstabe.
 
 Dazu `--hauch` für den Farbton, der nur bei Berührung erscheint, und
 `--st-1` bis `--st-5` ausschließlich für die Leichte-Sprache-Seite: dort
-hilft Farbe beim Wiederfinden und ist damit Funktion, keine Dekoration.
+hilft Farbe an Listen und Überschriften beim Wiederfinden und ist damit
+Funktion, keine bloße Dekoration.
 
 **Jede Farbe ist gegen WCAG AA geprüft, hell und dunkel.** Nach jeder
 Änderung am PALETTE-Block neu rechnen — die schwächste Paarung liegt bei

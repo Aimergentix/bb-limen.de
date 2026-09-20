@@ -6,7 +6,7 @@
    Links eine stehende Kolumne in Graphit: Bürokennung, Navigation und
    Kontakt. Sie bleibt beim Scrollen stehen, damit die Telefonnummer auf
    jedem Bildschirmzentimeter erreichbar ist. Rechts der Satzspiegel im
-   Stil eines gesetzten Buches: Serifenschrift, Rubriken in Bernstein,
+   Stil eines gesetzten Buches: Serifenschrift, Rubriken in Goldocker,
    Aufgabenbereiche als Register mit römischen Ziffern.
 
    Proportion
@@ -17,12 +17,12 @@
    verlangte; sie sind Ausgangspunkt, nicht Gesetz. Die Kolumne verhält
    sich zum Satzspiegel etwa wie 1 : 1,9.
 
-   Palette C — Graphit & Bernstein
-   -------------------------------
-   Graphit trägt die Amtsautorität, Bernstein die Wärme des Klassischen.
+   Palette C — Graphit & Gold
+   --------------------------
+   Graphit trägt die Amtsautorität, Gold die Wärme des Klassischen.
    Alle Farbwerte stehen im Block PALETTE; ein Wechsel ersetzt nur ihn.
    Jeder Textwert ist gegen WCAG geprüft (Fließtext 8,9:1, Nebentext 4,6:1,
-   Bernstein als Textfarbe 5,4:1, Kolumnentext 15,0:1).
+   Gold als Textfarbe mindestens 4,6:1, Kolumnentext 15,0:1).
 */
 
 /* ================= PALETTE — austauschbarer Block ================= */
@@ -42,9 +42,18 @@
   --on-carrier:     #fafafa;
   --on-carrier-dim: #b9bfc7;
 
-  --accent:     #96581a;  /* Bernstein — Rubriken, Ziffern, Zierlinien */
-  --accent-ink: #96581a;  /* Bernstein als Textfarbe */
-  --accent-on-carrier: #b18355;
+  /* Zwei Goldstufen: Goldocker bleibt auf Papier lesbar, das hellere Gold
+     leuchtet auf Graphit. Gegenueber dem alten Bernstein zwei kleine
+     Schritte heller und gelblicher, ohne in Signalgelb zu kippen. */
+  --accent:     #95630e;
+  --accent-ink: #95630e;
+  --accent-on-carrier: #c89e42;
+
+  /* Zwei helle Wegweiser auf der dunklen Kolumne. Sie unterscheiden die
+     Sonderzugaenge, ohne den aktiven Zustand in Gold vorwegzunehmen. */
+  --fach-on-carrier:   #b5cae0; /* helles Stahlblau — sachlich, aber praesenter */
+  --leicht-on-carrier: #a6d2b7; /* helles Mint wie die Blattkontur */
+  --leicht-ink:        #8a4b32; /* Terrakotta auf Papier, 6,42:1 */
 
   /* Salbei — die zweite Stimme. Sie steht ausschliesslich dort, wo die
      Nachricht entlastet: keine Kosten, keine Entmuendigung, eigene Wahl
@@ -54,12 +63,12 @@
   --gut-ink:     #3a6350;
   --gut-flaeche: #edf2ee;
 
-  --hauch: #f7f1e6;     /* Bernstein sehr duenn — nur bei Beruehrung */
+  --hauch: #f8f3e3;     /* Gold sehr duenn — nur bei Beruehrung */
 
   /* Fuenf Stimmen, ausschliesslich fuer die Leichte-Sprache-Seite: dort
      hilft Farbe beim Wiederfinden, ueberall sonst waere sie Schmuck.
      Alle als Beschriftung auf der Flaeche geprueft, mindestens 5,0:1. */
-  --st-1: #96581a;
+  --st-1: #95630e;
   --st-2: #3a6350;
   --st-3: #8a4b32;
   --st-4: #3f5a78;
@@ -82,9 +91,13 @@
     --on-carrier:     #eef0f2;
     --on-carrier-dim: #9aa2ac;
 
-    --accent:     #d09a52;
-    --accent-ink: #d09a52;
-    --accent-on-carrier: #d09a52;
+    --accent:     #dfb24f;
+    --accent-ink: #dfb24f;
+    --accent-on-carrier: #dfb24f;
+
+    --fach-on-carrier:   #bdd5ec;
+    --leicht-on-carrier: #bae1c9;
+    --leicht-ink:        #d09a7f;
 
     --gut:         #94c4a6;   /* 9,57:1 auf Papier, 8,91:1 auf Flaeche */
     --gut-ink:     #94c4a6;
@@ -92,7 +105,7 @@
 
     --hauch: #1d1a15;
 
-    --st-1: #d09a52;
+    --st-1: #dfb24f;
     --st-2: #94c4a6;
     --st-3: #d09a7f;
     --st-4: #9bb6d4;
@@ -175,9 +188,9 @@ a { color: var(--accent-ink); text-underline-offset: 0.18em; }
 }
 
 .rail-brand .leaf { width: 1.75rem; height: 1.75rem; flex: none; color: var(--accent-on-carrier); }
-/* Blattkontur in Salbei, Mittelrippe und Adern in Bernstein — ein einziger
-   farbiger Punkt, aber auf jeder Seite sichtbar. */
-.rail-brand .leaf .blatt { stroke: var(--gut); }
+/* Blattkontur und Leichte-Sprache-Kartusche teilen dasselbe Mint. Mittelrippe
+   und Adern bleiben in Gold. */
+.rail-brand .leaf .blatt { stroke: var(--leicht-on-carrier); }
 
 .rail-name {
   font-family: var(--serif);
@@ -224,21 +237,25 @@ a { color: var(--accent-ink); text-underline-offset: 0.18em; }
 .rail nav a[aria-current="page"] { color: var(--accent-on-carrier); font-weight: 600; }
 
 /* "Fuer Fachkreise" richtet sich an ein anderes Publikum als der Rest
-   der Navigation. Statt eines fuenften gleichrangigen Punktes bekommt es
-   Abstand und die Kapitaelchen-Anmutung der Rubriken: erkennbar ein
-   Seitenweg, kein Hauptweg. */
+   der Navigation. Die Kartusche kennzeichnet den Seitenweg; Schreibweise
+   und Schriftgewicht bilden bewusst ein Paar mit "Leichte Sprache". */
 .rail nav li.fach { margin-top: var(--s2); }
 .rail nav li.fach a {
-  border-bottom: 0;
-  font-size: 0.74rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  display: inline-block;
+  border: 1px solid var(--fach-on-carrier);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
   font-weight: 600;
-  color: var(--accent-on-carrier);
-  padding: 0.2rem 0;
+  color: var(--fach-on-carrier);
+  padding: 0.32rem 0.85rem;
+  transition: border-color 120ms linear, color 120ms linear;
 }
-.rail nav li.fach a:hover { color: var(--on-carrier); }
-.rail nav li.fach a[aria-current="page"] { color: var(--on-carrier); }
+.rail nav li.fach a:hover { border-color: var(--on-carrier); color: var(--on-carrier); }
+.rail nav li.fach a[aria-current="page"] {
+  border-color: var(--accent-on-carrier);
+  color: var(--accent-on-carrier);
+}
 
 .rail-spacer { flex: 1; min-height: var(--s2); }
 
@@ -382,7 +399,7 @@ p:last-child { margin-bottom: 0; }
    Serifenschrift des Projekts vor — weder in Noto Serif noch in Georgia
    oder Times New Roman — und fiel deshalb auf eine Symbol- oder
    Farb-Emoji-Schrift zurueck: auf jedem Geraet ein anderes Bild, oft ein
-   bunter Fleck neben der Bernsteinlinie. Als SVG ist es ueberall dasselbe
+   bunter Fleck neben der Goldlinie. Als SVG ist es ueberall dasselbe
    und folgt ueber currentColor der Farbe des Ornaments.
 
    Das Verhaeltnis 24:26 des viewBox bestimmt Breite zu Hoehe; wer die
@@ -666,7 +683,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* ================= Exkurs: der Name ================= */
 
-/* Ein abgesetzter Einschub im Satzspiegel — anderer Grund, Bernsteinrahmen
+/* Ein abgesetzter Einschub im Satzspiegel — anderer Grund, Goldrahmen
    oben und unten, damit er als Einschub gelesen wird und nicht als
    Fortsetzung des Haupttextes. Die beiden Woerter stehen nebeneinander
    wie in einem Woerterbuch. */
@@ -877,6 +894,8 @@ dl.contact dd:last-child { margin-bottom: 0; }
   line-height: 1.22;
   letter-spacing: -0.01em;
 }
+.ls h1::after { background: var(--leicht-ink); }
+.ls .kicker { color: var(--leicht-ink); }
 
 .ls h2 {
   font-family: var(--sans);
@@ -884,7 +903,18 @@ dl.contact dd:last-child { margin-bottom: 0; }
   line-height: 1.32;
   letter-spacing: 0;
   margin: var(--s4) 0 var(--s1);
+  color: var(--leicht-ink);
+  border-left: 0.28rem solid var(--st-3);
+  padding-left: var(--s1);
 }
+
+/* Die Streifen bilden von oben nach unten einen ruhigen Farbrhythmus.
+   Die Ueberschriften bleiben auch ohne Farbe durch ihre Form erkennbar. */
+.ls h2:nth-of-type(5n + 1) { border-left-color: var(--st-3); }
+.ls h2:nth-of-type(5n + 2) { border-left-color: var(--st-4); }
+.ls h2:nth-of-type(5n + 3) { border-left-color: var(--st-2); }
+.ls h2:nth-of-type(5n + 4) { border-left-color: var(--st-5); }
+.ls h2:nth-of-type(5n)     { border-left-color: var(--st-1); }
 
 .ls .sheet p.lead {
   font-size: 1.36rem;
@@ -978,15 +1008,16 @@ dl.contact dd:last-child { margin-bottom: 0; }
   display: inline-block;
   font-family: var(--sans);
   font-size: 0.8rem;
+  font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--on-carrier);
+  color: var(--leicht-on-carrier);
   text-decoration: none;
-  border: 1px solid var(--carrier-line);
+  border: 1px solid var(--leicht-on-carrier);
   border-radius: 999px;
   padding: 0.32rem 0.85rem;
   transition: border-color 120ms linear;
 }
-.rail-ls a:hover { border-color: var(--accent-on-carrier); }
+.rail-ls a:hover { border-color: var(--on-carrier); color: var(--on-carrier); }
 .rail-ls a[aria-current="page"] {
   border-color: var(--accent-on-carrier);
   color: var(--accent-on-carrier);
@@ -1001,7 +1032,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .shell { grid-template-columns: 1fr; }
 
   /* Am Telefon wird aus der stehenden Kolumne ein schmales Kopfband:
-     Signet, Name, Rolle, darunter eine Navigationszeile. Ornament,
+     Signet, Name, Rolle, Blatttrenner und darunter die Navigation.
      Kontaktblock und Rechtszeile entfallen — der Kontakt steht in der
      Anrufleiste, die Rechtstexte in Navigation und Seitenfuss. Damit
      beginnt die Ueberschrift im ersten Bildschirmdrittel statt erst
@@ -1019,17 +1050,19 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail-role span { display: inline; }
   .rail-role span + span::before { content: " · "; }
 
-  .rail-ornament { display: none; }
+  /* Der Trenner bleibt an derselben semantischen Stelle wie am Schreibtisch:
+     zwischen Buerokennung und den beiden besonderen Zugaengen. */
+  .rail-ornament { margin: 0.7rem 0; }
   .rail-spacer { display: none; }
   .rail-contact { display: none; }   /* steht unten in der Anrufleiste */
   .rail-legal { display: none; }     /* steht in der Navigation und im Fuss */
 
-  .rail nav { margin-top: var(--s0); }
+  .rail-ls { margin-bottom: 0.45rem; }
+  .rail nav { margin-top: 0; }
   .rail nav ul {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    border-top: 1px solid var(--carrier-line);
   }
   .rail nav li { display: flex; align-items: baseline; }
   /* Der Trenner haengt hinten am Eintrag, nicht vorn. Vorn angesetzt
@@ -1048,8 +1081,8 @@ dl.contact dd:last-child { margin-bottom: 0; }
     font-size: 0.92rem;
   }
   /* Der Fachkreis-Verweis bekommt am Telefon eine eigene Zeile. */
-  .rail nav li.fach { flex-basis: 100%; margin-top: 0; }
-  .rail nav li.fach a { padding-top: 0.1rem; }
+  .rail nav li.fach { flex-basis: 100%; margin: 0.3rem 0 0.75rem; }
+  .rail nav li.fach a { padding: 0.32rem 0.85rem; }
 
   .sheet { padding: var(--s2) var(--s2) 7rem; }
 
@@ -1067,15 +1100,27 @@ dl.contact dd:last-child { margin-bottom: 0; }
   }
   .callbar a {
     flex: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
     text-align: center;
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 600;
     padding: 0.7rem 0.5rem;
     border-radius: 6px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color 100ms linear, border-color 100ms linear,
+                color 100ms linear, transform 80ms ease-out;
   }
   .callbar .tel { background: var(--accent-on-carrier); color: var(--carrier); }
-  .callbar .mail { color: var(--on-carrier); border: 1px solid var(--carrier-line); }
+  .callbar .mail { background: var(--fach-on-carrier); color: var(--carrier); }
+  .callbar .tel:hover { background: var(--on-carrier); }
+  .callbar .mail:hover { background: var(--on-carrier); }
+  .callbar a:active { transform: translateY(1px); }
 }
 
 /* Ab etwa 2000 px waechst die Seite proportional mit, damit sie auf
@@ -1094,8 +1139,8 @@ dl.contact dd:last-child { margin-bottom: 0; }
   top: -4rem;
   z-index: 40;
   background: var(--accent);
-  /* var(--paper) statt Weiss: im Hellen heller Grund auf Bernstein
-     (5,7:1), im Dunkeln dunkler Grund auf hellem Bernstein (7,5:1).
+  /* var(--paper) statt Weiss: im Hellen heller Grund auf Goldocker
+     (4,9:1), im Dunkeln dunkler Grund auf hellem Gold (9,4:1).
      Festes #fff faellt im Dunkelmodus auf 2,5:1 und waere zu schwach. */
   color: var(--paper);
   font-family: var(--sans);
@@ -1113,9 +1158,9 @@ a:focus-visible, .rail nav a:focus-visible {
   border-radius: 2px;
 }
 
-/* Auf dem Graphit der Kolumne traegt Bernstein nur 2,76:1 und bleibt
-   damit unter den 3:1, die WCAG 2.2 SC 1.4.11 fuer Nicht-Text fordert.
-   Dort ruht der Ring deshalb auf der hellen Schriftfarbe. */
+/* Auf dem Graphit der Kolumne liegt das dunklere Goldocker mit 3,03:1 nur
+   knapp ueber der Mindestlinie fuer Nicht-Text. Dort ruht der Ring deshalb
+   mit deutlicher Reserve auf der hellen Schriftfarbe. */
 .rail a:focus-visible, .callbar a:focus-visible { outline-color: var(--on-carrier); }
 
 @view-transition { navigation: auto; }
@@ -1150,6 +1195,9 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
     --accent: #000;
     --accent-ink: #000;
     --accent-on-carrier: #000;
+    --fach-on-carrier: #000;
+    --leicht-on-carrier: #000;
+    --leicht-ink: #000;
     --gut: #000;
     --gut-ink: #000;
     --gut-flaeche: #fff;
