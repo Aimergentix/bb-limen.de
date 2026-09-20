@@ -17,6 +17,10 @@ exclude:
   - README.md
   - AGENTS.md
   - CLAUDE.md
+  # Rechtevorbehalt fuers Repository, nicht fuer die Website. Die volle
+  # Anschrift steht im Impressum, wo sie hingehoert — sie muss nicht ein
+  # zweites Mal als nacktes Textdokument abrufbar sein. Entschieden am 21.09.2026.
+  - LICENSE
   - docs/
   - partials/
   - tests/

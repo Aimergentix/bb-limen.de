@@ -34,19 +34,21 @@ Verzeichnis liegt.
 
     partials/         die Bausteine, die auf jeder Seite gleich sind
     tools/build.sh    setzt diese Bausteine in die neun Seiten ein
-    tools/schau.sh    rendert Bildschirmfotos mit Chromium
     tools/pruefe-sprache.py  misst die Satzlänge im Fließtext
     tools/sitemap.sh  schreibt sitemap.xml aus der Git-Historie
     tools/vorschau.sh rendert Vorschaubild und Symbole aus zwei SVG
-    tools/ansicht.sh  rendert alle Seiten in einen Ordner
-    tools/vergleiche.py  vergleicht zwei solche Ordner Bild für Bild
     tools/hooks/      läuft vor jedem Commit — tools/einrichten.sh schaltet es an
     tests/            Regressionstests: Build, Sprache, Struktur, Angaben,
                       Begriffe, Kontraste
-    docs/             zentraler Reviewauftrag und lokale Arbeitsunterlagen
     .github/          die Prüfungen, die bei jedem Push laufen
-    LICENSE           alle Rechte vorbehalten
+    LICENSE           alle Rechte vorbehalten — nicht ausgeliefert
     .editorconfig     UTF-8, LF, zwei Leerzeichen
+    .gitattributes    schützt die CRLF-Zeilenenden der Visitenkarte
+
+Nicht versioniert, dürfen fehlen:
+
+    docs/             lokale Arbeitsunterlagen, fremde PDF, Entwürfe
+    reports/          Auditberichte — sie benennen Fehler der Seite
 
 Zwei Schranken, die nicht dasselbe tun: `.gitignore` hält Dateien aus der
 **Versionierung**, `_config.yml` hält versionierte Dateien aus der
@@ -295,16 +297,10 @@ HTML-Seiten nicht verlässlich bewahren.
 
     python3 -m http.server 8000
 
-Dann `http://localhost:8000` öffnen. Für Bilder zum Nachsehen:
-
-    tools/schau.sh index.html 1280 1500 start          # hell
-    tools/schau.sh index.html 390 1400 start-mobil     # Telefon
-    tools/schau.sh index.html 1280 1500 start-d dunkel # Dunkelmodus
-
-Das legt PNG unter `~/bb-shots` ab; der Server muss auf Port 8391 laufen.
-Chromium im Snap darf nicht nach `/tmp` schreiben — deshalb der Home-Pfad. Unbedingt auch am Telefon ansehen: dort
-wird aus der stehenden Kolumne ein schmales Kopfband, und der Kontakt steht
-in der festen Anrufleiste am unteren Rand.
+Dann `http://localhost:8000` öffnen — breit, schmal (390 px) und in
+Dunkeldarstellung. Unbedingt auch am Telefon ansehen: dort wird aus der
+stehenden Kolumne ein schmales Kopfband, und der Kontakt steht in der festen
+Anrufleiste am unteren Rand.
 
 ## 3a. Was von selbst läuft
 
@@ -320,28 +316,18 @@ Satzlängen. Wer `partials/` ändert und `tools/build.sh` vergisst, merkt es
 hier statt zwei Tage später. Notausgang: `git commit --no-verify` — dann
 fällt es in der CI auf.
 
-**Bei jedem Push** (`.github/workflows/pruefung.yml`), drei Aufgaben:
+**Bei jedem Push** (`.github/workflows/pruefung.yml`), zwei Aufgaben:
 
 - dieselben Prüfungen wie der Hook, dazu der Abgleich, dass die Seiten
   wirklich zu `partials/` passen,
-- **HTML-Validierung** der neun Seiten mit dem W3C-Validator,
-- **Bildvergleich**: der Stand vor und nach dem Push wird gerendert und Bild
-  für Bild verglichen. Das Ergebnis steht in der Zusammenfassung des Laufs,
-  die Bilder liegen vierzehn Tage als Artefakt bereit. Er bricht nie ab — er
-  zeigt nur, was sich in der Ansicht geändert hat, auch das Unbeabsichtigte.
+- **HTML-Validierung** der neun Seiten mit dem W3C-Validator.
 
-  Verglichen wird gegen den Vorgängerstand, nicht gegen hinterlegte
-  Vorlagenbilder. Beide Stände entstehen dadurch in derselben Umgebung;
-  Vorlagen von einem anderen Rechner wären wegen Schriftglättung und
-  Chromium-Fassung wertlos.
-
-Dasselbe lässt sich lokal machen — nützlich vor einer größeren Änderung am
-Stylesheet:
-
-    tools/ansicht.sh ~/bb-shots/vorher
-    …Änderung…
-    tools/ansicht.sh ~/bb-shots/nachher
-    tools/vergleiche.py ~/bb-shots/vorher ~/bb-shots/nachher ~/bb-shots/diff
+Einen maschinellen Bildvergleich gibt es seit dem 21.09.2026 nicht mehr. Er
+verglich den Stand vor und nach dem Push Bild für Bild, brach nie ab und
+kostete drei Skripte, einen Chromium-Lauf und den längsten CI-Job — für
+eine Website ohne JavaScript, deren Layout sich selten ändert, war das zu
+viel Werkzeugkette. An seine Stelle tritt das Ansehen von Hand aus
+Abschnitt 3, vor jeder größeren Änderung am Stylesheet.
 
 **Einmal im Monat** (`.github/workflows/verweise.yml`) werden die zwölf
 Verweise nach außen abgerufen. Ist einer tot, entsteht ein Issue. Das
@@ -406,7 +392,8 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
 
 ## 5. Vor dem Onlinegehen prüfen
 
-- Die beiden offenen Angaben aus Abschnitt 2 eingetragen.
+- Die offene Angabe aus Abschnitt 2 eingetragen: Firma und Anschrift des
+  Berufshaftpflichtversicherers.
 - Registrierung nach § 23 BtOG noch nicht erteilt: Der Hinweis auf den
   Gründungsstand steht auf allen fünf Inhaltsseiten (`index`, `betreuung`,
   `aufgaben`, `vorsorge`, `fachkreise`) und im Impressum. Nach Erteilung
@@ -430,8 +417,8 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
   Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG.
   Die Tabelle ist die Anlage zu § 8 Abs. 1 VBVG (Fundstelle BGBl. 2025 I
-  Nr. 109), die Bemessung regelt § 9 VBVG. Der
-  Geldbetrag von grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
+  Nr. 109), die Bemessung regelt § 9 VBVG. Der Geldbetrag von
+  grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
   Vermögens. Bei der nächsten Anpassung der Gesetze alle Angaben nachziehen.
 - Das Einzugsgebiet umfasst die Landkreise Lörrach (35 Gemeinden) und
   Waldshut (32 Gemeinden), zusammen 67. Die vollständige Liste steht an genau
@@ -449,6 +436,9 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
 - `sitemap.xml` ist neu geschrieben: `tools/sitemap.sh`. Impressum und
   Datenschutz stehen bewusst nicht darin — beide tragen `noindex`, weil
   § 5 DDG Erreichbarkeit verlangt, nicht Auffindbarkeit.
+- `bb-limen.vcf` stimmt mit dem JSON-LD der Startseite überein — Name,
+  Telefonnummer, E-Mail, Anschrift und Website. `tests/test_angaben.py`
+  prüft das mit, einschließlich der CRLF-Zeilenenden des Formats.
 - Die Liste der offenen Platzhalter ist leer:
 
       grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/

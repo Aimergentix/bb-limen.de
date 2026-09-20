@@ -191,7 +191,7 @@ E-Mail, Anschrift und Website müssen mit dem JSON-LD der Startseite
 Danach laufen diese Prüfungen vor jedem Commit von selbst, und eine
 vergessene Bausteinübertragung wird gleich berichtigt und mit vorgemerkt.
 Dieselben Prüfungen laufen bei jedem Push in der CI, dazu die
-HTML-Validierung und ein Bildvergleich zum Vorgängerstand.
+HTML-Validierung.
 
 Die Tests prüfen nach, was diese Datei fordert: `test_angaben.py` zählt die
 doppelt gepflegten Angaben aus §6, `test_begriffe.py` hält die Verbote aus
@@ -202,9 +202,9 @@ Ansehen — unbedingt auch am Telefon, dort wird aus der stehenden Kolumne
 ein schmales Kopfband:
 
     python3 -m http.server 8391
-    tools/schau.sh index.html 1280 1500 start
-    tools/schau.sh index.html  390 1400 start-mobil
-    tools/schau.sh index.html 1280 1500 start-dunkel dunkel
+
+Dann http://localhost:8391 öffnen — breit, schmal (390 px) und in
+Dunkeldarstellung. Das ist Handarbeit und bleibt es.
 
 ---
 
@@ -217,7 +217,8 @@ ein schmales Kopfband:
     partials/       Bausteine für build.sh, nicht ausgeliefert
     tools/          Werkzeuge, nicht ausgeliefert
     tests/          Regressionstests, nicht ausgeliefert
-    docs/           Arbeitsmaterial, grösstenteils unversioniert
+    docs/           lokale Arbeitsunterlagen, unversioniert — kann fehlen
+    reports/        Auditberichte, unversioniert — kann fehlen
     _config.yml     bestimmt, was GitHub Pages NICHT ausliefert
 
 Zwei verschiedene Schranken, die oft verwechselt werden:

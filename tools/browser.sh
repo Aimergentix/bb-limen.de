@@ -2,7 +2,8 @@
 #
 # Der Browser heisst je nach System anders: unter Debian und Ubuntu
 # chromium oder chromium-browser, auf den GitHub-Laeufern google-chrome.
-# Ohne diese Suche liefe tools/ansicht.sh lokal und bliebe in der CI stehen.
+# Ohne diese Suche liefe tools/vorschau.sh auf dem einen System und nicht
+# auf dem anderen.
 BROWSER=${BROWSER:-}
 if [ -z "$BROWSER" ]; then
   for kandidat in chromium chromium-browser google-chrome google-chrome-stable chrome; do

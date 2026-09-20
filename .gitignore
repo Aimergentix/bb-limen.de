@@ -9,16 +9,11 @@
 # _config.yml unter "exclude" steht, ist versioniert, wird aber von GitHub
 # Pages nicht veroeffentlicht — das gilt fuer partials/, tools/ und tests/.
 
-# docs/ enthaelt fremde PDF zur Betreuung in Leichter Sprache. Sie sind
-# Grundlage fuer leichte-sprache.html, aber nicht zum Weiterveroeffent-
-# lichen gedacht — das waere auch urheberrechtlich zu pruefen.
-#
-# Ausgenommen ist allein der Reviewauftrag: er ist ein allgemeiner
-# Arbeitsauftrag ohne Befunde und gehoert zur Projektgeschichte. Die
-# Reviewberichte selbst bleiben unversioniert — sie benennen Fehler der
-# Seite und gehoeren nicht in ein oeffentliches Repository.
-docs/*
-!docs/review-prompt.md
+# docs/ ist der Ablageort fuer lokale Arbeitsunterlagen: fremde PDF zur
+# Betreuung in Leichter Sprache, Entwuerfe, Notizen. Nichts davon wird
+# versioniert — die PDF sind nicht zum Weiterveroeffentlichen gedacht, das
+# waere auch urheberrechtlich zu pruefen. Der Ordner muss nicht existieren.
+docs/
 
 # Reviewberichte. Aus demselben Grund wie docs/: sie benennen Fehler der
 # Seite und gehoeren nicht in ein oeffentliches Repository. Das Wurzel-
