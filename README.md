@@ -95,13 +95,14 @@ Offen sind:
   Versicherung ist ohnehin Voraussetzung der Registrierung nach
   § 23 Abs. 1 Nr. 3 BtOG.
 
-**Telefonnummer von Mika Möller** — die maßgebliche Stelle ist
-`partials/rail.html`; nach dem Build steht deren Kopie in allen neun Seiten.
-Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
-`fachkreise.html`, `leichte-sprache.html` und im Impressum. Achtung: Der
-Platzhalter ist bewusst **kein** `tel:`-Link — ein leeres `href="tel:"` war
-schon einmal der schwerste Fehler dieser Seite. Beim Eintragen die Nummer an
-allen direkten Kontaktstellen zugleich verlinken und anschließend bauen.
+**Büro-Telefon** — BB Limen veröffentlicht genau eine gemeinsame Nummer und
+ordnet sie keiner einzelnen Person zu. Die maßgeblichen Stellen für Kolumne
+und mobile Anrufleiste liegen in `partials/rail.html` und
+`partials/callbar.html`; nach dem Build stehen deren Kopien in allen neun
+Seiten. Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
+`fachkreise.html`, `leichte-sprache.html`, `impressum.html` und
+`datenschutz.html`. Eine zweite persönliche Telefonnummer und ein leeres
+`href="tel:"` dürfen nicht hinzukommen.
 
 **Registrierungen.** Beide Personen sind freiberuflich und einzeln
 registrierungspflichtig (§ 23 BtOG, personenbezogen, nicht bürobezogen).

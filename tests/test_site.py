@@ -112,7 +112,7 @@ class SiteStructureTests(unittest.TestCase):
         callbar = (ROOT / "partials" / "callbar.html").read_text(encoding="utf-8")
         self.assertIn('href="tel:+4917642904270"', callbar)
         self.assertIn('href="mailto:info@bb-limen.de"', callbar)
-        self.assertIn('aria-label="Aranda Möller unter +49 176 42904270 anrufen"', callbar)
+        self.assertIn('aria-label="Büro BB Limen unter +49 176 42904270 anrufen"', callbar)
         self.assertIn('aria-label="E-Mail an info@bb-limen.de schreiben"', callbar)
 
 

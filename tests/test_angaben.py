@@ -42,6 +42,21 @@ def organisation() -> dict:
 
 
 class AngabenTests(unittest.TestCase):
+    def test_buero_hat_genau_eine_eigene_telefonnummer(self) -> None:
+        eigene_nummern = set()
+        for pfad in ALLE:
+            text = pfad.read_text(encoding="utf-8")
+            eigene_nummern.update(
+                nummer
+                for nummer in re.findall(r'href="tel:([^"]*)"', text)
+                if nummer not in FREMDE_NUMMERN
+            )
+
+            with self.subTest(datei=pfad.name):
+                self.assertNotRegex(text, r"\[Telefonnummer [^\]]+\]")
+
+        self.assertEqual(eigene_nummern, {TELEFON_TECHNISCH})
+
     def test_jeder_telefonverweis_ist_bekannt(self) -> None:
         erlaubt = {TELEFON_TECHNISCH, *FREMDE_NUMMERN}
         for pfad in ALLE:

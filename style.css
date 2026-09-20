@@ -236,7 +236,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
   display: block;
   color: var(--link-on-carrier);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1.08rem;
   padding: 0.55rem 0 0.55rem 0.75rem;
   border-bottom: 1px solid var(--carrier-line);
   transition: color 120ms linear, border-color 120ms linear;
@@ -257,7 +257,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
   display: inline-block;
   border: 1px solid var(--link-on-carrier);
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.06em;
   font-weight: 600;
   color: var(--link-on-carrier);
@@ -1034,7 +1034,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .rail-ls a {
   display: inline-block;
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--link-on-carrier);
@@ -1087,6 +1087,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail-legal { display: none; }     /* steht in der Navigation und im Fuss */
 
   .rail-ls { margin-bottom: 0.45rem; }
+  .rail-ls a { font-size: 0.8rem; }
   .rail nav { margin-top: 0; }
   .rail nav ul {
     display: flex;
@@ -1117,7 +1118,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   }
   /* Der Fachkreis-Verweis bekommt am Telefon eine eigene Zeile. */
   .rail nav li.fach { flex-basis: 100%; margin: 0.3rem 0 0.75rem; }
-  .rail nav li.fach a { padding: 0.32rem 0.85rem; }
+  .rail nav li.fach a { padding: 0.32rem 0.85rem; font-size: 0.8rem; }
 
   .sheet { padding: var(--s2) var(--s2) 7rem; }
 

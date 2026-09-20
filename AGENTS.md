@@ -86,10 +86,9 @@ Angabe, die noch niemand entschieden hat.
 - Nie die Klammern entfernen, damit es fertig aussieht.
 - Offene Stellen finden: `grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/`
 
-Besonders: Mika Möllers Telefonnummer ist **kein** `tel:`-Link, sondern
-reiner Text. Ein leeres `href="tel:"` war schon einmal der schwerste
-technische Fehler dieser Seite. Beim Eintragen die Nummer zugleich
-verlinken.
+BB Limen veröffentlicht genau **eine gemeinsame Büro-Telefonnummer**. Sie
+wird keiner Person zugeordnet. Eine zweite persönliche Telefonnummer und ein
+leeres `href="tel:"` dürfen nicht hinzukommen.
 
 ---
 
