@@ -81,15 +81,15 @@
     --surface: #191a18;
     --tint:    #1d1f1c;
     --ink:     #eef0f2;
-    --body:    #c3c9d0;
-    --muted:   #949ba5;
+    --body:    #ced4db; /* heller fuer ruhigen, kontrastreichen Fliesstext */
+    --muted:   #a4acb6; /* Zusatztext bleibt abgestuft, aber besser lesbar */
     --line:    #282a27;
 
     --carrier:   #16191d;
     --carrier-2: #262c33;
     --carrier-line: #333a42;
     --on-carrier:     #eef0f2;
-    --on-carrier-dim: #9aa2ac;
+    --on-carrier-dim: #aab3be;
 
     --accent:     #dfb24f;
     --accent-ink: #dfb24f;
