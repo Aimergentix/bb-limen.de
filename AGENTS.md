@@ -141,10 +141,10 @@ Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte.
 
 | Angabe | Steht in |
 | --- | --- |
-| Telefonnummer | `partials/rail.html`, `partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz` |
-| Einzugsgebiet (67 Gemeinden) | `index.html` im Fließtext **und** im JSON-LD unter `areaServed` |
-| Anschrift | `partials/rail.html`, `partials/foot.html`, `index`, `impressum` |
-| Sprechzeiten | `partials/rail.html`, `index`, JSON-LD `openingHours` |
+| Telefonnummer | `partials/rail.html`, `partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404` |
+| Einzugsgebiet (67 Gemeinden) | im Fließtext von `index`, `betreuung` und `fachkreise` **und** in `index.html` im JSON-LD unter `areaServed` |
+| Anschrift | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address` |
+| Sprechzeiten | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache` |
 | Datum des Stands | `impressum.html`, `datenschutz.html`, `sitemap.xml` |
 
 Nach einer solchen Änderung immer gegenzählen, nicht schätzen.

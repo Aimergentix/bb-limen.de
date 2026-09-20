@@ -91,12 +91,14 @@ etwas gefunden wird, ist die Seite nicht veröffentlichungsfertig:
 
 Offen sind:
 
-**Im Impressum** (zwei Angaben, beide brauchen eine Entscheidung):
+**Im Impressum** (eine Angabe braucht noch eine Entscheidung):
 
-- **Umsatzsteuer.** Entweder eine USt-IdNr. nach § 27a UStG, oder der
-  Hinweis auf § 19 UStG (Kleinunternehmer). Für Betreuungsleistungen ist
-  zusätzlich § 4 Nr. 16 UStG einschlägig — das bitte mit dem Steuerbüro
-  klären und dann genau eine der Varianten eintragen.
+- **Umsatzsteuer — erledigt am 20.09.2026.** Im Impressum steht die
+  Befreiung nach § 4 Nr. 16 Satz 1 Buchstabe k UStG mit der Ausnahme für
+  Leistungen nach § 1877 Abs. 3 BGB. Offen bleibt allein, ob eine
+  USt-IdNr. nach § 27a UStG besteht; § 5 DDG verlangt sie nur, soweit
+  vorhanden. Falls ja, einen Satz ergänzen — nicht ins Blaue behaupten,
+  dass keine besteht.
 - **Berufshaftpflichtversicherung.** Versicherer und Anschrift. Die
   Versicherung ist ohnehin Voraussetzung der Registrierung nach
   § 23 Abs. 1 Nr. 3 BtOG.
@@ -402,13 +404,17 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   nachziehen.
 - Die Vergütungsangaben in `aufgaben.html` (sechzehn reguläre
   Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
-  Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG. Der
+  Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG.
+  Die Tabelle ist die Anlage zu § 8 Abs. 1 VBVG (Fundstelle BGBl. 2025 I
+  Nr. 109), die Bemessung regelt § 9 VBVG. Der
   Geldbetrag von grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
   Vermögens. Bei der nächsten Anpassung der Gesetze alle Angaben nachziehen.
 - Das Einzugsgebiet umfasst die Landkreise Lörrach (35 Gemeinden) und
-  Waldshut (32 Gemeinden). Die Liste steht an genau einer Stelle im JSON-LD unter
-  `areaServed`. Bei einer Gebietsänderung bitte anpassen. Die Kurzfassung
-  steht in `partials/rail.html` und in `aufgaben.html`.
+  Waldshut (32 Gemeinden), zusammen 67. Die vollständige Liste steht an genau
+  einer Stelle im JSON-LD unter `areaServed`. Bei einer Gebietsänderung bitte
+  anpassen. Die Zahl 67 steht zusätzlich im Fließtext von `index.html`,
+  `betreuung.html` und `fachkreise.html`; die Kurzfassung ohne Zahl — nur die
+  beiden Landkreisnamen — in `partials/rail.html`.
 - Keine externen Schriften, Skripte oder Karten nachträglich einbauen. Die
   Datenschutzerklärung behauptet, dass es keine gibt — und die
   Content-Security-Policy in `partials/head.html` setzt das durch. Wer sie

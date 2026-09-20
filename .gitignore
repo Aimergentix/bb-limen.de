@@ -20,6 +20,12 @@
 docs/*
 !docs/review-prompt.md
 
+# Reviewberichte. Aus demselben Grund wie docs/: sie benennen Fehler der
+# Seite und gehoeren nicht in ein oeffentliches Repository. Das Wurzel-
+# verzeichnis ist zugleich das Web-Wurzelverzeichnis — ohne diese Zeile
+# laege ein Bericht nach dem Push unter https://bb-limen.de/reports/.
+reports/
+
 # Werkzeuge und Zwischenstaende
 .agents/
 .codex/
