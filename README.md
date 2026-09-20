@@ -11,7 +11,7 @@ Verzeichnis liegt.
 
     index.html        BB Limen, Exkurs zum Namen, Haltung nach § 1821 BGB, Kontakt
     betreuung.html    Betreuung, Einordnung, Verfahren und Einzugsgebiet
-    aufgaben.html     Aufgabenbereiche, Ablauf, Kosten
+    aufgaben.html     Aufgabenbereiche, Betreuerwahl, Zusammenarbeit und Kosten
     vorsorge.html     Vollmacht, Betreuungs- und Patientenverfügung
     fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte
     leichte-sprache.html  dieselben Inhalte in Leichter Sprache
@@ -43,7 +43,7 @@ Verzeichnis liegt.
     tools/hooks/      läuft vor jedem Commit — tools/einrichten.sh schaltet es an
     tests/            Regressionstests: Build, Sprache, Struktur, Angaben,
                       Begriffe, Kontraste
-    docs/             Quellenmaterial, grösstenteils unversioniert
+    docs/             zentraler Reviewauftrag und lokale Arbeitsunterlagen
     .github/          die Prüfungen, die bei jedem Push laufen
     LICENSE           alle Rechte vorbehalten
     .editorconfig     UTF-8, LF, zwei Leerzeichen

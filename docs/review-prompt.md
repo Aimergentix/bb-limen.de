@@ -4,7 +4,9 @@
 > lesenden Zugriff auf das gesamte Repository. Das Ergebnis ist ein Audit,
 > keine automatische Reparatur.
 >
-> Letzte Anpassung an den Repositorystand: 20.09.2026.
+> Letzte Anpassung an den Repositorystand: 21.09.2026.
+> Zentraler Reviewauftrag einschließlich der eigenständigen Prüfpunkte des
+> bisherigen SEO-Reviewauftrags.
 
 ## 0. Auftragsmodus — zuerst festlegen
 
@@ -56,6 +58,12 @@ Die Zielqualitäten sind:
 9. reproduzierbare Tests, Builds und Freigaben
 10. eine seriöse, ruhige und zielgruppengerechte Außenwirkung
 
+Gewichte Befunde nach dem tatsächlichen Zweck der Website: Sie dient zuerst
+als Vertrauensnachweis für Menschen, die das Büro nach einer Empfehlung von
+Gericht, Behörde, Klinik oder aus ihrem persönlichen Umfeld prüfen. Neue
+Anfragen über Suchmaschinen sind ein zweiter Zweck. Prüfe deshalb, ob
+Tätigkeit, verantwortliche Personen, Gebiet und Kontakt schnell klar werden.
+
 Suche aktiv nach Gegenbelegen zu den Behauptungen des Repositorys. Erfinde
 keine Befunde, um Kritik zu produzieren. Ein positiver Befund ist zulässig,
 wenn du ihn geprüft hast. Eine Vermutung ist kein Befund.
@@ -80,9 +88,11 @@ Eine Regel darf kritisiert werden. Aber trenne „die Regel ist unklug" von
 
 ### 1.3 Frühere Berichte
 
-In `docs/` können Berichte früherer Audits liegen (`review-*.md`,
-`bestandsaufnahme-*.md`). Sie sind **unversioniert** und können fehlen; nur
-`docs/review-prompt.md` ist versioniert (`.gitignore`).
+In `docs/` und `reports/` können Berichte früherer Audits liegen
+(`review-*.md`, `bestandsaufnahme-*.md`, `web-audit-*.md`). Sie sind
+**unversioniert** und können fehlen. Unter diesen Arbeitsunterlagen ist nur
+`docs/review-prompt.md` versioniert (`.gitignore`); er ist ein Prüfauftrag,
+kein Befundbericht.
 
 Wenn Berichte vorhanden sind:
 
@@ -472,6 +482,9 @@ Prüfe mit verfügbaren Standardwerkzeugen:
   Darstellung
 - tatsächliche Maße, Dateitypen und Dateigrößen von `vorschau.png`,
   `favicon.ico`, `apple-touch-icon.png`
+- unnötiges Übertragungsvolumen, fehlende Bildmaße und vermeidbare
+  Layoutverschiebungen; Ladeleistung messen, soweit die Umgebung das erlaubt,
+  und sonst nur belegte strukturelle Risiken nennen
 - Übereinstimmung der generierten Bilder mit ihren SVG-Quellen in `tools/`
   und ob der Weg dorthin reproduzierbar dokumentiert ist
 - Druckstylesheet
@@ -651,6 +664,11 @@ Prüfe:
 - elegante statt abgehackte Einfache Sprache
 - erklärte Fachbegriffe
 - klare Handlungsoptionen für Menschen unter Stress
+- unbelegte Vertrauensfloskeln, Erfolgsversprechen und behauptete
+  Alleinstellungsmerkmale mit genauer Fundstelle
+- reale Fallbeispiele, Klientengeschichten und Zitate betreuter Personen
+  auf Vertraulichkeitsrisiken, auch bei behaupteter Anonymisierung;
+  keine solchen Geschichten als neue Inhalte vorschlagen
 - keine irreführende Nähe zu individueller Rechtsberatung
 - keine bloße numerische Behauptung, ein Text sei A1, A2 oder B1
 
@@ -658,7 +676,36 @@ Für Leichte Sprache prüfe zusätzlich gegen ein benanntes Regelwerk. Ein
 automatischer Satzlängentest und deine eigene Einschätzung ersetzen keine
 Prüfgruppe aus Menschen mit Lernschwierigkeiten.
 
+### Seitenzweck, Wiederholungen und überprüfbare Aussagen
+
+- Benenne je Seite ihre Leserfrage und Zielgruppe. Erfasse URL, Quelldatei,
+  Titel, H1 und Wortzahl des eigentlichen Inhalts ohne Navigation und Footer.
+- Prüfe, ob Tätigkeit, Personen, Leistungen, Gebiet und Kontakt auf der
+  Startseite schnell auffindbar sind. Belegte Qualifikationen und bestehende
+  Register- oder Verbandsverweise können Vertrauen stützen; fehlende Angaben
+  oder Mitgliedschaften dürfen nicht erfunden werden.
+- Prüfe, ob wichtige Informationen über aussagekräftige interne Links
+  erreichbar sind. Fordere nicht pauschal eigene Seiten für Personen, Kosten,
+  Ablauf, Kontakt oder jede einzelne Leistung. Die vorhandene Seite und ein
+  gezielter Abschnittsverweis können die Leserfrage bereits beantworten.
+- Trenne inhaltliche Doppelpflege von sinnvollen Kurzfassungen, anderen
+  Sprachebenen und generierten Bausteinkopien. Empfehle eine Zusammenführung
+  nur mit benannter Zielstelle für die eigenständigen Informationen und einem
+  Plan für betroffene Verweise. Prüfe verwaiste, veraltete oder inhaltsarme
+  Seiten ebenso wie nahezu identische Ortsseiten.
+- Entnimm jeder fachlichen Inhaltsseite drei bis fünf überprüfbare Aussagen
+  über das Büro oder das Thema und nenne ihre Fundstellen. Fehlen
+  Voraussetzungen, Zuständigkeiten, Quellen oder zeitliche Einordnungen,
+  benenne die konkrete Lücke. Beurteile Aktualisierungsdaten nach dem
+  Änderungsrisiko der Aussage; ein fehlendes Seitendatum ist allein kein
+  schwerer Befund.
+
 ## 13. Phase G: Metadaten, Suche und strukturierte Daten
+
+Prüfe verständliche, belegte Inhalte und gewöhnliche Suchmaschinen-Grundlagen.
+Empfehle weder Keyword-Wiederholungen noch Texte oder Spezialmarkup eigens
+für KI-Systeme. `llms.txt` ist keine Voraussetzung dieser Architektur;
+zusätzliche Orts- oder Blogseiten brauchen einen eigenständigen Lesernutzen.
 
 Prüfe für jede Seite:
 
@@ -693,6 +740,9 @@ Prüfe JSON-LD auf:
 - gültiges JSON
 - aktuelle Schema.org-Typen und erlaubte Eigenschaften
 - korrekte Identität der beschriebenen Organisation beziehungsweise Personen
+- konsistente Benennung auf Startseite, Impressum, in Seitentiteln und
+  strukturierten Daten; begründete Kurzformen von widersprüchlichen
+  Identitäten unterscheiden
 - Deckungsgleichheit von Telefon, Adresse, Sprechzeiten, Status und Gebiet
   mit dem sichtbaren Text
 - `areaServed`: zähle die Einträge und gleiche sie mit der Zahl im Fließtext
@@ -701,8 +751,18 @@ Prüfe JSON-LD auf:
 - sichtbare Belegbarkeit der strukturierten Angaben
 - unnötige oder irreführende Detailtiefe
 - ob `openingHours` maschinell dasselbe sagt wie die Kolumne im Klartext
+- belegte Standortmerkmale und dazu passende Typen: aus einer Postanschrift
+  weder ein besetztes Publikumsbüro noch einen Kartendienst-Eintrag ableiten
+- keine unbelegten Bewertungen, Auszeichnungen, Qualifikationen oder
+  externen Profilzuordnungen
 
 Ein Parserfolg beweist nur Syntax, nicht Schema.org-Semantik.
+
+Erfasse vorhandene Entscheidungen zu Suchmaschinen und Verbreitung:
+Crawlerregeln, Search Console, Bing Webmaster Tools, IndexNow und externe
+Profile. Das Fehlen eines Dienstes ist kein automatischer Mangel. Prüfe
+Nutzen und Pflegeaufwand, bevor du eine Ergänzung empfiehlst; richte im Audit
+keine Konten, Profile oder Dienste ein.
 
 ## 14. Phase H: Security, Supply Chain und Deployment
 
@@ -806,6 +866,11 @@ Framework, Paketmanagement oder CMS ohne nachgewiesenen Nutzen, klare Kosten
 und eine kleinere Gesamtrisikooberfläche. Jede vorgeschlagene neue Datei,
 jedes neue Werkzeug und jede neue Prüfung ist zugleich neue Wartungslast —
 benenne sie.
+
+Schätze auch den laufenden Pflegeaufwand des bestehenden Seitenbestands:
+regelmäßige Prüfungen, veränderliche Angaben und manuelle Mehrfachpflege.
+Kennzeichne Zeitangaben als Schätzung mit Annahmen und bevorzuge bei gleichem
+Lesernutzen die Lösung mit weniger dauerhaftem Pflegeaufwand.
 
 ## 16. Phase J: Regressionen und Stand früherer Befunde
 

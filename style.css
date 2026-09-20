@@ -32,14 +32,12 @@
 :root {
   --paper:   #fbfaf7;   /* Grund des Satzspiegels — eine Spur warm */
   --surface: #f4f2ed;   /* abgesetzte Flächen, Register, Hinweis */
-  --tint:    #efece5;   /* tiefste helle Fläche */
   --ink:     #14181c;   /* Überschriften */
   --body:    #414750;   /* Fließtext */
   --muted:   #656c77;   /* Nebentext, Beschriftungen */
   --line:    #e6e2da;   /* Haarlinien auf Papier */
 
   --carrier:   #1f242a; /* Graphit — die stehende Kolumne */
-  --carrier-2: #333b44;
   --carrier-line: #434b56;
   --on-carrier:      #fafafa;
   --meta-on-carrier: #c5beb3; /* warmes Grau — nicht anklickbare Nebenangaben */
@@ -85,14 +83,12 @@
   :root {
     --paper:   #111312;
     --surface: #191a18;
-    --tint:    #1d1f1c;
     --ink:     #eef0f2;
     --body:    #ced4db; /* heller fuer ruhigen, kontrastreichen Fliesstext */
     --muted:   #a4acb6; /* Zusatztext bleibt abgestuft, aber besser lesbar */
     --line:    #282a27;
 
     --carrier:   #16191d;
-    --carrier-2: #262c33;
     --carrier-line: #333a42;
     --on-carrier:      #eef0f2;
     --meta-on-carrier: #bbb6ae;
@@ -452,32 +448,6 @@ p:last-child { margin-bottom: 0; }
 
 .register h3 { margin: 0 0 0.2rem; }
 .register p { margin: 0; color: var(--muted); font-size: 0.98rem; }
-
-/* ================= Ortsliste des Einzugsgebiets ================= */
-
-.orte {
-  list-style: none;
-  margin: var(--s1) 0 var(--s1);
-  padding: 0;
-  columns: 2;
-  column-gap: var(--s2);
-  max-width: var(--measure);
-  font-family: var(--sans);
-  font-size: 0.94rem;
-  color: var(--muted);
-}
-.orte li {
-  break-inside: avoid;
-  padding: 0.14rem 0;
-}
-.orte li.hier {
-  color: var(--accent-ink);
-  font-weight: 600;
-}
-
-@media (min-width: 46rem) {
-  .orte { columns: 3; }
-}
 
 /* Aufzaehlung innerhalb eines Registereintrags */
 .unterliste {
@@ -1226,13 +1196,11 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
   :root {
     --paper: #fff;
     --surface: #fff;
-    --tint: #fff;
     --ink: #000;
     --body: #000;
     --muted: #333;
     --line: #999;
     --carrier: #fff;
-    --carrier-2: #fff;
     --carrier-line: #333;
     --on-carrier: #000;
     --meta-on-carrier: #333;
@@ -1272,5 +1240,4 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
     font-size: 0.85em;
     word-break: break-all;
   }
-  .orte { columns: 2; }
 }
