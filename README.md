@@ -1,96 +1,107 @@
 # bb-limen.de — statische Website
 
-Neun Seiten, ein Stylesheet, keine Abhängigkeiten, keine externen Ressourcen,
-kein JavaScript. Was im Browser ankommt, ist genau das, was hier im
-Verzeichnis liegt.
+Neun Seiten, ein Stylesheet, keine externen Ressourcen und kein JavaScript
+im Browser. Bearbeitet werden `src/` und `public/`; `tools/build.sh` erzeugt
+alle 17 öffentlichen Dateien in `dist/`.
 
-> **Wer hier etwas ändert — Mensch oder Sprachmodell — liest zuerst
-> [`AGENTS.md`](AGENTS.md).** Dort stehen die Regeln in kurzer, prüfbarer
-> Form. Dieses README erklärt sie: es ist das Handbuch, `AGENTS.md` ist der
-> Vertrag.
+> **Zuerst [AGENTS.md](AGENTS.md) lesen.** Dort stehen die verbindlichen
+> Regeln. Dieses Handbuch erklärt die Gründe und die Arbeitsabläufe.
 
-    index.html        BB Limen, Exkurs zum Namen, Haltung nach § 1821 BGB, Kontakt
-    betreuung.html    Betreuung, Einordnung, Verfahren und Einzugsgebiet
-    aufgaben.html     Aufgabenbereiche, Betreuerwahl, Zusammenarbeit und Kosten
-    vorsorge.html     Vollmacht, Betreuungs- und Patientenverfügung
-    fachkreise.html   Fachsprache: Gerichte, Behörden, Kliniken, Ärzte
-    leichte-sprache.html  dieselben Inhalte in Leichter Sprache
+## Schnellstart
 
-    impressum.html    Pflichtangaben nach § 5 DDG
-    datenschutz.html  Information nach Art. 13 DSGVO
-    404.html          Fehlerseite, nicht in der sitemap.xml
-    style.css         gemeinsames Stylesheet
-    bb-limen.vcf      gemeinsame Bürovisitenkarte zum Download
-    vorschau.png      Vorschaubild für geteilte Verweise (Open Graph)
-    favicon.ico       Symbol in der Browserleiste
-    apple-touch-icon.png  Symbol auf dem iOS-Startbildschirm
-    robots.txt        Indexierungsregeln
-    sitemap.xml       Seitenverzeichnis für Suchmaschinen
-    CNAME             die kanonische Domain für GitHub Pages
-    _config.yml       was GitHub Pages **nicht** ausliefert
+Voraussetzungen: Python 3.10 oder neuer und eine POSIX-Shell. Der normale
+Build und die Regressionstests verwenden nur die Python-Standardbibliothek.
+Git wird für die Versionsverwaltung und den optionalen Commit-Hook gebraucht.
 
-    AGENTS.md         Arbeitsregeln für Mensch und Modell — erst lesen
-    CLAUDE.md         Einzeiler, der auf AGENTS.md verweist
+```sh
+tools/build.sh
+python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
+```
 
-    partials/         die Bausteine, die auf jeder Seite gleich sind
-    tools/build.sh    setzt diese Bausteine in die neun Seiten ein
-    tools/pruefe-sprache.py  misst die Satzlänge im Fließtext
-    tools/sitemap.sh  schreibt sitemap.xml aus der Git-Historie
-    tools/vorschau.sh rendert Vorschaubild und Symbole aus zwei SVG
-    tools/hooks/      läuft vor jedem Commit — tools/einrichten.sh schaltet es an
-    tests/            Regressionstests: Build, Sprache, Struktur, Angaben,
-                      Begriffe, Kontraste
-    .github/          die Prüfungen, die bei jedem Push laufen
-    LICENSE           alle Rechte vorbehalten — nicht ausgeliefert
-    .editorconfig     UTF-8, LF, zwei Leerzeichen
-    .gitattributes    schützt die CRLF-Zeilenenden der Visitenkarte
+Dann <http://localhost:8391> öffnen. Ein zweites Terminal für die Prüfung:
 
-Nicht versioniert, dürfen fehlen:
+```sh
+tools/pruefen.sh
+```
 
-    docs/             lokale Arbeitsunterlagen, fremde PDF, Entwürfe
-    reports/          Auditberichte — sie benennen Fehler der Seite
+`tools/pruefen.sh` erzeugt eine frische Ausgabe in einem temporären Ordner,
+prüft sie und räumt sie wieder auf. Quellen, `dist/` und Git-Index bleiben
+unverändert. `tools/build.sh --check` vergleicht dagegen das vorhandene
+`dist/` mit den aktuellen Quellen und meldet Drift, ohne ihn zu berichtigen.
 
-Zwei Schranken, die nicht dasselbe tun: `.gitignore` hält Dateien aus der
-**Versionierung**, `_config.yml` hält versionierte Dateien aus der
-**Auslieferung**. `partials/`, `tools/` und `tests/` liegen im Repository,
-aber nicht im Netz.
+| Ich möchte … | Maßgebliche Datei | Danach |
+| --- | --- | --- |
+| einen Seitentext oder Seitentitel ändern | `src/pages/<seite>.html` | Build, Prüfung, ansehen |
+| Navigation, Kolumne oder Kontaktleiste ändern | `src/partials/rail.html`, `callbar.html` | Build, Prüfung, alle Seiten beachten |
+| Farben oder Abstände ändern | `src/style.css` | Build, Prüfung inklusive Kontrast, hell/dunkel/mobil ansehen |
+| Telefonnummer oder Anschrift ändern | Fundstellen in AGENTS §6 | alle Angaben abgleichen, einschließlich `public/bb-limen.vcf` |
+| eine Seite hinzufügen | `src/pages/`, `src/seiten.json`, Navigation und erwarteter Testbestand | Build, Prüfung, neue Verweise ansehen |
+| einen Sitemap-Stand ändern | `lastmod` in `src/seiten.json` | Build und Prüfung |
+| Signet oder Vorschaubild ändern | `src/grafik/` | `tools/vorschau.sh`, dann Build und Prüfung |
 
-## 1. Gemeinsame Bausteine ändern
+Die [Architekturbeschreibung](docs/architektur.md) erklärt Datenfluss,
+Verantwortlichkeiten, Katalog und Erweiterungsweg.
 
-Kolumne, Navigation, Telefonnummer, Anschrift, Seitenfuß und Anrufleiste
-stehen **nur** in `partials/`. Die neun Seiten enthalten Kopien davon
-zwischen Marken wie
+```text
+src/pages/         neun individuelle Seitenquellen mit Include-Verweisen
+src/partials/      fünf gemeinsame HTML-Bausteine
+src/style.css      ein Stylesheet mit zentralem PALETTE-Block
+src/grafik/        SVG-Originale für Signet und Vorschaubild
+src/seiten.json    Seitenbestand, Sprachprofile, Sitemap-Stände, öffentliche Dateien
+public/            bewusst öffentliche, unverändert kopierte Dateien
+dist/              erzeugte Website, nicht versioniert, niemals von Hand bearbeiten
+tools/             Build, Prüfung, Bildexport und Commit-Hook
+tests/             Regressionstests
+docs/              gemeinsame technische Dokumentation, versioniert
+docs/lokal/        persönliche Arbeitsunterlagen, ignoriert
+reports/           lokale Auditberichte, ignoriert
+.github/workflows/ automatische Prüfung, Verweise und Veröffentlichung
+```
 
-    <!-- #rail -->   … generierter Inhalt …   <!-- /#rail -->
+Projektregeln (`AGENTS.md`, `CLAUDE.md`), dieses Handbuch, `LICENSE` sowie
+Git- und Editor-Konfiguration bleiben im Root. `.gitignore` bestimmt die
+Versionierung; der Veröffentlichungsworkflow lädt ausschließlich `dist/` hoch.
+`_config.yml` ist bis zur bestätigten Pages-Umstellung ein Übergangsschutz,
+kein Teil des neuen Builds. Ein `.nojekyll` wird nicht benötigt.
 
-Also: in `partials/` ändern, dann
+## 1. Seiten und gemeinsame Bausteine ändern
 
-    tools/build.sh
+Die Inhalte stehen in `src/pages/`. An den fünf Einfügestellen steht jeweils
+allein auf einer Zeile ein Include, beispielsweise:
 
-Das Skript überschreibt ausschließlich den Bereich zwischen den Marken und
-setzt `aria-current="page"` auf den jeweils eigenen Navigationspunkt. Vor dem
-Schreiben prüft es alle Seiten, Marken und Partials. Alle Ergebnisse entstehen
-zuerst in einem Arbeitsverzeichnis; ein Fehler an einer späteren Seite lässt
-die Originaldateien unverändert. Benötigt werden nur übliche Unix-Werkzeuge
-(`sh`, `awk`, `sed`, `grep`, `cmp`, `mktemp`, `cp`, `mv`, `rm`). Die Seiten bleiben dabei
-vollständiges HTML und lassen sich jederzeit direkt im Browser öffnen — der
-Build ist kein Zwischenschritt, sondern nur ein Abgleich.
+```html
+<!-- @include rail -->
+```
 
-Seitentitel, Beschreibung und `canonical` stehen dagegen einzeln in jeder
-Seite, weil sie sich unterscheiden.
+Die Reihenfolge lautet `head`, `skip`, `rail`, `foot`, `callbar`. Bearbeitet
+wird der Baustein in `src/partials/`, anschließend läuft `tools/build.sh`.
+Die vollständigen Seiten entstehen ausschließlich in `dist/`. Ihre bisherigen
+Kommentargrenzen `<!-- #rail -->` und `<!-- /#rail -->` bleiben zur Orientierung
+erhalten. Die Ausgabe darf jederzeit neu erzeugt werden.
 
-Die öffentlichen Adressen bleiben klassische `.html`-Adressen. Der Dateiname
-bezeichnet das eindeutige Sachthema der Seite in Kleinbuchstaben; mehrere
-Wörter werden mit Bindestrichen verbunden. Menütexte dürfen eine grammatische
-Ergänzung enthalten, aber kein anderes Sachthema verwenden. `index.html` ist
-die technische Startdatei für die öffentliche Adresse `https://bb-limen.de/`.
+Der Build prüft den Katalog, Dateibestand, Bausteine, Include-Reihenfolge und
+Navigationsplatzhalter vor dem Schreiben. Er erzeugt erst ein vollständiges
+Arbeitsverzeichnis und ersetzt dann `dist/`. Bei fehlerhaften Eingaben bleiben
+Quellen und die letzte erfolgreiche Ausgabe erhalten. Nicht mehr benötigte
+Ausgabedateien verschwinden beim nächsten erfolgreichen Build.
+
+Seitentitel, Beschreibung, `canonical` und individuelle `og:`-Angaben bleiben
+bei der jeweiligen Seite. Die öffentliche Adresse bleibt unabhängig vom
+Quellpfad: `src/pages/betreuung.html` wird zu `dist/betreuung.html` und ist
+weiterhin unter `/betreuung.html` erreichbar. Der Dateiname benennt das
+Sachthema in Kleinbuchstaben und mit Bindestrichen. Menütexte dürfen eine
+grammatische Ergänzung enthalten, aber kein anderes Sachthema verwenden.
+`index.html` ist die technische Startdatei für `https://bb-limen.de/`.
+
+Kurze HTML-Dateinamen in den folgenden fachlichen Abschnitten bezeichnen die
+jeweilige Quelle unter `src/pages/`. Gemeinsame Texte liegen in `src/partials/`.
 
 ## 2. Noch offen
 
 Suche in den ausgelieferten HTML-Dateien und Partials nach `[` — solange dort
 etwas gefunden wird, ist die Seite nicht veröffentlichungsfertig:
 
-    rg -n '\[[A-ZÄÖÜ]' -- *.html partials/*.html
+    rg -n '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/*.html
 
 Offen sind:
 
@@ -108,14 +119,14 @@ Offen sind:
 
 **Büro-Telefon** — BB Limen veröffentlicht genau eine gemeinsame Nummer und
 ordnet sie keiner einzelnen Person zu. Die maßgeblichen Stellen für Kolumne
-und mobile Anrufleiste liegen in `partials/rail.html` und
-`partials/callbar.html`; nach dem Build stehen deren Kopien in allen neun
+und mobile Anrufleiste liegen in `src/partials/rail.html` und
+`src/partials/callbar.html`; nach dem Build stehen deren Kopien in allen neun
 Seiten. Zusätzliche direkte Kontaktangaben gibt es in `index.html`,
 `fachkreise.html`, `leichte-sprache.html`, `impressum.html` und
 `datenschutz.html`. Eine zweite persönliche Telefonnummer und ein leeres
 `href="tel:"` dürfen nicht hinzukommen.
 
-**Bürovisitenkarte** — `bb-limen.vcf` wird öffentlich ausgeliefert und ist
+**Bürovisitenkarte** — `public/bb-limen.vcf` wird öffentlich ausgeliefert und ist
 im Kontaktabschnitt der Startseite und der Fachseite verlinkt. Sie enthält
 den gemeinsamen Bürokontakt, keine persönliche Telefonnummer. Name,
 Telefonnummer, E-Mail, Anschrift und Website stimmen mit dem JSON-LD der
@@ -173,7 +184,7 @@ Weiterverbreitung angibt.
 Auf jeder Angabe steht der Stand des Dokuments. **Zweimal im Jahr prüfen**,
 ob Link und Stand noch stimmen:
 
-    grep -ho 'href="https\?://[^"]*"' *.html | sed 's/href="//;s/"$//' \
+    grep -ho 'href="https\?://[^"]*"' dist/*.html | sed 's/href="//;s/"$//' \
       | grep -v bb-limen.de | sed 's/&amp;/\&/g' | sort -u \
       | while read u; do echo "$(curl -sLo /dev/null -w '%{http_code}' "$u")  $u"; done
 
@@ -182,7 +193,7 @@ mitziehen — sonst steht dort eine Jahreszahl, die nicht mehr gilt.
 
 ## 2b. Sprachebenen
 
-Die Seite hat drei Sprachebenen. Wer Text ändert, sollte wissen, auf
+Die Seite hat vier Sprachebenen. Wer Text ändert, sollte wissen, auf
 welcher er sich befindet:
 
 - **`leichte-sprache.html`** — Leichte Sprache. Kurze Sätze,
@@ -232,16 +243,17 @@ Dieselben Prüfungen laufen bei jedem Push in GitHub Actions
 dasselbe nur früher.
 
 Die drei Bilddateien — Vorschaubild und die beiden Symbole — entstehen aus
-zwei SVG-Quellen in `tools/` und sind versioniert, damit die Website ohne
-Werkzeugkette auslieferbar bleibt. Nach einer Änderung an Signet oder
-Palette neu rendern:
+zwei SVG-Quellen in `src/grafik/` und sind versioniert, damit der normale
+Build keinen Browser braucht. Der Bildexport benötigt Chromium oder Chrome
+und Python; die fertigen Bilder liegen in `public/`. Nach einer Änderung
+an Signet oder Palette neu rendern:
 
     tools/vorschau.sh
 
 ## 2c. Farbe
 
 Die Farben benennen Funktionen, nicht einzelne Seiten. Alle Werte stehen im
-Block PALETTE in `style.css`; ein Rückbau ist immer dieser eine Block, nie
+Block PALETTE in `src/style.css`; ein Rückbau ist immer dieser eine Block, nie
 eine Suche durchs Stylesheet.
 
 - **Gold** (`--accent`, `--accent-on-carrier`) — Ordnung: Rubriken,
@@ -272,7 +284,7 @@ eine Suche durchs Stylesheet.
   Überschriften und Farbrhythmus, nicht die Navigation.
 
 Das Zierzeichen zwischen den Haarlinien ist kein Buchstabe, sondern
-dasselbe Blatt wie die Marke der Kolumne (`.zierblatt`, siehe `style.css`).
+dasselbe Blatt wie die Marke der Kolumne (`.zierblatt`, siehe `src/style.css`).
 Bis zum 20.09.2026 stand dort U+2766 ❦ — ein Zeichen, das in keiner
 Serifenschrift des Projekts vorkommt und deshalb auf eine Symbol- oder
 Farb-Emoji-Schrift zurückfiel: auf jedem Gerät ein anderes Bild. Als SVG
@@ -295,100 +307,95 @@ HTML-Seiten nicht verlässlich bewahren.
 
 ## 3. Lokal ansehen
 
-    python3 -m http.server 8000
+```sh
+tools/build.sh
+python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
+```
 
-Dann `http://localhost:8000` öffnen — breit, schmal (390 px) und in
-Dunkeldarstellung. Unbedingt auch am Telefon ansehen: dort wird aus der
-stehenden Kolumne ein schmales Kopfband, und der Kontakt steht in der festen
-Anrufleiste am unteren Rand.
+<http://localhost:8391> breit, schmal (390 px) und in Dunkeldarstellung ansehen.
+Nach Quellenänderungen erneut bauen und die Seite neu laden. Auf dem Telefon
+wird aus der stehenden Kolumne ein Kopfband; die Kontaktleiste bleibt unten.
+Die Quellen in `src/pages/` sind Vorlagen und nicht als vollständige Seiten
+im Browser zu öffnen.
 
 ## 3a. Was von selbst läuft
 
-Drei Ebenen, von früh nach spät:
+**Vor jedem Commit:** `tools/einrichten.sh` aktiviert einmalig den Hook.
+Er ruft denselben Befehl `tools/pruefen.sh` auf wie die CI. Geprüft wird der
+Arbeitsbaum, nicht nur der Git-Index; der Hook verändert und staged nichts.
+Bei teilweise vorgemerkten Änderungen prüft die CI anschließend den
+committeten Stand. `git commit --no-verify` überspringt nur den lokalen Hook.
 
-**Vor jedem Commit** — einmalig einschalten mit
+**Bei Push und Pull Request:** `.github/workflows/pruefung.yml` führt den
+Prüfbefehl aus und validiert danach das fertige HTML mit `html5validator`
+(Java 21 und Python-Paket, nur für diese zusätzliche Prüfung). Auf `main`
+ruft der Veröffentlichungsworkflow diese Prüfung als Voraussetzung auf;
+andere Branches und Pull Requests werden ohne Veröffentlichung geprüft.
 
-    tools/einrichten.sh
+`tools/html5validator.yml` lässt Warnungen fehlschlagen und nimmt nur zwei
+bekannte CSP-Meldungen der lokalen Dateiprüfung aus. Separate Regressionen
+sichern Stylesheet, JSON-LD und CSP ab; Begründung und Quellen stehen in der
+[Architekturbeschreibung](docs/architektur.md#html-validierung).
+Mit installiertem Java und `html5validator` läuft dieselbe Zusatzprüfung lokal:
 
-Danach setzt `tools/hooks/pre-commit` die Bausteine ein, merkt eine dabei
-berichtigte Seite gleich mit vor, lässt die Tests laufen und misst die
-Satzlängen. Wer `partials/` ändert und `tools/build.sh` vergisst, merkt es
-hier statt zwei Tage später. Notausgang: `git commit --no-verify` — dann
-fällt es in der CI auf.
+```sh
+tools/build.sh
+html5validator --config tools/html5validator.yml
+```
 
-**Bei jedem Push** (`.github/workflows/pruefung.yml`), zwei Aufgaben:
+**Einmal im Monat:** `.github/workflows/verweise.yml` baut die Website und
+prüft ihre externen Verweise. Bei nicht erreichbaren Adressen entsteht ein
+Issue. Der Dokumentstand bleibt halbjährlich von Hand zu prüfen (§2a).
 
-- dieselben Prüfungen wie der Hook, dazu der Abgleich, dass die Seiten
-  wirklich zu `partials/` passen,
-- **HTML-Validierung** der neun Seiten mit dem W3C-Validator.
-
-Einen maschinellen Bildvergleich gibt es seit dem 21.09.2026 nicht mehr. Er
-verglich den Stand vor und nach dem Push Bild für Bild, brach nie ab und
-kostete drei Skripte, einen Chromium-Lauf und den längsten CI-Job — für
-eine Website ohne JavaScript, deren Layout sich selten ändert, war das zu
-viel Werkzeugkette. An seine Stelle tritt das Ansehen von Hand aus
-Abschnitt 3, vor jeder größeren Änderung am Stylesheet.
-
-**Einmal im Monat** (`.github/workflows/verweise.yml`) werden die zwölf
-Verweise nach außen abgerufen. Ist einer tot, entsteht ein Issue. Das
-ersetzt die halbjährliche Handarbeit aus Abschnitt 2a — aber nur deren
-mechanischen Teil: ob der genannte **Stand** eines Dokuments noch stimmt,
-sieht kein Abruf.
+Der seit 21.09.2026 entfernte maschinelle Bildvergleich wird nicht wieder
+eingeführt. Die Sichtprüfung aus Abschnitt 3 bleibt Handarbeit.
 
 ## 4. Bei GitHub Pages veröffentlichen
 
-Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
-`main` aus <https://github.com/Aimergentix/bb-limen.de>.
+Kanonische Adresse bleibt `https://bb-limen.de/`, Repository
+<https://github.com/Aimergentix/bb-limen.de>. Die neue Struktur benötigt
+**Settings → Pages → Source: GitHub Actions**. Die frühere Einstellung
+`Deploy from a branch`, `main`, `/ (root)` ist damit nicht mehr kompatibel.
 
-1. **Pages einschalten.** Im Repository unter **Settings → Pages**:
-   *Source* = „Deploy from a branch", *Branch* = `main`, *Folder* = `/ (root)`.
-   Ein Push nach `main` veröffentlicht danach automatisch.
+### Einmaliger Übergang
 
-2. **Was ausgeliefert wird**, steuert `_config.yml`. Pages veröffentlicht
-   sonst alles, was im Branch liegt — auch `tools/`, `tests/` und die
-   Bausteine aus `partials/`. Letztere sind kein vollständiges HTML; einzeln
-   aufgerufen ergäben sie ein kaputtes Dokument mit der vollen Anschrift.
-   Die `exclude`-Liste verhindert das.
+1. Den lokalen Stand prüfen und die Änderung als zusammengehörige Migration
+   bereitstellen. Vor dem ersten Push nach `main` die Pages-Einstellungen
+   und die Domain prüfen. Ist Pages noch nicht eingerichtet oder für das
+   Repository nicht verfügbar, muss das zuerst geklärt werden.
+2. Pages auf **GitHub Actions** umstellen. Die Domain `bb-limen.de` und HTTPS
+   in den Pages-Einstellungen erhalten beziehungsweise bestätigen. Die Datei
+   `public/CNAME` bleibt Teil der Ausgabe; beim eigenen Workflow ersetzt sie
+   nicht die Domain-Einstellung bei GitHub.
+3. Erst dann die Migration nach `main` übertragen. Der Workflow
+   `veroeffentlichung.yml` prüft den Stand, baut `dist/`, lädt genau diesen
+   Ordner als Pages-Artefakt hoch und veröffentlicht ihn. Ein fehlgeschlagener
+   Prüflauf blockiert die Veröffentlichung. Manueller Start ist auf `main`
+   ebenfalls möglich.
+4. Die öffentlichen Seiten, Downloads, Domainweiterleitung und HTTPS prüfen.
+   `src/`, `tools/`, `tests/`, `docs/` und `README.md` dürfen nicht ausgeliefert
+   werden. Die HTML-Adressen bleiben unverändert.
+5. Erst nach bestätigter Umstellung kann `_config.yml` entfallen. Bis dahin
+   schließt die Datei auch `src/`, `public/` und `dist/` vom alten Jekyll-Weg
+   aus. Sie verhindert die Auslieferung von Quellen, macht den alten Weg
+   aber nicht mit der neuen Struktur kompatibel. Kein `.nojekyll` anlegen.
 
-   **Kein `.nojekyll` anlegen.** Das schaltet Jekyll ab und hebt damit genau
-   diesen Ausschluss wieder auf. Die Seiten enthalten keine Liquid-Syntax,
-   Jekyll reicht sie also unverändert durch.
+Der lokale Refactor allein ändert keine GitHub-Einstellung. Ein erfolgreicher
+lokaler Test bestätigt weder Pages-Zugriff noch einen erfolgten Deploy.
 
-3. **Eigene Domain.** Die Datei `CNAME` im Wurzelverzeichnis enthält die
-   kanonische Domain (`bb-limen.de`) und wird von Pages ausgewertet. Bei
-   inwx einzutragen:
+### Rückweg
 
-       bb-limen.de      A      185.199.108.153
-       bb-limen.de      A      185.199.109.153
-       bb-limen.de      A      185.199.110.153
-       bb-limen.de      A      185.199.111.153
-       bb-limen.de      AAAA   2606:50c0:8000::153
-       bb-limen.de      AAAA   2606:50c0:8001::153
-       bb-limen.de      AAAA   2606:50c0:8002::153
-       bb-limen.de      AAAA   2606:50c0:8003::153
-       www.bb-limen.de  CNAME  aimergentix.github.io.
+Der Ausgangsstand dieser Migration ist Commit
+`c2064ceac1a0c7bc7505c640b120ee69ba4d4428`. Ein Rückbau muss die vollständige
+alte Dateistruktur und die dazu passende Veröffentlichung aus `main / (root)`
+wieder zusammenherstellen. Nur die Pages-Einstellung zurückzustellen reicht
+nicht. Lokale Änderungen vorher sichern; kein pauschales `reset --hard`.
 
-   Eine eigene Weiterleitungsdatei für `www` wird nicht gebraucht: Pages
-   leitet die nicht-kanonische der beiden Varianten selbst auf die im
-   `CNAME` stehende um, sobald beide DNS-Einträge stehen.
+Offizielle Anleitungen:
 
-   Die MX- und TXT-Einträge für mailbox.org bleiben unverändert. Falls
-   CAA-Einträge gesetzt sind, muss `letsencrypt.org` darin erlaubt sein.
-
-4. **HTTPS.** Nach erfolgreicher DNS-Prüfung unter **Settings → Pages** den
-   Haken bei *Enforce HTTPS* setzen. Das Zertifikat holt GitHub selbst über
-   Let's Encrypt; bis es ausgestellt ist, können einige Minuten vergehen.
-
-5. **Die IP-Adressen und das Verfahren vor der Einrichtung gegenlesen** — sie
-   ändern sich selten, aber sie ändern sich:
-
-   <https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site>
-
-6. **Danach einmal prüfen**, dass die Werkstatt nicht mit im Netz steht:
-
-       curl -sI https://bb-limen.de/tools/build.sh      # muss 404 sein
-       curl -sI https://bb-limen.de/partials/rail.html  # muss 404 sein
-       curl -sI https://www.bb-limen.de/                # muss auf bb-limen.de umleiten
+- [Veröffentlichungsquelle konfigurieren](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+- [Eigene Pages-Workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+- [Eigene Domain konfigurieren](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
 
 ## 5. Vor dem Onlinegehen prüfen
 
@@ -405,8 +412,8 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   verfügbar“ — das ist erfüllt, solange die Verweise wörtlich Impressum
   und Datenschutz heißen, auf jeder Seite stehen und ohne JavaScript
   funktionieren. Beim Umbau der Navigation nicht antasten.
-- Das Datum in `impressum.html`, `datenschutz.html` und `sitemap.xml`
-  stimmt noch.
+- Die Datumsangaben in `impressum.html` und `datenschutz.html` sowie der
+  Inhaltsstand `lastmod` in `src/seiten.json` stimmen noch.
 - Die veröffentlichte Aufgabenverteilung nach Art. 26 DSGVO entspricht der
   tatsächlichen Vereinbarung: Aranda Möller übernimmt für die gemeinsame
   Website die Informationspflichten, die Bearbeitung von Betroffenenanfragen
@@ -425,20 +432,22 @@ Kanonische Adresse ist `https://bb-limen.de/`. Ausgeliefert wird der Branch
   einer Stelle im JSON-LD unter `areaServed`. Bei einer Gebietsänderung bitte
   anpassen. Die Zahl 67 steht zusätzlich im Fließtext von `index.html`,
   `betreuung.html` und `fachkreise.html`; die Kurzfassung ohne Zahl — nur die
-  beiden Landkreisnamen — in `partials/rail.html`.
+  beiden Landkreisnamen — in `src/partials/rail.html`.
 - Keine externen Schriften, Skripte oder Karten nachträglich einbauen. Die
   Datenschutzerklärung behauptet, dass es keine gibt — und die
-  Content-Security-Policy in `partials/head.html` setzt das durch. Wer sie
+  Content-Security-Policy in `src/partials/head.html` setzt das durch. Wer sie
   lockern muss, baut gerade etwas ein, das hier nicht hingehört.
 - Das Vorschaubild `vorschau.png` zeigt noch den richtigen Anspruch. Es
   erscheint überall dort, wo jemand den Verweis weiterschickt, und wird aus
-  `tools/vorschau.svg` erzeugt: `tools/vorschau.sh`.
-- `sitemap.xml` ist neu geschrieben: `tools/sitemap.sh`. Impressum und
+  `src/grafik/vorschau.svg` erzeugt: `tools/vorschau.sh`.
+- `dist/sitemap.xml` ist aktuell erzeugt: `tools/build.sh`.
+  `tools/sitemap.sh` zeigt sie zur Kontrolle auf stdout; `lastmod` wird als
+  geprüfter Inhaltsstand in `src/seiten.json` gepflegt. Impressum und
   Datenschutz stehen bewusst nicht darin — beide tragen `noindex`, weil
   § 5 DDG Erreichbarkeit verlangt, nicht Auffindbarkeit.
-- `bb-limen.vcf` stimmt mit dem JSON-LD der Startseite überein — Name,
+- `public/bb-limen.vcf` stimmt mit dem JSON-LD der Startseite überein — Name,
   Telefonnummer, E-Mail, Anschrift und Website. `tests/test_angaben.py`
   prüft das mit, einschließlich der CRLF-Zeilenenden des Formats.
 - Die Liste der offenen Platzhalter ist leer:
 
-      grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/
+      grep -rn '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/

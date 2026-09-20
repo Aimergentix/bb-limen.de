@@ -1,0 +1,47 @@
+# GitHub Pages muss vor dem ersten Push dieser Migration auf GitHub Actions stehen.
+name: Website veröffentlichen
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  pruefung:
+    uses: ./.github/workflows/pruefung.yml
+
+  paket:
+    needs: pruefung
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Veröffentlichungsdateien erzeugen
+        run: |
+          tools/build.sh
+          tools/build.sh --check
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  veroeffentlichung:
+    needs: paket
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Geprüfte Website veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4

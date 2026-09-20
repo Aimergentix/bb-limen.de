@@ -1,30 +1,16 @@
-# Arbeitsmaterial, nicht Teil der Website.
-#
-# Zwei Schranken, die nicht verwechselt werden duerfen:
-#
-#   .gitignore       haelt Dateien aus der Versionierung heraus.
-#   _config.yml      haelt versionierte Dateien aus der Auslieferung heraus.
-#
-# Was hier steht, ist im Repository gar nicht erst vorhanden. Was in
-# _config.yml unter "exclude" steht, ist versioniert, wird aber von GitHub
-# Pages nicht veroeffentlicht — das gilt fuer partials/, tools/ und tests/.
-
-# docs/ ist der Ablageort fuer lokale Arbeitsunterlagen: fremde PDF zur
-# Betreuung in Leichter Sprache, Entwuerfe, Notizen. Nichts davon wird
-# versioniert — die PDF sind nicht zum Weiterveroeffentlichen gedacht, das
-# waere auch urheberrechtlich zu pruefen. Der Ordner muss nicht existieren.
-docs/
-
-# Reviewberichte. Aus demselben Grund wie docs/: sie benennen Fehler der
-# Seite und gehoeren nicht in ein oeffentliches Repository. Das Wurzel-
-# verzeichnis ist zugleich das Web-Wurzelverzeichnis — ohne diese Zeile
-# laege ein Bericht nach dem Push unter https://bb-limen.de/reports/.
-reports/
-
-# Werkzeuge und Zwischenstaende
-.agents/
-.codex/
-tmp/
+# Erzeugte Website und temporäre Builddateien. Veröffentlicht wird nur dist/.
+/dist/
 .build.*/
 *.neu
 __pycache__/
+
+# Gemeinsame technische Dokumentation wird versioniert.
+# Persönliche Unterlagen und Auditberichte bleiben lokal.
+/docs/lokal/
+/reports/
+/tmp/
+
+# Lokale Einstellungen der KI-Werkzeuge.
+.agents/
+.codex/
+.claude/settings.local.json

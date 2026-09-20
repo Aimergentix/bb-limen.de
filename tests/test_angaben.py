@@ -12,9 +12,9 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from site_support import SITE as ROOT, SOURCE
 SEITEN = sorted(ROOT.glob("*.html"))
-BAUSTEINE = sorted((ROOT / "partials").glob("*.html"))
+BAUSTEINE = sorted((SOURCE / "partials").glob("*.html"))
 ALLE = SEITEN + BAUSTEINE
 
 TELEFON_TECHNISCH = "+4917642904270"
@@ -102,8 +102,9 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(anschrift["postalCode"], PLZ_ORT[0])
         self.assertEqual(anschrift["addressLocality"], PLZ_ORT[1])
 
-        for name in ("partials/rail.html", "impressum.html"):
-            text = (ROOT / name).read_text(encoding="utf-8")
+        for path in (SOURCE / "partials/rail.html", ROOT / "impressum.html"):
+            name = path.name
+            text = path.read_text(encoding="utf-8")
             with self.subTest(datei=name):
                 self.assertIn(STRASSE, text)
                 self.assertIn(PLZ_ORT[0], text)
@@ -153,7 +154,7 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(len(set(orte)), len(orte), "Gemeinde doppelt im JSON-LD")
 
         # Dieselben zwei Landkreise muessen auch sichtbar auf der Seite stehen.
-        rail = (ROOT / "partials" / "rail.html").read_text(encoding="utf-8")
+        rail = (SOURCE / "partials" / "rail.html").read_text(encoding="utf-8")
         for kreis in KREISE:
             with self.subTest(kreis=kreis):
                 self.assertIn(kreis, rail)

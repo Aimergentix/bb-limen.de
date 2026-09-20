@@ -1,17 +1,11 @@
-# Die drei Prüfungen aus AGENTS.md §8, bei jedem Push und jedem Pull Request.
-#
-# Diese Architektur hat genau eine Art zu brechen: jemand ändert partials/
-# und vergisst tools/build.sh. Dann steht in acht Seiten die alte
-# Telefonnummer, und ohne diesen Lauf sagt es niemand.
-#
-# Die Veröffentlichung selbst braucht keinen Workflow: GitHub Pages liefert
-# den Branch main unmittelbar aus (Settings → Pages).
-
+# Ein gemeinsamer Prüfweg für Branches, Pull Requests und Veröffentlichung.
 name: Prüfung
 
 on:
   push:
+    branches-ignore: [main]
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -21,53 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Regressionstests
-        run: python3 -m unittest discover -s tests -v
-
-      - name: Bausteine und Seiten sind synchron
-        run: |
-          tools/build.sh
-          git diff --exit-code || {
-            echo "::error::Die Seiten weichen von partials/ ab. Lokal 'tools/build.sh' laufen lassen und das Ergebnis mit committen."
-            exit 1
-          }
-
-      - name: Satzlängen
-        run: python3 tools/pruefe-sprache.py
-
-      - name: Vorschaubild und Symbole sind vorhanden
-        run: |
-          for datei in vorschau.png apple-touch-icon.png favicon.ico; do
-            test -s "$datei" || { echo "::error::$datei fehlt"; exit 1; }
-          done
-
-      - name: Offene Platzhalter
-        # Absichtlich ohne Abbruch: solange das Büro in Gründung ist, sind
-        # diese Stellen offen und sollen nur sichtbar bleiben. Vor dem
-        # Onlinegehen muss die Liste leer sein — siehe README §5.
-        run: |
-          if grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/; then
-            echo "::warning::Offene Platzhalter — vor der Veröffentlichung eintragen."
-          else
-            echo "Keine offenen Platzhalter."
-          fi
-
-  markup:
-    name: HTML-Validierung
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
+      - name: Build, Regressionen und Satzlängen
+        run: tools/pruefen.sh
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-
-      - name: Validator einrichten
+      - name: HTML-Validator einrichten
         run: pip install --quiet html5validator
-
-      # Geprüft werden nur die ausgelieferten Seiten. partials/ sind
-      # Bruchstücke und als Einzeldokument absichtlich unvollständig.
-      - name: Seiten prüfen
-        run: html5validator --root . --match "*.html" --blacklist partials tests tools docs --show-warnings
+      - name: Fertige Seiten validieren
+        run: |
+          tools/build.sh
+          html5validator --config tools/html5validator.yml
+          tools/build.sh --check

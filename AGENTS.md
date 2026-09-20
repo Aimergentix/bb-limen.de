@@ -13,23 +13,26 @@ gelesen. Ein falscher Paragraph ist hier kein Schönheitsfehler.
 
 ---
 
-## 1. Die Regel, die am leichtesten bricht
+## 1. Quellen bearbeiten, Ausgabe erzeugen
 
-Zwischen den Marken `<!-- #rail -->` und `<!-- /#rail -->` steht
-**generierter** Inhalt. Dasselbe gilt für `#head`, `#skip`, `#foot` und
-`#callbar`.
+**Bearbeite ausschließlich die Quellen unter `src/` und die bewusst
+öffentlichen Dateien unter `public/`, wenn du Website-Inhalte änderst.
+`dist/` ist vollständig generiert.**
 
-**Ändere dort nie direkt in der Seite.** Ändere `partials/`, dann:
+Individuelle Seiten stehen in `src/pages/`. Sie enthalten je einen Include
+für `head`, `skip`, `rail`, `foot`, `callbar`, in dieser Reihenfolge und
+jeweils allein auf einer Zeile, etwa `<!-- @include rail -->`.
+Gemeinsame Inhalte stehen in `src/partials/`. Danach:
 
     tools/build.sh
 
-Eine Änderung direkt in `index.html` sieht richtig aus, besteht sogar die
-Tests — und ist beim nächsten Build spurlos verschwunden. Das ist der
-Fehler, den bisher jedes Modell mindestens einmal gemacht hat.
+Die vollständigen Seiten entstehen in `dist/`; dort bleiben die bisherigen
+Marken `<!-- #rail -->` und `<!-- /#rail -->` zur Orientierung erhalten.
+Direkte Änderungen an der Ausgabe gehen beim nächsten Build verloren.
+`tools/build.sh --check` meldet eine Abweichung, ohne Dateien zu verändern.
 
-Titel, `description`, `canonical` und die `og:`-Angaben stehen dagegen
-**einzeln in jeder Seite**, weil sie sich unterscheiden. Sie gehören nicht
-in einen Baustein.
+Titel, `description`, `canonical` und die individuellen `og:`-Angaben
+bleiben in der jeweiligen Quelle unter `src/pages/`.
 
 ---
 
@@ -41,16 +44,18 @@ in einen Baustein.
   Das ist keine Geschmacksfrage: `datenschutz.html` behauptet, dass es
   nichts davon gibt. Jede Einbindung macht die Datenschutzerklärung unwahr
   und aus einem Gestaltungswunsch ein Rechtsproblem. Die Content-Security-
-  Policy in `partials/head.html` setzt das technisch durch — wer sie
+  Policy in `src/partials/head.html` setzt das technisch durch — wer sie
   lockern muss, baut gerade etwas ein, das hier nicht hingehört.
 
 - **Keine fremden Formulare im Repo.** Verlinken, nicht hosten. Eine
   veraltete Vorsorgevollmacht versagt genau dann, wenn sie gebraucht wird
   (Begründung: `README.md` §2a).
 
-- **Keine neue Datei im Wurzelverzeichnis**, ohne zu entscheiden, ob sie
-  ausgeliefert werden soll. Wenn nicht, gehört sie in `_config.yml` unter
-  `exclude`.
+- **Jede neue Datei erhält eine eindeutige Rolle.** Seitenquellen gehören
+  nach `src/pages/` und in `src/seiten.json`, öffentliche Kopierdateien nach
+  `public/` und in dessen `public_files`. Der Build lehnt nicht registrierte
+  Dateien in diesen Bereichen ab. Projektkonfiguration bleibt im Root;
+  veröffentlicht wird ausschließlich das erzeugte `dist/`.
 
 - **Kein Schmuckzeichen, das nicht in der Serifenschrift steht.** Zeichen
   wie ❦ ❧ ✦ ❖ kommen weder in Noto Serif noch in Georgia oder Times New
@@ -84,7 +89,7 @@ Angabe, die noch niemand entschieden hat.
 
 - Nie erfinden.
 - Nie die Klammern entfernen, damit es fertig aussieht.
-- Offene Stellen finden: `grep -rn '\[[A-ZÄÖÜ]' -- *.html partials/`
+- Offene Stellen finden: `grep -rn '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/`
 
 BB Limen veröffentlicht genau **eine gemeinsame Büro-Telefonnummer**. Sie
 wird keiner Person zugeordnet. Eine zweite persönliche Telefonnummer und ein
@@ -116,7 +121,7 @@ dahin kein Europäisches Leichte-Sprache-Logo verwenden.
 
 ## 5. Farbe
 
-- Alle Werte stehen im Block `PALETTE` in `style.css`. Ein Rückbau ist immer
+- Alle Werte stehen im Block `PALETTE` in `src/style.css`. Ein Rückbau ist immer
   dieser eine Block, nie eine Suche durchs Stylesheet.
 - **`--gut` (Salbei) steht an genau vier Stellen im Fließtext**
   (`index` 1, `betreuung` 1, `aufgaben` 2). Die Farbe bedeutet Entlastung;
@@ -137,19 +142,21 @@ Begründung: `README.md` §2c.
 
 ## 6. Doppelt gepflegte Angaben
 
+Kurze Seitennamen in diesem Vertrag beziehen sich auf `src/pages/`.
+
 Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte.
 
 | Angabe | Steht in |
 | --- | --- |
-| Telefonnummer | `partials/rail.html`, `partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404`, `bb-limen.vcf` |
+| Telefonnummer | `src/partials/rail.html`, `src/partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404`, `public/bb-limen.vcf` |
 | Einzugsgebiet (67 Gemeinden) | im Fließtext von `index`, `betreuung` und `fachkreise` **und** in `index.html` im JSON-LD unter `areaServed` |
-| Anschrift | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address`, `bb-limen.vcf` |
-| Sprechzeiten | `partials/rail.html`, `index`, `fachkreise`, `leichte-sprache` |
-| Datum des Stands | `impressum.html`, `datenschutz.html`, `sitemap.xml`; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
+| Anschrift | `src/partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address`, `public/bb-limen.vcf` |
+| Sprechzeiten | `src/partials/rail.html`, `index`, `fachkreise`, `leichte-sprache` |
+| Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` in `src/seiten.json`; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
 
 Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
 
-`bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte. Name, Telefonnummer,
+`public/bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte. Name, Telefonnummer,
 E-Mail, Anschrift und Website müssen mit dem JSON-LD der Startseite
 übereinstimmen. Die Datei bleibt in UTF-8 mit CRLF-Zeilenenden;
 `.editorconfig` und `.gitattributes` sichern das beim Bearbeiten und in Git.
@@ -180,55 +187,64 @@ E-Mail, Anschrift und Website müssen mit dem JSON-LD der Startseite
 
 ## 8. Nach jeder Änderung, ohne Ausnahme
 
+    tools/pruefen.sh
+    tools/build.sh
+    tools/build.sh --check
+
+Der gemeinsame Prüfbefehl erzeugt seine Ausgabe temporär und verändert weder
+Quellen noch `dist/` noch Git-Index. Er führt Buildprüfung, Regressionstests
+und Sprachmessung aus. Einzelaufrufe bleiben möglich:
+
     python3 -m unittest discover -s tests -v
-    tools/build.sh && git diff --exit-code     # kein Drift zwischen partials/ und Seiten
-    python3 tools/pruefe-sprache.py            # Satzlängen
+    python3 tools/pruefe-sprache.py
 
-**Einmal einrichten und nie wieder daran denken:**
+Die Sprachprüfung verwendet standardmäßig `dist/` und bricht bei fehlendem
+oder unvollständigem Seitenbestand ab. Die Tests erzeugen unabhängig davon
+eine frische temporäre Ausgabe. `tools/einrichten.sh` aktiviert den Hook,
+der ebenfalls `tools/pruefen.sh` ausführt; er merkt keine Dateien vor.
+Bei teilweise vorgemerkten Änderungen prüft er den gesamten Arbeitsbaum.
 
-    tools/einrichten.sh
+Die CI verwendet denselben Prüfbefehl und zusätzlich die HTML-Validierung.
+Die zwei begrenzten CSP-Ausnahmen in `tools/html5validator.yml` benötigen die
+Gegenkontrollen in `tests/test_site.py`; Begründung: README §3a und
+`docs/architektur.md`. Keine pauschale Unterdrückung von Warnungen.
+Die Veröffentlichung darf erst nach erfolgreicher Prüfung erfolgen und nur
+`dist/` hochladen. Eine neue Seite erfordert den Eintrag im Seitenkatalog,
+ihre bewusst gewählte Navigation und angepasste unabhängige Bestandstests.
 
-Danach laufen diese Prüfungen vor jedem Commit von selbst, und eine
-vergessene Bausteinübertragung wird gleich berichtigt und mit vorgemerkt.
-Dieselben Prüfungen laufen bei jedem Push in der CI, dazu die
-HTML-Validierung.
+Ansehen — breit, schmal (390 px) und in Dunkeldarstellung:
 
-Die Tests prüfen nach, was diese Datei fordert: `test_angaben.py` zählt die
-doppelt gepflegten Angaben aus §6, `test_begriffe.py` hält die Verbote aus
-§2 und §3 fest, `test_kontrast.py` rechnet die Paarungen aus §5 durch. Wer
-eine Regel hier ändert, ändert dort mit.
+    python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
 
-Ansehen — unbedingt auch am Telefon, dort wird aus der stehenden Kolumne
-ein schmales Kopfband:
-
-    python3 -m http.server 8391
-
-Dann http://localhost:8391 öffnen — breit, schmal (390 px) und in
-Dunkeldarstellung. Das ist Handarbeit und bleibt es.
+Dann http://localhost:8391 öffnen. Die Sichtprüfung bleibt Handarbeit.
 
 ---
 
 ## 9. Ordnung im Repository
 
-    *.html          acht Inhaltsseiten und 404.html — das ist die Website
-    style.css       ein Stylesheet, keine Abhängigkeiten
-    bb-limen.vcf    gemeinsame Bürovisitenkarte zum öffentlichen Download
-    vorschau.png    Open-Graph-Bild, erzeugt aus tools/vorschau.svg
-    partials/       Bausteine für build.sh, nicht ausgeliefert
-    tools/          Werkzeuge, nicht ausgeliefert
-    tests/          Regressionstests, nicht ausgeliefert
-    docs/           lokale Arbeitsunterlagen, unversioniert — kann fehlen
-    reports/        Auditberichte, unversioniert — kann fehlen
-    _config.yml     bestimmt, was GitHub Pages NICHT ausliefert
+    src/pages/       acht Inhaltsseiten und 404.html als Quellen
+    src/partials/    gemeinsame HTML-Bausteine
+    src/style.css    ein Stylesheet, PALETTE bleibt ein Block
+    src/grafik/      bearbeitbare SVG-Originale
+    src/seiten.json  Seitenbestand, Sprachprofile, Sitemap und öffentliche Dateien
+    public/          unverändert kopierte öffentliche Dateien, auch bb-limen.vcf
+    dist/            vollständig erzeugte Website, unversioniert
+    tools/           Werkzeuge und Commit-Hook, nicht ausgeliefert
+    tests/           Regressionstests, nicht ausgeliefert
+    docs/            technische Projektdokumentation, versioniert
+    docs/lokal/      persönliche Arbeitsunterlagen, unversioniert — kann fehlen
+    reports/         Auditberichte, unversioniert — kann fehlen
 
-Zwei verschiedene Schranken, die oft verwechselt werden:
+`.gitignore` steuert die Versionierung. Die Auslieferung wird durch den
+Workflow begrenzt: Nur `dist/` wird hochgeladen. `_config.yml` bleibt als
+Übergangsschutz, bis GitHub Pages bestätigt auf **GitHub Actions** umgestellt
+ist; vorher darf die Migration nicht nach `main` gepusht werden. Siehe README
+§4. Kein `.nojekyll` anlegen. Die alte Veröffentlichung aus dem Root ist mit
+der neuen Quellstruktur nicht kompatibel.
 
-- **`.gitignore`** hält Dateien aus der *Versionierung*.
-- **`_config.yml`** hält versionierte Dateien aus der *Auslieferung*.
-
-`partials/`, `tools/` und `tests/` sind versioniert, aber nicht im Netz.
-Deshalb **kein `.nojekyll` anlegen** — das würde Jekyll abschalten und damit
-genau diesen Ausschluss aufheben.
+`lastmod` im Katalog bezeichnet eine tatsächliche Inhaltsänderung. Builddatum,
+Dateiverschiebung oder eine technische Formatierung setzen es nicht neu.
+Weitere Datenzentralisierung wird als eigener inhaltlicher Umbau behandelt.
 
 ---
 

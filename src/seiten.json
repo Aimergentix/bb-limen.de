@@ -1,0 +1,63 @@
+{
+  "pages": [
+    {
+      "file": "index.html",
+      "language": "einfach",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "betreuung.html",
+      "language": "einfach",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "aufgaben.html",
+      "language": "einfach",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "vorsorge.html",
+      "language": "einfach",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "fachkreise.html",
+      "language": "fach",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "leichte-sprache.html",
+      "language": "leicht",
+      "sitemap": true,
+      "lastmod": "2026-09-20"
+    },
+    {
+      "file": "impressum.html",
+      "language": "recht",
+      "sitemap": false
+    },
+    {
+      "file": "datenschutz.html",
+      "language": "recht",
+      "sitemap": false
+    },
+    {
+      "file": "404.html",
+      "language": "fehler",
+      "sitemap": false
+    }
+  ],
+  "public_files": [
+    "robots.txt",
+    "CNAME",
+    "bb-limen.vcf",
+    "favicon.ico",
+    "apple-touch-icon.png",
+    "vorschau.png"
+  ]
+}

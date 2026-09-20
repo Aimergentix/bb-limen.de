@@ -11,8 +11,8 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
-DATEIEN = sorted(ROOT.glob("*.html")) + sorted((ROOT / "partials").glob("*.html"))
+from site_support import SITE as ROOT, SOURCE
+DATEIEN = sorted(ROOT.glob("*.html")) + sorted((SOURCE / "partials").glob("*.html"))
 
 # (Muster, Begruendung). Die Muster laufen ueber den Quelltext der Seiten.
 VERBOTEN = [

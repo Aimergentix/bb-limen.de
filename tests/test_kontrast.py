@@ -13,7 +13,7 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from site_support import SITE as ROOT
 CSS = (ROOT / "style.css").read_text(encoding="utf-8")
 
 # Fliesstext und Beschriftungen — der Schwellenwert fuer normalen Text.

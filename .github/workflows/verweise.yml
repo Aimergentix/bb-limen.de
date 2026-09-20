@@ -26,10 +26,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Website erzeugen
+        run: tools/build.sh
+
       - name: Abrufen
         id: pruefen
         run: |
-          grep -ho 'href="https\?://[^"]*"' -- *.html \
+          grep -ho 'href="https\?://[^"]*"' -- dist/*.html \
             | sed 's/href="//; s/"$//; s/&amp;/\&/g' \
             | grep -v 'bb-limen\.de' | sort -u > adressen.txt
 
@@ -44,7 +47,10 @@ jobs:
             printf '  %s  %s\n' "$status" "$adresse"
             case "$status" in
               2*|3*) ;;
-              *) printf '- `%s` → HTTP %s\n' "$adresse" "$status" >> tot.txt ;;
+              *)
+                # Backticks sind hier absichtliches Markdown, keine Shell-Ausdrücke.
+                # shellcheck disable=SC2016
+                printf -- '- `%s` → HTTP %s\n' "$adresse" "$status" >> tot.txt ;;
             esac
           done < adressen.txt
 

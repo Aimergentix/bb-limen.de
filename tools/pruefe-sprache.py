@@ -11,35 +11,24 @@ Pflichttexte und Leichte Sprache werden separat ausgewiesen, aber nicht an
 diesem A2/B1-Ziel gemessen. Die Statistik ersetzt weder eine redaktionelle
 Pruefung noch die Pruefung Leichter Sprache durch die vorgesehene Zielgruppe.
 
-    ./pruefe-sprache.py               alle Seiten
-    ./pruefe-sprache.py index.html    eine Seite, mit den langen Saetzen
+    python3 tools/pruefe-sprache.py               alle Seiten
+    python3 tools/pruefe-sprache.py index.html    eine Seite, mit den langen Saetzen
 """
 
 from __future__ import annotations
 
-import glob
+import argparse
 import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
+from site_config import ROOT, LANGUAGES, load_catalog
+
 
 ZIEL_MITTEL = 15.0
 ZIEL_MAX = 25
 
-EINFACHE_SPRACHE = {
-    "index.html",
-    "betreuung.html",
-    "aufgaben.html",
-    "vorsorge.html",
-}
-PROFILE = {
-    "fachkreise.html": "Fachsprache, nur Statistik",
-    "impressum.html": "Pflichttext, nur Statistik",
-    "datenschutz.html": "Pflichttext, nur Statistik",
-    "leichte-sprache.html": "Leichte Sprache, Zielgruppenpruefung bleibt noetig",
-    "404.html": "Fehlerseite, nur Statistik",
-}
 
 ABKUERZUNG = re.compile(
     r"(?<![\wäöüßÄÖÜ])"
@@ -163,18 +152,19 @@ def saetze(bloecke: list[str] | str) -> list[str]:
     return ergebnis
 
 
-def pruefe(datei: str, zeige: bool = False) -> bool:
+def pruefe(datei: str, zeige: bool = False, language: str = "einfach") -> bool:
     ss = saetze(fliesstext(datei))
     laengen = [len(WORT.findall(satz)) for satz in ss]
+    if not laengen:
+        raise ValueError(f"{datei}: keine messbaren Sätze")
     mittel = sum(laengen) / len(laengen)
     groesste = max(laengen)
     lang = sorted(((laenge, satz) for laenge, satz in zip(laengen, ss) if laenge > ZIEL_MAX), reverse=True)
 
-    name = Path(datei).name
-    hat_ziel = name in EINFACHE_SPRACHE
+    hat_ziel = language == "einfach"
     bestanden = not hat_ziel or (mittel <= ZIEL_MITTEL and groesste <= ZIEL_MAX)
     marke = "ok " if hat_ziel and bestanden else "!! " if hat_ziel else "-- "
-    profil = "A2/B1-Ziel" if hat_ziel else PROFILE.get(name, "nur Statistik")
+    profil = LANGUAGES[language]
 
     print(
         f"  {marke}{datei:22s} {len(ss):3d} Sätze · Mittel {mittel:5.1f}"
@@ -188,10 +178,22 @@ def pruefe(datei: str, zeige: bool = False) -> bool:
 
 
 def main(argumente: list[str]) -> int:
-    ziele = argumente or sorted(glob.glob("*.html"))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--site-dir", type=Path, default=ROOT / "dist")
+    parser.add_argument("seiten", nargs="*", help="Dateinamen aus src/seiten.json")
+    args = parser.parse_args(argumente)
     print(f"Redaktionelles A2/B1-Ziel: Mittel ≤ {ZIEL_MITTEL:.0f} Wörter, kein Satz > {ZIEL_MAX}\n")
     try:
-        ergebnisse = [pruefe(datei, zeige=bool(argumente)) for datei in ziele]
+        pages = {page["file"]: page for page in load_catalog()["pages"]}
+        found = {path.name for path in args.site_dir.glob("*.html")}
+        if not found or found != set(pages):
+            raise ValueError(f"{args.site_dir}: unvollständiger Seitenbestand; zuerst tools/build.sh ausführen")
+        names = args.seiten or sorted(pages)
+        unknown = set(names) - set(pages)
+        if unknown:
+            raise ValueError(f"Unbekannte Seiten: {sorted(unknown)}")
+        ergebnisse = [pruefe(str(args.site_dir / name), zeige=bool(args.seiten),
+                            language=pages[name]["language"]) for name in names]
     except (OSError, ValueError) as fehler:
         print(f"FEHLER: {fehler}", file=sys.stderr)
         return 2

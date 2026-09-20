@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from site_support import REPO as ROOT
 SPEC = importlib.util.spec_from_file_location("pruefe_sprache", ROOT / "tools" / "pruefe-sprache.py")
 assert SPEC and SPEC.loader
 SPRACHE = importlib.util.module_from_spec(SPEC)
@@ -14,6 +16,21 @@ SPEC.loader.exec_module(SPRACHE)
 
 
 class SprachpruefungTests(unittest.TestCase):
+    def test_empty_site_directory_is_an_error(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+                                     "--site-dir", temp], cwd=temp, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("unvollständiger Seitenbestand", result.stderr)
+
+    def test_unknown_page_is_an_error(self) -> None:
+        from site_support import SITE
+        result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+                                 "--site-dir", str(SITE), "unbekannt.html"],
+                                cwd="/tmp", text=True, capture_output=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("Unbekannte Seiten", result.stderr)
+
     def test_name_ending_in_a_does_not_hide_sentence_boundary(self) -> None:
         self.assertEqual(
             SPRACHE.saetze("Ich spreche mit Mika. Danach komme ich."),

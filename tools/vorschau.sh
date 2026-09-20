@@ -1,15 +1,16 @@
 #!/bin/sh
 # Rendert die drei Bilddateien der Website aus ihren SVG-Quellen:
 #
-#     vorschau.png          1200x630, Open Graph — aus tools/vorschau.svg
-#     apple-touch-icon.png   180x180, iOS-Startbildschirm — aus tools/signet.svg
-#     favicon.ico             32x32, Browserleiste — aus tools/signet.svg
+#     vorschau.png          1200x630, Open Graph — aus src/grafik/vorschau.svg
+#     apple-touch-icon.png   180x180, iOS-Startbildschirm — aus src/grafik/signet.svg
+#     favicon.ico             32x32, Browserleiste — aus src/grafik/signet.svg
 #
 #     tools/vorschau.sh
 #
 # Braucht chromium und python3. Die erzeugten Dateien sind versioniert,
-# damit die Website ohne Werkzeugkette auslieferbar bleibt.
+# damit der normale Build keinen Browser braucht.
 set -eu
+# shellcheck source=tools/browser.sh
 . "$(dirname "$0")/browser.sh"
 cd "$(dirname "$0")/.."
 
@@ -21,9 +22,9 @@ rendere() {
   echo "  $2  $(stat -c%s "$2") B"
 }
 
-rendere tools/vorschau.svg vorschau.png          1200 630
-rendere tools/signet.svg   apple-touch-icon.png   180 180
-rendere tools/signet.svg   .favicon-32.png         32  32
+rendere src/grafik/vorschau.svg public/vorschau.png          1200 630
+rendere src/grafik/signet.svg   public/apple-touch-icon.png   180 180
+rendere src/grafik/signet.svg   .favicon-32.png         32  32
 
 # ICO ist ein Behaelter; seit Vista darf darin ein PNG stehen.
 python3 - <<'PY'
@@ -34,7 +35,7 @@ png = Path(".favicon-32.png")
 daten = png.read_bytes()
 kopf = struct.pack("<HHH", 0, 1, 1)
 eintrag = struct.pack("<BBBBHHII", 32, 32, 0, 0, 1, 32, len(daten), 6 + 16)
-Path("favicon.ico").write_bytes(kopf + eintrag + daten)
+Path("public/favicon.ico").write_bytes(kopf + eintrag + daten)
 png.unlink()
 PY
-echo "  favicon.ico  $(stat -c%s favicon.ico) B"
+echo "  favicon.ico  $(stat -c%s public/favicon.ico) B"
