@@ -1,0 +1,25 @@
+# Was GitHub Pages NICHT ausliefert.
+#
+# Das Repository-Wurzelverzeichnis ist zugleich das Web-Wurzelverzeichnis:
+# Pages veroeffentlicht alles, was im Branch liegt. Ohne diese Liste waeren
+# die Werkzeuge, die Tests und die Bausteine aus partials/ oeffentlich
+# abrufbar — letztere als kaputtes Teildokument mit der vollen Anschrift.
+#
+# Jekyll reicht alle uebrigen Dateien unveraendert durch. Die Seiten
+# enthalten keine Liquid-Syntax ({{ ... }} oder {% ... %}), es gibt also
+# nichts, was dabei umgeschrieben werden koennte.
+#
+# WICHTIG: kein .nojekyll anlegen. Das schaltet Jekyll ab und hebt damit
+# genau diesen Ausschluss wieder auf.
+
+exclude:
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md
+  - docs/
+  - partials/
+  - tests/
+  - tools/
+
+# Ein reines Dateiprojekt: keine Beitraege, keine Layouts, keine Plugins.
+plugins: []
