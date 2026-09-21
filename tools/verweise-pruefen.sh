@@ -9,7 +9,7 @@
 #
 # Was es NICHT prüft: ob der genannte Stand eines Dokuments noch stimmt. Ein
 # Ministerium kann dieselbe Adresse behalten und den Inhalt austauschen. Das
-# bleibt Handarbeit; siehe docs/redaktion.md.
+# bleibt Handarbeit; siehe docs/pflege.md.
 set -eu
 WURZEL=$(dirname "$0")/..
 SITE=${1:-"$WURZEL/dist"}

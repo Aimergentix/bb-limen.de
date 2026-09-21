@@ -1,7 +1,7 @@
 # Arbeitsregeln für bb-limen.de
 
-Diese Datei ist der **Vertrag**: kurze, prüfbare Regeln für alle, die an
-diesem Repository arbeiten — Menschen wie Sprachmodelle.
+Diese Datei ist der **Vertrag**: kurze Regeln für alle, die an diesem
+Repository arbeiten — Menschen wie Sprachmodelle.
 
 Diese Website gehört einem Büro für rechtliche Betreuung. Sie wird von
 Gerichten, Behörden, Kliniken und von Menschen in einer Ausnahmesituation
@@ -10,13 +10,14 @@ gelesen. Ein falscher Paragraph ist hier kein Schönheitsfehler.
 **Verbindlichkeit.** MUSS und DARF NICHT gelten ohne Ausnahme. SOLL gilt im
 Regelfall; wer abweicht, begründet es im Commit. KANN ist erlaubt.
 
-**Kennungen.** Jede Regel hat eine feste Kennung wie `R-RECHT-2`. Tests,
-Kommentare und Begründungen nennen dieselbe Kennung: `grep -rn R-RECHT-2`
-findet alles dazu. Kennungen werden nie neu vergeben.
+**Kennungen.** Jede Regel hat eine feste Kennung wie `R-RECHT-2`. Tests und
+Kommentare nennen dieselbe Kennung: `grep -rn R-RECHT-2` findet alles dazu.
+Kennungen werden nie neu vergeben; eine fehlende Nummer ist eine entfallene
+Regel.
 
-Hier stehen nur Regeln. Wie etwas funktioniert und warum es so entschieden
-wurde, steht in den Dokumenten, die das [README](README.md#wo-steht-was)
-aufführt.
+Hier stehen nur Regeln. Die Handgriffe für häufige Änderungen stehen im
+[README](README.md); wie etwas funktioniert und warum es so entschieden wurde,
+in [docs/pflege.md](docs/pflege.md).
 
 ## Begriffe
 
@@ -24,7 +25,6 @@ aufführt.
 | --- | --- |
 | Seite | eine HTML-Datei unter `src/pages/`; der Bestand steht im Katalog |
 | Katalog | `src/seiten.json` |
-| Sprachprofil | der Wert `language` einer Seite im Katalog |
 | Pflichtseiten | `impressum.html` und `datenschutz.html` |
 | Baustein | Datei unter `src/partials/`, über eine Include-Zeile in jede Seite eingesetzt |
 | Kolumne | die stehende linke Spalte mit Navigation und Kontakt, Baustein `rail`; am Telefon ein Kopfband |
@@ -45,7 +45,7 @@ Kurze Seitennamen wie `index.html` meinen die Quelle unter `src/pages/`.
   `src/pages/` und in den Katalog, öffentliche Kopierdateien nach `public/`
   und in dessen `public_files`. Der Build lehnt nicht eingetragene Dateien ab.
 
-Mechanik: [docs/architektur.md](docs/architektur.md).
+Mechanik: [docs/pflege.md](docs/pflege.md#aufbau).
 
 ## 2. Was nicht hinzukommt
 
@@ -69,7 +69,7 @@ Mechanik: [docs/architektur.md](docs/architektur.md).
 - **R-VERBOT-6** Das JSON-LD MUSS beim Typ `Organization` mit `PostalAddress`
   bleiben. `LocalBusiness` und seine Untertypen DÜRFEN NICHT verwendet werden.
 
-Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
+Begründungen: [docs/pflege.md](docs/pflege.md#entscheidungen-in-kürze).
 
 ## 3. Recht
 
@@ -95,7 +95,7 @@ Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
   persönliche Telefonnummer und ein leeres `href="tel:"` DÜRFEN NICHT
   hinzukommen.
 
-Geltende Rechtsstände: [docs/redaktion.md](docs/redaktion.md#rechtsstände).
+Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wiedervorlagen).
 
 ## 4. Sprache und redaktionelle Hoheit
 
@@ -113,23 +113,27 @@ Geltende Rechtsstände: [docs/redaktion.md](docs/redaktion.md#rechtsstände).
   unbegründet oder falsch ist. Das Fehlen einer solchen Quelle im Repository
   oder im Arbeitskontext DARF allein weder eine Textänderung noch eine
   Veröffentlichungssperre auslösen.
-- **R-REDAKTION-3** Messwerte zu Satzlänge und Sprachniveau sind
-  redaktionelle Hinweise, keine Freigabesperren. Eine Überschreitung der
-  Zielwerte DARF `tools/pruefen.sh` nicht fehlschlagen lassen und berechtigt
-  Assistenten nicht zur Änderung eines sichtbaren Textes. Fehler im
-  Seitenbestand oder bei der technischen Auswertung bleiben Fehler.
+- **R-REDAKTION-3** Geprüft wird Technik, nie Inhalt. Eine Prüfung DARF bei
+  einer reinen Änderung von Text, Zahlen, Büroangaben oder Gestaltung der
+  Seiten NICHT fehlschlagen können. Tests und CI DÜRFEN deshalb keine
+  Erwartungen zum Inhalt führen: keinen Wortlaut, keine Wortliste, keine
+  Satzlänge, keine Büroangabe, keine Zählung. Zulässig ist, was nur bei einem
+  Defekt anschlägt — Build, Verweise, HTML-Struktur, Kopfangaben, Werkzeuge.
+  Werkzeugtests laufen gegen die Test-Website in `tests/fixture_site.py`, nicht
+  gegen die echten Seiten. Assistenten DÜRFEN eine Inhaltsprüfung NICHT wieder
+  einführen; die Regeln dieses Vertrags gelten auch ohne Test.
 
 - **R-SPRACHE-1** Die vier Sprachebenen DÜRFEN NICHT vermischt werden, und der
   Stil einer Seite DARF NICHT nach dem Maßstab einer anderen „verbessert"
   werden.
 
-  | Seite | Ebene | Sprachprofil |
-  | --- | --- | --- |
-  | `leichte-sprache.html` | Leichte Sprache (etwa A1), ein Satz je Zeile | `leicht` |
-  | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung | `fach` |
-  | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch | `recht` |
-  | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) | `einfach` |
-  | `404.html` | kurz und einfach, wird nur gezählt | `fehler` |
+  | Seite | Ebene |
+  | --- | --- |
+  | `leichte-sprache.html` | Leichte Sprache (etwa A1), ein Satz je Zeile |
+  | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
+  | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
+  | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) |
+  | `404.html` | kurz und einfach |
 
 - **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine
   Prüfgruppe aus Menschen mit Lernschwierigkeiten sie gegengelesen hat. Das
@@ -141,16 +145,16 @@ Geltende Rechtsstände: [docs/redaktion.md](docs/redaktion.md#rechtsstände).
 - **R-SPRACHE-4** Jeder Verweis MUSS sein Ziel nennen. „hier" und „mehr" sind
   keine Verweistexte.
 
-Einzelheiten und Messung: [docs/redaktion.md](docs/redaktion.md).
+Einzelheiten: [docs/pflege.md](docs/pflege.md#schreiben).
 
 ## 5. Farbe
 
 - **R-FARBE-1** Alle Farbwerte MÜSSEN im Block `PALETTE` in `src/style.css`
   stehen. Ein Rückbau ist immer dieser eine Block, nie eine Suche durchs
   Stylesheet.
-- **R-FARBE-2** `--gut` (Salbei) steht an genau vier Stellen im Fließtext:
-  `index.html` 1, `betreuung.html` 1, `aufgaben.html` 2. Die Farbe bedeutet
-  Entlastung; eine fünfte Stelle DARF NICHT hinzukommen.
+- **R-FARBE-2** `--gut` (Salbei) bedeutet Entlastung und steht im Fließtext nur
+  im Block `.gut`. Assistenten DÜRFEN keine weitere Stelle hinzufügen; ob eine
+  hinzukommt, entscheidet das Büro.
 - **R-FARBE-3** Stahlblau bedeutet anklickbar: `--link-ink` auf Papier,
   `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
   Kolumne MÜSSEN `--meta-on-carrier` verwenden. Ausnahmen sind die Wortmarke,
@@ -161,30 +165,23 @@ Einzelheiten und Messung: [docs/redaktion.md](docs/redaktion.md).
 - **R-FARBE-5** Jede Textpaarung MUSS WCAG AA erfüllen, hell und dunkel. Wer
   eine neue Paarung einführt, trägt sie in `tests/test_kontrast.py` ein.
 
-Bedeutung der Farben: [docs/gestaltung.md](docs/gestaltung.md).
+Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 
 ## 6. Gemeinsame Angaben
 
-Telefonnummer, E-Mail, Anschrift und Sprechzeiten MÜSSEN ausschließlich in
-`src/bureauangaben.json` gepflegt werden. Seiten und Bausteine MÜSSEN diese
-Werte über Büroplatzhalter beziehen. Jede Angabe MUSS in der erzeugten Ausgabe
-an allen genannten Stellen stehen und übereinstimmen. Nach einer Änderung
-MÜSSEN die unabhängigen Erwartungswerte in `tests/site_support.py` und
-`tests/test_angaben.py` nachgezogen und die betroffenen Inhaltsstände geprüft
-werden (R-ORDNUNG-6).
-
-| Kennung | Angabe | Steht in |
-| --- | --- | --- |
-| **R-ANGABEN-1** | Telefonnummer und E-Mail | `src/partials/rail.html`, `src/partials/callbar.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, `404.html`, `dist/bb-limen.vcf`, JSON-LD `telephone` und `email` |
-| **R-ANGABEN-2** | Einzugsgebiet: zwei Landkreise, 67 Gemeinden | beide Landkreise im Fließtext von `index.html`, `betreuung.html` und `fachkreise.html`; alle Gemeinden in `index.html` im JSON-LD unter `areaServed`. Nennt ein Text die Zahl, MUSS sie mit dem JSON-LD übereinstimmen |
-| **R-ANGABEN-3** | Anschrift | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, JSON-LD `address`, `dist/bb-limen.vcf` |
-| **R-ANGABEN-4** | Sprechzeiten | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html` — je Sprachebene im eigenen Wortlaut |
-| **R-ANGABEN-5** | Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` im Katalog; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
-
-- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame Bürovisitenkarte.
-  Name, Telefonnummer, E-Mail, Anschrift und Website MÜSSEN mit dem JSON-LD der
-  Startseite übereinstimmen. Die Datei MUSS in UTF-8 mit CRLF-Zeilenenden
-  bleiben; eine zweite, manuell gepflegte vCard DARF NICHT hinzukommen.
+- **R-ANGABEN-1** Telefonnummer, E-Mail, Anschrift und Sprechzeiten MÜSSEN
+  ausschließlich in `src/bureauangaben.json` gepflegt werden. Seiten und
+  Bausteine MÜSSEN diese Werte über Büroplatzhalter beziehen; wörtlich DÜRFEN
+  sie dort NICHT stehen.
+- **R-ANGABEN-2** Die vollständige Liste der Gemeinden des Einzugsgebiets steht
+  an genau einer Stelle: in `index.html` im JSON-LD unter `areaServed`.
+- **R-ANGABEN-5** Ändert sich der Inhalt einer Seite, MUSS ihr Stand
+  nachgezogen werden: `lastmod` im Katalog, bei `impressum.html` und
+  `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
+  Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
+- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame
+  Bürovisitenkarte aus dem JSON-LD der Startseite, in UTF-8 mit
+  CRLF-Zeilenenden. Eine zweite, manuell gepflegte vCard DARF NICHT hinzukommen.
 
 ## 7. Bestand, der bleibt
 
@@ -204,7 +201,8 @@ werden (R-ORDNUNG-6).
   `betreuung.html`, `aufgaben.html`, `vorsorge.html` und `fachkreise.html` und
   im Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
   verschwindet erst mit der Registrierungsnummer, und dann MUSS er überall
-  gleichzeitig verschwinden.
+  gleichzeitig verschwinden. Alle Stellen nennt die Checkliste im
+  [README](README.md#registrierung-eintragen).
 - **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
   nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.
 
@@ -222,23 +220,21 @@ werden (R-ORDNUNG-6).
 - **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
   sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
   DÜRFEN NICHT pauschal unterdrückt werden.
-- **R-PRUEFUNG-5** Eine neue Regel, die sich prüfen lässt, SOLL einen Test
-  bekommen, der ihre Kennung nennt. Eine neue Seite MUSS in den Katalog, in die
-  Navigationsentscheidung und in die Bestandstests.
+- **R-PRUEFUNG-5** Eine neue Seite MUSS in den Katalog und braucht eine
+  bewusste Navigationsentscheidung. Eine neue Prüfung MUSS R-REDAKTION-3
+  einhalten.
 
 **Fertig heißt:** `tools/pruefen.sh` besteht · die Änderung ist angesehen ·
-mehrfach gepflegte Angaben sind gegengezählt · die CI ist grün.
+die CI ist grün.
 
 ## 9. Ordnung
 
-- **R-ORDNUNG-1** Jede Aussage MUSS genau ein Zuhause haben. Regeln stehen
-  hier, alles andere in dem Dokument, das das README dafür nennt. Wer etwas ein
-  zweites Mal aufschreiben will, setzt stattdessen einen Verweis.
-- **R-ORDNUNG-2** Vertrag und Handbücher beschreiben den Zustand, nicht den
-  Weg dorthin. Geschichte gehört in Git, Entscheidungen mit Datum nach
-  `docs/entscheidungen.md`; dort wird nur ergänzt, nie umgeschrieben.
-- **R-ORDNUNG-3** Zahlen in der Dokumentation SOLLEN nur dort stehen, wo ein
-  Test sie nachzählt.
+- **R-ORDNUNG-1** Jede Aussage MUSS genau ein Zuhause haben: Regeln hier,
+  Handgriffe im README, Funktionsweise, Rechtsstände und Gründe in
+  `docs/pflege.md`. Wer etwas ein zweites Mal aufschreiben will, setzt
+  stattdessen einen Verweis.
+- **R-ORDNUNG-2** Die Dokumente beschreiben den Zustand, nicht den Weg dorthin.
+  Geschichte gehört in Git.
 - **R-ORDNUNG-4** Verzeichnisse heißen nach Web-Konvention englisch (`src`,
   `public`, `dist`, `tools`, `tests`, `docs`), Fachliches heißt deutsch.
   Dateinamen sind ASCII in Kleinbuchstaben: HTML und Shell mit Bindestrich,

@@ -1,5 +1,5 @@
 # Nur genau dokumentierte Meldungen; übrige Fehler und Warnungen bleiben Fehler.
-# Begründung und unabhängige Kontrollen: docs/architektur.md, HTML-Validierung.
+# Begründung und unabhängige Kontrollen: docs/pflege.md, HTML-Validierung.
 root: dist
 match: ["*.html"]
 errors_only: false
