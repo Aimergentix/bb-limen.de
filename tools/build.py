@@ -26,9 +26,11 @@ def error_page_links(source: str) -> str:
     Ein base-Element würde auch den Sprunglink auf die Startseite umlenken.
     Deshalb werden nur relative Dateiziele in HTML-Tags absolut zur Domain.
     """
+    # HTMLParser zählt Zeilen nur an \n. str.splitlines trennt auch an \r,
+    # \x85 oder U+2028 und verschöbe dann jede folgende Ersetzung.
     offsets = [0]
-    for line in source.splitlines(keepends=True):
-        offsets.append(offsets[-1] + len(line))
+    for line in source.split("\n"):
+        offsets.append(offsets[-1] + len(line) + 1)
     replacements = []
 
     def replace(match: re.Match) -> str:
@@ -45,6 +47,8 @@ def error_page_links(source: str) -> str:
             if raw != updated:
                 line, column = self.getpos()
                 start = offsets[line - 1] + column
+                if source[start:start + len(raw)] != raw:
+                    raise ValueError(f"404.html:{line}: Verweis nicht eindeutig zu verankern")
                 replacements.append((start, start + len(raw), updated))
 
     parser = Links(convert_charrefs=False)

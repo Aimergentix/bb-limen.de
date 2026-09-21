@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 import unittest
 
-from fixture_site import OFFICE, write_site
+from fixture_site import OFFICE, page, write_site
 from site_support import REPO
 
 
@@ -94,6 +94,7 @@ class BuildTests(unittest.TestCase):
             lambda d: d["telefon"].update(sichtbar="+49 123"),
             lambda d: d.update(email="mail@example.org?subject=test"),
             lambda d: d["anschrift"].update(strasse="Straße\nZusatz"),
+            lambda d: d["anschrift"].update(strasse="Straße\u2028Zusatz"),
             lambda d: d["anschrift"].update(ort="%%BUREAU:email%%"),
             lambda d: d["anschrift"].update(plz="1234"),
             lambda d: d["sprechzeiten"]["regulaer"].update(von="24:00"),
@@ -147,6 +148,19 @@ class BuildTests(unittest.TestCase):
                      'href="#inhalt"'):
             self.assertIn(link, text)
         self.assertIn('href="style.css"', (self.work / "dist/index.html").read_text(encoding="utf-8"))
+
+    def test_error_page_links_survive_unusual_line_separators(self) -> None:
+        """Aus Word oder PDF eingefügte Zeilentrenner verschieben keine Verweise."""
+        text = "Absatz\u2028Zeile\x85Zeile\rZeile\x0cEnde"
+        (self.work / "src/pages/404.html").write_bytes(
+            page("Nicht gefunden", body=f"<p>{text}</p>\n").encode("utf-8"))
+        result = self.run_build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = (self.work / "dist/404.html").read_bytes().decode("utf-8")
+        self.assertIn(f"<p>{text}</p>\n", output)
+        for link in ('href="/style.css"', 'href="/favicon.ico"', 'href="/index.html"', 'href="/zweite.html"'):
+            self.assertIn(link, output)
+        self.assertIn("<h1>Nicht gefunden</h1>", output)
 
     def test_build_is_repeatable_and_preserves_sources(self) -> None:
         before = {name: self.snapshot(name) for name in ("src", "public", "dist")}
