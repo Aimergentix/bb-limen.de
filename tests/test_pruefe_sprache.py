@@ -1,31 +1,26 @@
 from __future__ import annotations
 
-import importlib.util
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-
-from site_support import REPO as ROOT
-SPEC = importlib.util.spec_from_file_location("pruefe_sprache", ROOT / "tools" / "pruefe-sprache.py")
-assert SPEC and SPEC.loader
-SPRACHE = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(SPRACHE)
+from site_support import REPO as ROOT  # legt tools/ auf den Suchpfad
+import pruefe_sprache as SPRACHE
 
 
 class SprachpruefungTests(unittest.TestCase):
     def test_empty_site_directory_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+            result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe_sprache.py"),
                                      "--site-dir", temp], cwd=temp, text=True, capture_output=True)
             self.assertEqual(result.returncode, 2)
             self.assertIn("unvollständiger Seitenbestand", result.stderr)
 
     def test_unknown_page_is_an_error(self) -> None:
         from site_support import SITE
-        result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+        result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe_sprache.py"),
                                  "--site-dir", str(SITE), "unbekannt.html"],
                                 cwd="/tmp", text=True, capture_output=True)
         self.assertEqual(result.returncode, 2)

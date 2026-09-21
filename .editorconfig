@@ -17,8 +17,5 @@ indent_size = 4
 # Zwei Leerzeichen am Zeilenende sind in Markdown ein Zeilenumbruch.
 trim_trailing_whitespace = false
 
-[Makefile]
-indent_style = tab
-
 [*.vcf]
 end_of_line = crlf

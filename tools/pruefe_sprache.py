@@ -11,8 +11,8 @@ Pflichttexte und Leichte Sprache werden separat ausgewiesen, aber nicht an
 diesem A2/B1-Ziel gemessen. Die Statistik ersetzt weder eine redaktionelle
 Pruefung noch die Pruefung Leichter Sprache durch die vorgesehene Zielgruppe.
 
-    python3 tools/pruefe-sprache.py               alle Seiten
-    python3 tools/pruefe-sprache.py index.html    eine Seite, mit den langen Saetzen
+    python3 tools/pruefe_sprache.py               alle Seiten
+    python3 tools/pruefe_sprache.py index.html    eine Seite, mit den langen Saetzen
 """
 
 from __future__ import annotations

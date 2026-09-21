@@ -23,8 +23,8 @@
    Stahlblau kennzeichnet, was sich anklicken lässt. Nicht anklickbare
    Nebenangaben bleiben in einem warmen Steingrau davon getrennt.
    Alle Farbwerte stehen im Block PALETTE; ein Wechsel ersetzt nur ihn.
-   Jeder Textwert ist gegen WCAG geprüft (Fließtext 8,9:1, Nebentext 4,6:1,
-   Gold als Textfarbe mindestens 4,6:1, Kolumnentext mindestens 8,4:1).
+   Jede Textpaarung erfüllt WCAG AA, hell und dunkel; tests/test_kontrast.py
+   rechnet es bei jeder Prüfung nach.
 */
 
 /* ================= PALETTE — austauschbarer Block ================= */

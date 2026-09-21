@@ -37,7 +37,7 @@ tools/pruefen.sh
 | Telefonnummer, Anschrift oder Sprechzeiten ändern | alle Stellen aus R-ANGABEN-1 bis R-ANGABEN-6 | Erwartungswerte in `tests/site_support.py` nachziehen |
 | eine Seite hinzufügen | `src/pages/`, `src/seiten.json`, Navigation, Bestandstests | [Erweiterung](docs/architektur.md#erweiterung) |
 | einen Sitemap-Stand ändern | `lastmod` in `src/seiten.json` | R-ORDNUNG-6 |
-| Signet oder Vorschaubild ändern | `src/grafik/` | danach `tools/vorschau.sh`; braucht Chromium |
+| Signet oder Vorschaubild ändern | `src/grafik/` | danach `tools/bilder-erzeugen.sh`; braucht Chromium |
 | veröffentlichen | Zweig, Freigabe, `main` | [Betrieb](docs/betrieb.md); R-COMMIT-3 |
 
 ## Wo steht was

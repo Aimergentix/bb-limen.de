@@ -65,8 +65,8 @@ Die öffentliche Adresse hängt am Namen in der Ausgabe, nicht am Quellpfad:
 - `sitemap`: bewusste Entscheidung über die Aufnahme;
 - `lastmod`: nur für Sitemap-Seiten, geprüfter Inhaltsstand als `YYYY-MM-DD`.
 
-Der Build benötigt keine Git-Historie. `tools/sitemap.sh` zeigt die Sitemap zur
-Kontrolle, ohne zu schreiben.
+Der Build benötigt keine Git-Historie. `tools/build.sh --sitemap` zeigt die
+Sitemap zur Kontrolle, ohne zu schreiben.
 
 Jede Seite enthält genau diese Include-Zeilen, in dieser Reihenfolge und
 jeweils allein auf einer Zeile:
@@ -133,8 +133,8 @@ Prüfbefehl aus und validiert danach das fertige HTML. Auf `main` ruft
 `.github/workflows/veroeffentlichung.yml` diese Prüfung als Voraussetzung auf.
 
 **Einmal im Monat** baut `.github/workflows/verweise.yml` die Website und ruft
-ihre Verweise nach außen ab. Bei nicht erreichbaren Adressen entsteht ein
-Issue. Was dann zu tun ist, steht in
+mit `tools/verweise-pruefen.sh` ihre Verweise nach außen ab; das Skript läuft
+genauso lokal. Bei nicht erreichbaren Adressen entsteht ein Issue. Was dann zu tun ist, steht in
 [redaktion.md](redaktion.md#verweise-nach-außen-pflegen).
 
 ### HTML-Validierung
@@ -180,7 +180,7 @@ normale Build keinen Browser braucht. Nach einer Änderung an Signet oder
 Palette neu rendern; das Skript braucht Chromium oder Chrome und Python:
 
 ```sh
-tools/vorschau.sh
+tools/bilder-erzeugen.sh
 ```
 
 ## Erweiterung

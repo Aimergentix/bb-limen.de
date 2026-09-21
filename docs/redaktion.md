@@ -33,8 +33,8 @@ abschließende Liste der Aufgabenbereiche gibt es nicht — Register VI auf
 
 Messen lässt sich ein Teil davon:
 
-    python3 tools/pruefe-sprache.py                 alle Seiten
-    python3 tools/pruefe-sprache.py vorsorge.html   mit den zu langen Sätzen
+    python3 tools/pruefe_sprache.py                 alle Seiten
+    python3 tools/pruefe_sprache.py vorsorge.html   mit den zu langen Sätzen
 
 Der Parser betrachtet nur den Fließtext in `main`; Überschriften,
 Beschriftungen, Kontakt- und Ortslisten werden getrennt gehalten. `<br>` ist
@@ -66,8 +66,8 @@ Seiten — Ministerien, Behörden, Bundesnotarkammer, Lebenshilfe, KVJS. Fremde
 Formulare werden verlinkt, nicht gehostet (R-VERBOT-2, Begründung E-02).
 
 Auf jeder Angabe steht der Stand des Dokuments. Ob die Adressen erreichbar
-sind, prüft einmal im Monat ein Workflow und legt bei einem toten Verweis ein
-Issue an. Was er nicht prüft: ob der genannte Stand noch stimmt. Ein
+sind, prüft `tools/verweise-pruefen.sh` — einmal im Monat von selbst als
+Workflow, der bei einem toten Verweis ein Issue anlegt, und jederzeit von Hand. Was er nicht prüft: ob der genannte Stand noch stimmt. Ein
 Ministerium kann dieselbe Adresse behalten und den Inhalt austauschen. Deshalb
 **zweimal im Jahr von Hand prüfen**, ob Verweis und Stand noch stimmen.
 

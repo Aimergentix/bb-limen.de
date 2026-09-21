@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# Werkzeuge, Bausteine und Tests liefert GitHub Pages gar nicht erst aus;
-# siehe _config.yml. Was nicht erreichbar ist, muss nicht verboten werden.
+# Veröffentlicht wird nur die erzeugte Website. Quellen, Werkzeuge und Tests
+# sind nicht erreichbar, und was nicht erreichbar ist, muss nicht verboten werden.
 
 Sitemap: https://bb-limen.de/sitemap.xml
