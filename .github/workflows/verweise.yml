@@ -1,14 +1,6 @@
-# Prueft die Verweise nach aussen. Monatlich, und auf Zuruf.
-#
-# Die Seiten vorsorge.html und leichte-sprache.html verweisen auf Ministerien,
-# Behoerden, die Bundesnotarkammer, Lebenshilfe und KVJS. README §2a sagt,
-# das sei zweimal im Jahr von Hand zu pruefen — das hier nimmt die Handarbeit
-# ab und legt bei einem toten Verweis ein Issue an.
-#
-# Was es NICHT prueft: ob der genannte Stand eines Dokuments noch stimmt.
-# Ein Ministerium kann dieselbe Adresse behalten und den Inhalt austauschen.
-# Das bleibt Handarbeit.
-
+# Prüft die Verweise nach außen, monatlich und auf Zuruf. Die Logik steht in
+# tools/verweise-pruefen.sh und läuft genauso lokal; bei einem toten Verweis
+# entsteht hier ein Issue. Was dann zu tun ist: docs/redaktion.md.
 name: Verweise nach außen
 
 on:
@@ -24,7 +16,7 @@ jobs:
   verweise:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Website erzeugen
         run: tools/build.sh
@@ -32,35 +24,18 @@ jobs:
       - name: Abrufen
         id: pruefen
         run: |
-          grep -ho 'href="https\?://[^"]*"' -- dist/*.html \
-            | sed 's/href="//; s/"$//; s/&amp;/\&/g' \
-            | grep -v 'bb-limen\.de' | sort -u > adressen.txt
-
-          echo "Geprüfte Adressen: $(wc -l < adressen.txt)"
-          : > tot.txt
-
-          while read -r adresse; do
-            status=$(curl -sSL --max-time 30 --retry 2 --retry-delay 5 \
-              -o /dev/null -w '%{http_code}' \
-              -A 'bb-limen.de Linkpruefung (+https://bb-limen.de/)' \
-              "$adresse" || echo "000")
-            printf '  %s  %s\n' "$status" "$adresse"
-            case "$status" in
-              2*|3*) ;;
-              *)
-                # Backticks sind hier absichtliches Markdown, keine Shell-Ausdrücke.
-                # shellcheck disable=SC2016
-                printf -- '- `%s` → HTTP %s\n' "$adresse" "$status" >> tot.txt ;;
-            esac
-          done < adressen.txt
-
-          if [ -s tot.txt ]; then
-            echo "tot=ja" >> "$GITHUB_OUTPUT"
-            { echo "## Nicht erreichbare Verweise"; echo; cat tot.txt; } >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "tot=nein" >> "$GITHUB_OUTPUT"
-            echo "Alle Verweise erreichbar." >> "$GITHUB_STEP_SUMMARY"
-          fi
+          status=0
+          tools/verweise-pruefen.sh > tot.txt || status=$?
+          case "$status" in
+            0)
+              echo "tot=nein" >> "$GITHUB_OUTPUT"
+              echo "Alle Verweise erreichbar." >> "$GITHUB_STEP_SUMMARY" ;;
+            1)
+              echo "tot=ja" >> "$GITHUB_OUTPUT"
+              { echo "## Nicht erreichbare Verweise"; echo; cat tot.txt; } >> "$GITHUB_STEP_SUMMARY" ;;
+            *)
+              exit "$status" ;;
+          esac
 
       - name: Issue anlegen
         if: steps.pruefen.outputs.tot == 'ja'
@@ -75,12 +50,9 @@ jobs:
             echo "Bitte die betroffene Stelle auf der herausgebenden Seite suchen und"
             echo "Adresse **und** Standangabe in \`vorsorge.html\` bzw."
             echo "\`leichte-sprache.html\` nachziehen. Ein veralteter Stand ist"
-            echo "schlimmer als kein Stand — siehe README §2a."
+            echo "schlimmer als kein Stand — siehe docs/redaktion.md."
           } > meldung.md
 
           gh issue create \
-            --title "Tote Verweise nach außen ($(date +%d.%m.%Y))" \
-            --body-file meldung.md \
-            --label "" || gh issue create \
             --title "Tote Verweise nach außen ($(date +%d.%m.%Y))" \
             --body-file meldung.md

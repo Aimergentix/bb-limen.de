@@ -1,0 +1,10 @@
+# Hält die Versionen der GitHub Actions aktuell. Jeder Vorschlag kommt als
+# Pull Request und durchläuft die Prüfung, bevor er nach main gelangt.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "Actions aktualisieren:"

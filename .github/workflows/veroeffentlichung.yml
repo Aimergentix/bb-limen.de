@@ -1,4 +1,5 @@
-# GitHub Pages muss vor dem ersten Push dieser Migration auf GitHub Actions stehen.
+# Veröffentlicht ausschließlich dist/, und nur nach bestandener Prüfung.
+# Voraussetzung bei GitHub: Settings → Pages → Source: GitHub Actions.
 name: Website veröffentlichen
 
 on:
@@ -22,8 +23,11 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/configure-pages@v5
+      # Offene Platzhalter sind beim Arbeiten erlaubt, in der Auslieferung nicht.
+      - name: Keine offenen Platzhalter veröffentlichen
+        run: tools/pruefen.sh --veroeffentlichung
       - name: Veröffentlichungsdateien erzeugen
         run: |
           tools/build.sh

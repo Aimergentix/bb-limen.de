@@ -14,15 +14,21 @@ jobs:
   pruefung:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      # Dieselbe Python-Version, die das README als Mindeststand nennt.
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
       - name: Build, Regressionen und Satzlängen
         run: tools/pruefen.sh
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "21"
+      # Feste Version: Der Prüfstand darf sich nicht ohne Commit ändern.
+      # Wann gewechselt wird, steht in docs/entscheidungen.md.
       - name: HTML-Validator einrichten
-        run: pip install --quiet html5validator
+        run: pip install --quiet html5validator==0.4.2
       - name: Fertige Seiten validieren
         run: |
           tools/build.sh

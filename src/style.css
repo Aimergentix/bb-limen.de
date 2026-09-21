@@ -23,8 +23,8 @@
    Stahlblau kennzeichnet, was sich anklicken lässt. Nicht anklickbare
    Nebenangaben bleiben in einem warmen Steingrau davon getrennt.
    Alle Farbwerte stehen im Block PALETTE; ein Wechsel ersetzt nur ihn.
-   Jeder Textwert ist gegen WCAG geprüft (Fließtext 8,9:1, Nebentext 4,6:1,
-   Gold als Textfarbe mindestens 4,6:1, Kolumnentext mindestens 8,4:1).
+   Jede Textpaarung erfüllt WCAG AA, hell und dunkel; tests/test_kontrast.py
+   rechnet es bei jeder Prüfung nach.
 */
 
 /* ================= PALETTE — austauschbarer Block ================= */
@@ -42,36 +42,36 @@
   --on-carrier:      #fafafa;
   --meta-on-carrier: #c5beb3; /* warmes Grau — nicht anklickbare Nebenangaben */
 
-  /* Bedienfarbe: dunkel auf Papier, hell auf Graphit. Farbe allein genuegt
-     nicht; Fliesstext- und Kontaktlinks bleiben zusaetzlich unterstrichen. */
+  /* Bedienfarbe: dunkel auf Papier, hell auf Graphit. Farbe allein genügt
+     nicht; Fließtext- und Kontaktlinks bleiben zusätzlich unterstrichen. */
   --link-ink:        #365f7a;
   --link-on-carrier: #b5cae0;
 
   /* Zwei Goldstufen: Goldocker bleibt auf Papier lesbar, das hellere Gold
-     leuchtet auf Graphit. Gegenueber dem alten Bernstein zwei kleine
+     leuchtet auf Graphit. Gegenüber dem alten Bernstein zwei kleine
      Schritte heller und gelblicher, ohne in Signalgelb zu kippen. */
   --accent:     #95630e;
   --accent-ink: #95630e;
   --accent-on-carrier: #c89e42;
 
-  /* Mint gehoert zur Marke, nicht zur Bedienung. Terrakotta traegt nur die
+  /* Mint gehört zur Marke, nicht zur Bedienung. Terrakotta trägt nur die
      eigene Stimme der Leichte-Sprache-Seite. */
   --brand-leaf: #a6d2b7;
   --leicht-ink: #8a4b32; /* Terrakotta auf Papier, 6,42:1 */
 
-  /* Salbei — die zweite Stimme. Sie steht ausschliesslich dort, wo die
+  /* Salbei — die zweite Stimme. Sie steht ausschließlich dort, wo die
      Nachricht entlastet: keine Kosten, keine Entmuendigung, eigene Wahl
-     des Betreuers, der Weg zurueck. Nie als Schmuck. Geprueft: 6,53:1
-     auf Papier, 6,14:1 auf Flaeche. */
+     des Betreuers, der Weg zurück. Nie als Schmuck. Geprüft: 6,53:1
+     auf Papier, 6,14:1 auf Fläche. */
   --gut:         #3a6350;
   --gut-ink:     #3a6350;
   --gut-flaeche: #edf2ee;
 
-  --hauch: #f8f3e3;     /* Gold sehr duenn — nur bei Beruehrung */
+  --hauch: #f8f3e3;     /* Gold sehr dünn — nur bei Berührung */
 
-  /* Fuenf Stimmen, ausschliesslich fuer die Leichte-Sprache-Seite: dort
-     hilft Farbe beim Wiederfinden, ueberall sonst waere sie Schmuck.
-     Alle als Beschriftung auf der Flaeche geprueft, mindestens 5,0:1. */
+  /* Fünf Stimmen, ausschließlich für die Leichte-Sprache-Seite: dort
+     hilft Farbe beim Wiederfinden, überall sonst wäre sie Schmuck.
+     Alle als Beschriftung auf der Fläche geprüft, mindestens 5,0:1. */
   --st-1: #95630e;
   --st-2: #3a6350;
   --st-3: #8a4b32;
@@ -84,7 +84,7 @@
     --paper:   #111312;
     --surface: #191a18;
     --ink:     #eef0f2;
-    --body:    #ced4db; /* heller fuer ruhigen, kontrastreichen Fliesstext */
+    --body:    #ced4db; /* heller für ruhigen, kontrastreichen Fließtext */
     --muted:   #a4acb6; /* Zusatztext bleibt abgestuft, aber besser lesbar */
     --line:    #282a27;
 
@@ -103,7 +103,7 @@
     --brand-leaf: #bae1c9;
     --leicht-ink: #d09a7f;
 
-    --gut:         #94c4a6;   /* 9,57:1 auf Papier, 8,91:1 auf Flaeche */
+    --gut:         #94c4a6;   /* 9,57:1 auf Papier, 8,91:1 auf Fläche */
     --gut-ink:     #94c4a6;
     --gut-flaeche: #171f1a;
 
@@ -176,7 +176,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
     display: flex;
     flex-direction: column;
     overflow: auto;
-    /* Auf sehr breiten Schirmen laeuft der Graphit bis an den linken
+    /* Auf sehr breiten Schirmen läuft der Graphit bis an den linken
        Bildschirmrand, damit die Kolumne die Seite begrenzt, statt als
        Platte in der Mitte zu schweben. Ohne Einfluss auf das Layout. */
     box-shadow: -100vw 0 0 var(--carrier);
@@ -192,7 +192,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
 }
 
 .rail-brand .leaf { width: 1.75rem; height: 1.75rem; flex: none; color: var(--accent-on-carrier); }
-/* Die Blattkontur traegt das Mint der Marke. Mittelrippe und Adern bleiben
+/* Die Blattkontur trägt das Mint der Marke. Mittelrippe und Adern bleiben
    in Gold; Bedienfarbe ist das Mint nicht mehr. */
 .rail-brand .leaf .blatt { stroke: var(--brand-leaf); }
 
@@ -245,7 +245,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
   padding-left: calc(0.75rem - 2px);
 }
 
-/* "Fuer Fachkreise" richtet sich an ein anderes Publikum als der Rest
+/* "Für Fachkreise" richtet sich an ein anderes Publikum als der Rest
    der Navigation. Die Kartusche kennzeichnet den Seitenweg; Schreibweise
    und Schriftgewicht bilden bewusst ein Paar mit "Leichte Sprache". */
 .rail nav li.fach { margin-top: var(--s2); }
@@ -407,15 +407,15 @@ p:last-child { margin-bottom: 0; }
   content: ""; flex: 1; height: 1px; background: var(--line);
 }
 /* Das Zierzeichen ist dasselbe Blatt wie die Marke der Kolumne, nur klein.
-   Frueher stand hier das Schriftzeichen U+2766. Es kommt in keiner
+   Früher stand hier das Schriftzeichen U+2766. Es kommt in keiner
    Serifenschrift des Projekts vor — weder in Noto Serif noch in Georgia
    oder Times New Roman — und fiel deshalb auf eine Symbol- oder
-   Farb-Emoji-Schrift zurueck: auf jedem Geraet ein anderes Bild, oft ein
-   bunter Fleck neben der Goldlinie. Als SVG ist es ueberall dasselbe
-   und folgt ueber currentColor der Farbe des Ornaments.
+   Farb-Emoji-Schrift zurück: auf jedem Gerät ein anderes Bild, oft ein
+   bunter Fleck neben der Goldlinie. Als SVG ist es überall dasselbe
+   und folgt über currentColor der Farbe des Ornaments.
 
-   Das Verhaeltnis 24:26 des viewBox bestimmt Breite zu Hoehe; wer die
-   Breite aendert, rechnet die Hoehe mit 1,083 nach. */
+   Das Verhältnis 24:26 des viewBox bestimmt Breite zu Höhe; wer die
+   Breite ändert, rechnet die Höhe mit 1,083 nach. */
 .zierblatt { width: 0.95rem; height: 1.03rem; flex: none; }
 .rail-ornament .zierblatt { width: 0.85rem; height: 0.92rem; }
 
@@ -425,7 +425,7 @@ p:last-child { margin-bottom: 0; }
   border-top: 1px solid var(--line);
   margin: var(--s2) 0 0;
   max-width: var(--measure);
-  list-style: none;   /* die roemische Ziffer steht als .idx im Markup */
+  list-style: none;   /* die römische Ziffer steht als .idx im Markup */
   padding: 0;
 }
 
@@ -449,7 +449,7 @@ p:last-child { margin-bottom: 0; }
 .register h3 { margin: 0 0 0.2rem; }
 .register p { margin: 0; color: var(--muted); font-size: 0.98rem; }
 
-/* Aufzaehlung innerhalb eines Registereintrags */
+/* Aufzählung innerhalb eines Registereintrags */
 .unterliste {
   list-style: none;
   margin: var(--s0) 0;
@@ -469,10 +469,10 @@ p:last-child { margin-bottom: 0; }
   color: var(--accent-ink);
 }
 
-/* ================= Stufe 3: Leben nur bei Beruehrung ================= */
+/* ================= Stufe 3: Leben nur bei Berührung ================= */
 
 /* Im Ruhezustand unsichtbar — also ohne Wirkung auf den Ersteindruck und
-   auf den Druck. Nur auf Geraeten mit echtem Zeigegeraet, damit der
+   auf den Druck. Nur auf Geräten mit echtem Zeigegerät, damit der
    Zustand am Telefon nicht kleben bleibt. */
 @media (hover: hover) {
   .register .entry,
@@ -503,8 +503,8 @@ p:last-child { margin-bottom: 0; }
 .note p { margin: 0; }
 .note strong { color: var(--ink); }
 
-/* Faktenliste fuer Gerichte, Kliniken und Behoerden: Begriff links,
-   Antwort rechts, damit sich die gesuchte Zeile im Ueberfliegen findet. */
+/* Faktenliste für Gerichte, Kliniken und Behörden: Begriff links,
+   Antwort rechts, damit sich die gesuchte Zeile im Überfliegen findet. */
 .fakten {
   margin: var(--s2) 0 var(--s2);
   max-width: var(--measure);
@@ -535,8 +535,8 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* Geschwister von .note — gleiche Bauform, andere Aussage. .note warnt
-   oder schraenkt ein, .gut entlastet. Mehr als eine Handvoll pro Website
-   waere zu viel; dann verliert die Farbe ihre Bedeutung. */
+   oder schränkt ein, .gut entlastet. Mehr als eine Handvoll pro Website
+   wäre zu viel; dann verliert die Farbe ihre Bedeutung. */
 .gut {
   background: var(--gut-flaeche);
   border: 1px solid var(--line);
@@ -571,11 +571,11 @@ dl.contact dd { margin: 0 0 var(--s1); color: var(--ink); }
 dl.contact dd:last-child { margin-bottom: 0; }
 
 /* Impressum und Datenschutz stehen nur noch hier und in der Kolumne.
-   § 5 DDG verlangt "leicht erkennbar, unmittelbar erreichbar, staendig
-   verfuegbar" — der Fuss steht auf jeder Seite, die Verweise heissen
-   woertlich Impressum und Datenschutz und brauchen kein JavaScript.
-   Deshalb bleiben sie hier auch im Kontrast des Fliesstextes, nicht
-   schwaecher. */
+   § 5 DDG verlangt "leicht erkennbar, unmittelbar erreichbar, ständig
+   verfügbar" — der Fuß steht auf jeder Seite, die Verweise heißen
+   wörtlich Impressum und Datenschutz und brauchen kein JavaScript.
+   Deshalb bleiben sie hier auch im Kontrast des Fließtextes, nicht
+   schwächer. */
 .sheet-foot {
   margin-top: var(--s4);
   padding-top: var(--s1);
@@ -597,12 +597,12 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 .sheet-foot .foot-recht a:hover { color: var(--ink); }
 
-/* ================= Sprungmenue der Fachseite ================= */
+/* ================= Sprungmenü der Fachseite ================= */
 
 /* Die Fachseite ist lang und wird nicht gelesen, sondern angesteuert.
-   Das Menue ist deshalb kein Inhaltsverzeichnis in Kleinschrift, sondern
+   Das Menü ist deshalb kein Inhaltsverzeichnis in Kleinschrift, sondern
    ein Register mit Ziffern: dieselbe Bauform wie die Aufgabenbereiche,
-   damit die Seite eine Formensprache behaelt. */
+   damit die Seite eine Formensprache behält. */
 .sprungmenu {
   margin: var(--s3) 0;
   max-width: var(--measure);
@@ -672,15 +672,15 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .sprungmenu .dazu { grid-column: 3; grid-row: 1; margin-top: 0; }
 }
 
-/* Angesteuerte Ueberschrift nicht unter den oberen Rand rutschen lassen */
+/* Angesteuerte Überschrift nicht unter den oberen Rand rutschen lassen */
 .sheet [id] { scroll-margin-top: var(--s2); }
 
 /* ================= Exkurs: der Name ================= */
 
 /* Ein abgesetzter Einschub im Satzspiegel — anderer Grund, Goldrahmen
    oben und unten, damit er als Einschub gelesen wird und nicht als
-   Fortsetzung des Haupttextes. Die beiden Woerter stehen nebeneinander
-   wie in einem Woerterbuch. */
+   Fortsetzung des Haupttextes. Die beiden Wörter stehen nebeneinander
+   wie in einem Wörterbuch. */
 .exkurs {
   margin: var(--s3) 0;
   max-width: var(--measure);
@@ -728,8 +728,8 @@ dl.contact dd:last-child { margin-bottom: 0; }
   }
 }
 
-/* Die Schriftarten des Satzspiegels decken Griechisch mit ab; fuer den
-   Fall, dass die erste nicht verfuegbar ist, folgen breiter ausgestattete
+/* Die Schriftarten des Satzspiegels decken Griechisch mit ab; für den
+   Fall, dass die erste nicht verfügbar ist, folgen breiter ausgestattete
    Systemschriften. Weiterhin keine Webfonts. */
 .wort .schrift {
   font-family: "Noto Serif", "DejaVu Serif", "Liberation Serif", Georgia, serif;
@@ -783,7 +783,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* ================= Zwei Anbieter nebeneinander ================= */
 
-/* Im Impressum stehen zwei eigenstaendige Freiberufler. Sie nebeneinander
+/* Im Impressum stehen zwei eigenständige Freiberufler. Sie nebeneinander
    zu setzen macht sichtbar, dass es zwei getrennte Diensteanbieter sind
    und keine Gesellschaft. */
 .anbieter {
@@ -810,11 +810,11 @@ dl.contact dd:last-child { margin-bottom: 0; }
   }
 }
 
-/* ================= Dokumente und Verweise nach aussen ================= */
+/* ================= Dokumente und Verweise nach außen ================= */
 
 /* Jeder Verweis nennt Herausgeber und Stand. Das ist hier keine Zierde:
-   ein Vordruck fuer eine Vorsorgevollmacht veraltet mit dem Gesetz, und
-   der Leser muss auf einen Blick sehen koennen, wie alt er ist. */
+   ein Vordruck für eine Vorsorgevollmacht veraltet mit dem Gesetz, und
+   der Leser muss auf einen Blick sehen können, wie alt er ist. */
 .dokumente {
   list-style: none;
   margin: var(--s2) 0;
@@ -862,11 +862,11 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* ================= Leichte Sprache ================= */
 
-/* Eigene Typografie nach den Regeln fuer Leichte Sprache: Groteskschrift
-   statt Serife, grosser Schriftgrad, kurze Zeilen, linksbuendig, keine
-   Silbentrennung, ein Satz je Zeile (im Markup mit <br>), grosse Abstaende
-   zwischen den Absaetzen. Die Kolumne bleibt unveraendert, damit die Seite
-   erkennbar zum selben Buero gehoert. */
+/* Eigene Typografie nach den Regeln für Leichte Sprache: Groteskschrift
+   statt Serife, großer Schriftgrad, kurze Zeilen, linksbündig, keine
+   Silbentrennung, ein Satz je Zeile (im Markup mit <br>), große Abstände
+   zwischen den Absätzen. Die Kolumne bleibt unverändert, damit die Seite
+   erkennbar zum selben Büro gehört. */
 
 .ls .sheet { font-family: var(--sans); }
 .ls .sheet > * { max-width: 34rem; }
@@ -905,7 +905,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 
 /* Die Streifen bilden von oben nach unten einen ruhigen Farbrhythmus.
-   Die Ueberschriften bleiben auch ohne Farbe durch ihre Form erkennbar. */
+   Die Überschriften bleiben auch ohne Farbe durch ihre Form erkennbar. */
 .ls h2:nth-of-type(5n + 1) { border-left-color: var(--st-3); }
 .ls h2:nth-of-type(5n + 2) { border-left-color: var(--st-4); }
 .ls h2:nth-of-type(5n + 3) { border-left-color: var(--st-2); }
@@ -934,7 +934,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* Jeder Aufgabenbereich bekommt eine eigene Farbe. Auf dieser Seite ist
    das kein Schmuck: wer schwer liest, findet die Stelle am Farbstreifen
-   wieder, ohne noch einmal lesen zu muessen. */
+   wieder, ohne noch einmal lesen zu müssen. */
 .ls-liste li:nth-child(1) { border-left-color: var(--st-1); }
 .ls-liste li:nth-child(2) { border-left-color: var(--st-2); }
 .ls-liste li:nth-child(3) { border-left-color: var(--st-3); }
@@ -947,7 +947,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .ls-liste li:nth-child(4) strong { color: var(--st-4); }
 .ls-liste li:nth-child(5) strong { color: var(--st-5); }
 
-/* Hervorgehobener Merksatz — in Leichter Sprache gehoert das Wichtige
+/* Hervorgehobener Merksatz — in Leichter Sprache gehört das Wichtige
    sichtbar abgesetzt, nicht nur fett. */
 .ls-wichtig {
   background: var(--surface);
@@ -1028,7 +1028,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .callbar { display: none; }
 
 @media screen and (max-width: 60rem) {
-  /* Beim Anspringen eines Links bleibt Platz ueber der festen Anrufleiste. */
+  /* Beim Anspringen eines Links bleibt Platz über der festen Anrufleiste. */
   html { scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
   .shell { grid-template-columns: minmax(0, 1fr); }
 
@@ -1036,7 +1036,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
      Signet, Name, Rolle, Blatttrenner und darunter die Navigation.
      Kontaktblock und Rechtszeile entfallen — der Kontakt steht in der
      Anrufleiste, die Rechtstexte in Navigation und Seitenfuss. Damit
-     beginnt die Ueberschrift im ersten Bildschirmdrittel statt erst
+     beginnt die Überschrift im ersten Bildschirmdrittel statt erst
      nach der halben Seite. */
   .rail { padding: var(--s1) var(--s2) 0; }
   .rail-brand { gap: 0.55rem; }
@@ -1052,11 +1052,11 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail-role span + span::before { content: " · "; }
 
   /* Der Trenner bleibt an derselben semantischen Stelle wie am Schreibtisch:
-     zwischen Buerokennung und den beiden besonderen Zugaengen. */
+     zwischen Bürokennung und den beiden besonderen Zugängen. */
   .rail-ornament { margin: 0.7rem 0; }
   .rail-spacer { display: none; }
   .rail-contact { display: none; }   /* steht unten in der Anrufleiste */
-  .rail-legal { display: none; }     /* steht in der Navigation und im Fuss */
+  .rail-legal { display: none; }     /* steht in der Navigation und im Fuß */
 
   .rail-ls { margin-bottom: 0.45rem; }
   .rail-ls a { font-size: 0.8rem; }
@@ -1067,7 +1067,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
     align-items: baseline;
   }
   .rail nav li { display: flex; align-items: baseline; }
-  /* Der Trenner haengt hinten am Eintrag, nicht vorn. Vorn angesetzt
+  /* Der Trenner hängt hinten am Eintrag, nicht vorn. Vorn angesetzt
      beginnt eine umgebrochene Zeile (bei 320 px) mit einem verwaisten
      Punkt. */
   .rail nav li::after {
@@ -1080,7 +1080,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail nav a {
     border-bottom: 0;
     border-left: 0;
-    padding: 0.62rem 0;     /* ~45 px Antippflaeche */
+    padding: 0.62rem 0;     /* ~45 px Antippfläche */
     font-size: 0.92rem;
   }
   .rail nav li:not(.fach) a[aria-current="page"] {
@@ -1094,7 +1094,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
   .sheet {
     min-width: 0;
-    /* Silbentrennung, mit Umbruch als Rueckfall ohne Browser-Woerterbuch. */
+    /* Silbentrennung, mit Umbruch als Rückfall ohne Browser-Woerterbuch. */
     hyphens: auto;
     overflow-wrap: anywhere;
     padding: var(--s2) var(--s2) calc(7rem + env(safe-area-inset-bottom, 0px));
@@ -1137,8 +1137,8 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .callbar a:active { transform: translateY(1px); }
 }
 
-/* Ab etwa 2000 px waechst die Seite proportional mit, damit sie auf
-   4K-Schirmen nicht verloren wirkt. Zeilenlaenge bleibt unveraendert,
+/* Ab etwa 2000 px wächst die Seite proportional mit, damit sie auf
+   4K-Schirmen nicht verloren wirkt. Zeilenlänge bleibt unverändert,
    weil Satzbreite und Schriftgrad beide in rem stehen. */
 @media (min-width: 125rem) {
   html { font-size: 17.5px; }
@@ -1155,7 +1155,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   background: var(--accent);
   /* var(--paper) statt Weiss: im Hellen heller Grund auf Goldocker
      (4,9:1), im Dunkeln dunkler Grund auf hellem Gold (9,4:1).
-     Festes #fff faellt im Dunkelmodus auf 2,5:1 und waere zu schwach. */
+     Festes #fff fällt im Dunkelmodus auf 2,5:1 und wäre zu schwach. */
   color: var(--paper);
   font-family: var(--sans);
   font-size: 0.92rem;
@@ -1173,7 +1173,7 @@ a:focus-visible {
 }
 
 /* Auf dem Graphit der Kolumne liegt das dunklere Goldocker mit 3,03:1 nur
-   knapp ueber der Mindestlinie fuer Nicht-Text. Dort ruht der Ring deshalb
+   knapp über der Mindestlinie für Nicht-Text. Dort ruht der Ring deshalb
    mit deutlicher Reserve auf der hellen Schriftfarbe. */
 .rail a:focus-visible, .callbar a:focus-visible { outline-color: var(--on-carrier); }
 
@@ -1226,7 +1226,7 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
           box-shadow: none; position: static; height: auto; overflow: visible; }
   .rail nav, .rail-legal, .rail-ornament, .rail-ls, .rail-spacer, .callbar { display: none; }
   /* Kontaktblock bleibt: ein Ausdruck ohne Telefon und Anschrift ist
-     fuer die Leser, die ausdrucken, wertlos. */
+     für die Leser, die ausdrucken, wertlos. */
   .rail-contact { display: block; }
   .rail-name, .rail-contact dd, .rail-contact dd a { color: #000; }
   .rail-role, .rail-contact dt { color: #333; }

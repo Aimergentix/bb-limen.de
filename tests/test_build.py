@@ -38,6 +38,97 @@ class BuildTests(unittest.TestCase):
         change(catalog)
         path.write_text(json.dumps(catalog))
 
+    def change_office(self, change) -> None:
+        path = self.work / "src/bureauangaben.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        change(data)
+        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+
+    def test_office_change_reaches_pages_json_ld_and_vcard(self) -> None:
+        """R-ANGABEN-1, R-ANGABEN-3, R-ANGABEN-4, R-ANGABEN-6."""
+        self.change_office(lambda data: data.update(
+            telefon={"e164": "+4930123456", "sichtbar": "+49 30 123456"},
+            email="kontakt@example.org",
+            anschrift={"strasse": "Teststraße 42", "plz": "12345", "ort": "Testort",
+                       "bundesland": "Testland", "land": "DE"},
+            sprechzeiten={"regulaer": {"tage": ["Freitag"], "von": "09:30", "bis": "12:45"},
+                          "nach_vereinbarung": ["Samstag"]},
+        ))
+        result = self.run_build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for path in (self.work / "dist").glob("*.html"):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(page=path.name):
+                self.assertIn('href="tel:+4930123456"', text)
+                self.assertIn('href="mailto:kontakt@example.org"', text)
+                self.assertIn("Teststraße 42", text)
+                self.assertIn("12345 Testort", text)
+                self.assertIn("Fr 9:30–12:45 Uhr", text)
+                self.assertIn("Sa nach Vereinbarung", text)
+                for old in ("42904270", "info@bb-limen.de", "Am Dreispitz", "79589", "10–18", "%%BUREAU"):
+                    self.assertNotIn(old, text)
+        for name in ("index.html", "fachkreise.html"):
+            self.assertIn("Freitag von 9:30 bis 12:45 Uhr.<br>Samstag nach Vereinbarung.",
+                          (self.work / "dist" / name).read_text(encoding="utf-8"))
+        easy = (self.work / "dist/leichte-sprache.html").read_text(encoding="utf-8")
+        for sentence in ("Am Freitag.", "Von 9:30 Uhr bis 12:45 Uhr.", "Am Samstag geht es auch."):
+            self.assertIn(sentence, easy)
+        index = (self.work / "dist/index.html").read_text(encoding="utf-8")
+        for field in ('"telephone": "+4930123456"', '"email": "kontakt@example.org"',
+                      '"addressLocality": "Testort"', '"addressRegion": "Testland"'):
+            self.assertIn(field, index)
+        card = (self.work / "dist/bb-limen.vcf").read_bytes().decode("utf-8")
+        for field in ("TEL;TYPE=WORK,VOICE:+4930123456\r\n", "EMAIL;TYPE=INTERNET,WORK:kontakt@example.org\r\n",
+                      "ADR;TYPE=WORK:;;Teststraße 42;Testort;Testland;12345;DE\r\n"):
+            self.assertIn(field, card)
+
+    def test_invalid_office_data_preserves_last_good_output(self) -> None:
+        path = self.work / "src/bureauangaben.json"
+        original = path.read_bytes()
+        changes = [
+            lambda d: d.pop("email"),
+            lambda d: d.update(unbekannt="Wert"),
+            lambda d: d.update(telefon=[]),
+            lambda d: d["telefon"].update(sichtbar="+49 123"),
+            lambda d: d.update(email="mail@example.org?subject=test"),
+            lambda d: d["anschrift"].update(strasse="Straße\nZusatz"),
+            lambda d: d["anschrift"].update(ort="%%BUREAU:email%%"),
+            lambda d: d["anschrift"].update(plz="1234"),
+            lambda d: d["sprechzeiten"]["regulaer"].update(von="24:00"),
+            lambda d: d["sprechzeiten"]["regulaer"].update(bis="09:00"),
+            lambda d: d["sprechzeiten"]["regulaer"].update(tage=[]),
+            lambda d: d["sprechzeiten"]["regulaer"].update(tage=["Dienstag", "Dienstag"]),
+            lambda d: d["sprechzeiten"]["regulaer"].update(tage=[{}]),
+            lambda d: d["sprechzeiten"].update(nach_vereinbarung=["Dienstag"]),
+        ]
+        for number, change in enumerate(changes):
+            with self.subTest(case=number):
+                path.write_bytes(original)
+                self.change_office(change)
+                self.assert_build_fails_without_writes()
+        path.write_text('{"email": "eins", "email": "zwei"}', encoding="utf-8")
+        self.assert_build_fails_without_writes()
+        path.unlink()
+        self.assert_build_fails_without_writes()
+
+    def test_unknown_or_wrong_context_office_tokens_are_rejected(self) -> None:
+        path = self.work / "src/pages/index.html"
+        original = path.read_bytes()
+        for token in ("%%BUREAU:unbekannt%%", "%%BUREAU:email%", '"%%BUREAU_JSON:email%%"'):
+            with self.subTest(token=token):
+                path.write_bytes(original)
+                self.change_page("</main>", token + "</main>")
+                self.assert_build_fails_without_writes()
+        path.write_bytes(original)
+        self.change_page("%%BUREAU_JSON:email%%", "%%BUREAU:email%%")
+        self.assert_build_fails_without_writes()
+
+    def test_vcard_cannot_be_shadowed_by_public_copy(self) -> None:
+        """R-ANGABEN-6: Keine zweite Quelle für die Bürovisitenkarte."""
+        (self.work / "public/bb-limen.vcf").write_text("fremde Karte", encoding="utf-8")
+        self.change_catalog(lambda data: data["public_files"].append("bb-limen.vcf"))
+        self.assert_build_fails_without_writes()
+
     def assert_build_fails_without_writes(self) -> None:
         before = {name: self.snapshot(name) for name in ("src", "public", "dist")}
         result = self.run_build()

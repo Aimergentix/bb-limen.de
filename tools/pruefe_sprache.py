@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Misst Satzlaengen im eigentlichen Fliesstext der Seiten.
+"""Misst Satzlängen im eigentlichen Fließtext der Seiten.
 
 Der Parser betrachtet nur ``main``. Navigation, Kontaktlisten, Ortslisten,
-Ueberschriften und Beschriftungen bleiben getrennt vom Fliesstext. Ein ``br``
+Überschriften und Beschriftungen bleiben getrennt vom Fließtext. Ein ``br``
 ist nur ein Layoutumbruch und beendet keinen Satz.
 
-Fuer die allgemein verstaendlichen Inhaltsseiten gilt das redaktionelle Ziel:
-im Mittel hoechstens 15 Woerter und kein Satz ueber 25 Woerter. Fachseite,
-Pflichttexte und Leichte Sprache werden separat ausgewiesen, aber nicht an
-diesem A2/B1-Ziel gemessen. Die Statistik ersetzt weder eine redaktionelle
-Pruefung noch die Pruefung Leichter Sprache durch die vorgesehene Zielgruppe.
+Für die Seiten mit dem Sprachprofil ``einfach`` gilt das redaktionelle Ziel:
+im Mittel höchstens 15 Wörter und kein Satz über 25 Wörter. Nach
+R-REDAKTION-3 sind Überschreitungen Hinweise und keine Freigabesperren.
+Fachseite, Pflichttexte und Leichte Sprache werden separat ausgewiesen. Die
+Statistik ersetzt weder eine redaktionelle Prüfung noch die Prüfung Leichter
+Sprache durch die vorgesehene Zielgruppe.
 
-    python3 tools/pruefe-sprache.py               alle Seiten
-    python3 tools/pruefe-sprache.py index.html    eine Seite, mit den langen Saetzen
+    python3 tools/pruefe_sprache.py               alle Seiten
+    python3 tools/pruefe_sprache.py index.html    eine Seite, mit den langen Sätzen
 """
 
 from __future__ import annotations
@@ -47,7 +48,7 @@ VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
 
 
 class MainTextParser(HTMLParser):
-    """Sammelt Fliesstextbloecke innerhalb des main-Elements."""
+    """Sammelt Fließtextblöcke innerhalb des main-Elements."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -105,7 +106,7 @@ class MainTextParser(HTMLParser):
 
         start_tag, skip_started, label_started, block_started = self.stack.pop()
         if start_tag != tag:
-            # Die Produktionsseiten werden gesondert als HTML geprueft. Hier
+            # Die Produktionsseiten werden gesondert als HTML geprüft. Hier
             # vermeiden wir bei fehlerhaftem Eingabe-HTML falsche Statistiken.
             raise ValueError(f"nicht passend geschlossene HTML-Tags: <{start_tag}> und </{tag}>")
 
@@ -135,7 +136,7 @@ def fliesstext(datei: str | Path) -> list[str]:
     if parser.in_main:
         raise ValueError(f"{datei}: main wurde nicht geschlossen")
     if not parser.bloecke:
-        raise ValueError(f"{datei}: kein Fliesstext in main gefunden")
+        raise ValueError(f"{datei}: kein Fließtext in main gefunden")
     return parser.bloecke
 
 
@@ -182,7 +183,10 @@ def main(argumente: list[str]) -> int:
     parser.add_argument("--site-dir", type=Path, default=ROOT / "dist")
     parser.add_argument("seiten", nargs="*", help="Dateinamen aus src/seiten.json")
     args = parser.parse_args(argumente)
-    print(f"Redaktionelles A2/B1-Ziel: Mittel ≤ {ZIEL_MITTEL:.0f} Wörter, kein Satz > {ZIEL_MAX}\n")
+    print(
+        f"Redaktioneller Hinweis nach R-REDAKTION-3: Mittel ≤ {ZIEL_MITTEL:.0f} Wörter, "
+        f"kein Satz > {ZIEL_MAX}\n"
+    )
     try:
         pages = {page["file"]: page for page in load_catalog()["pages"]}
         found = {path.name for path in args.site_dir.glob("*.html")}
@@ -192,12 +196,19 @@ def main(argumente: list[str]) -> int:
         unknown = set(names) - set(pages)
         if unknown:
             raise ValueError(f"Unbekannte Seiten: {sorted(unknown)}")
-        ergebnisse = [pruefe(str(args.site_dir / name), zeige=bool(args.seiten),
-                            language=pages[name]["language"]) for name in names]
+        for name in names:
+            pruefe(
+                str(args.site_dir / name),
+                zeige=bool(args.seiten),
+                language=pages[name]["language"],
+            )
     except (OSError, ValueError) as fehler:
         print(f"FEHLER: {fehler}", file=sys.stderr)
         return 2
-    return 0 if all(ergebnisse) else 1
+    # R-REDAKTION-3: Zielüberschreitungen bleiben sichtbar, blockieren aber
+    # weder Prüfung noch Veröffentlichung. Strukturelle Auswertungsfehler
+    # werden oben weiterhin mit Rückgabewert 2 beendet.
+    return 0
 
 
 if __name__ == "__main__":

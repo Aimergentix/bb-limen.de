@@ -1,10 +1,10 @@
 """Rechnet die Farbpaarungen des Stylesheets gegen WCAG AA durch.
 
-Das README verlangt, nach jeder Aenderung am Block PALETTE neu zu rechnen.
-Diese Datei macht daraus eine Pruefung: sie liest die Werte aus style.css,
-bildet die Paarungen, die auf der Seite tatsaechlich vorkommen, und faellt
-unter 4,5:1. Die schwaechste Paarung liegt bei 4,61:1 — es ist wenig Luft,
-und deshalb faellt eine Verschlechterung sofort auf.
+AGENTS.md (R-FARBE-5) verlangt WCAG AA für jede Textpaarung, hell und dunkel.
+Diese Datei macht daraus eine Prüfung: sie liest die Werte aus style.css,
+bildet die Paarungen, die auf der Seite tatsächlich vorkommen, und fällt
+unter 4,5:1. Die schwächste Paarung liegt bei 4,61:1 — es ist wenig Luft,
+und deshalb fällt eine Verschlechterung sofort auf.
 """
 from __future__ import annotations
 
@@ -16,10 +16,10 @@ from pathlib import Path
 from site_support import SITE as ROOT
 CSS = (ROOT / "style.css").read_text(encoding="utf-8")
 
-# Fliesstext und Beschriftungen — der Schwellenwert fuer normalen Text.
+# Fließtext und Beschriftungen — der Schwellenwert für normalen Text.
 AA_TEXT = 4.5
 
-# Jede Paarung, die auf der Seite als Text auf Flaeche vorkommt.
+# Jede Paarung, die auf der Seite als Text auf Fläche vorkommt.
 PAARE = [
     ("--ink", "--paper"),
     ("--body", "--paper"),
@@ -49,7 +49,7 @@ PAARE = [
 
 
 def _block(text: str, start: str) -> str:
-    """Gibt den Inhalt des geschweiften Blocks nach `start` zurueck."""
+    """Gibt den Inhalt des geschweiften Blocks nach `start` zurück."""
     i = text.index(start) + len(start)
     tiefe, j = 1, i
     while tiefe:
@@ -95,17 +95,18 @@ class KontrastTests(unittest.TestCase):
                     self.assertIn(vorn, werte, f"{vorn} fehlt im Block PALETTE")
                     self.assertIn(hinten, werte, f"{hinten} fehlt im Block PALETTE")
                     wert = kontrast(werte[vorn], werte[hinten])
+                    # Ungerundet: 4,496:1 ist nicht bestanden.
                     self.assertGreaterEqual(
-                        round(wert, 2),
+                        wert,
                         AA_TEXT,
-                        f"{vorn} auf {hinten} ({modus}) traegt nur {wert:.2f}:1, "
-                        f"noetig sind {AA_TEXT}:1",
+                        f"{vorn} auf {hinten} ({modus}) trägt nur {wert:.2f}:1, "
+                        f"nötig sind {AA_TEXT}:1",
                     )
 
     def test_palette_hat_hellen_und_dunklen_satz(self) -> None:
         hell, dunkel = palette(False), palette(True)
         self.assertNotEqual(hell["--paper"], dunkel["--paper"],
-                            "Der Dunkelmodus ueberschreibt --paper nicht mehr")
+                            "Der Dunkelmodus überschreibt --paper nicht mehr")
         self.assertEqual(sorted(hell), sorted(dunkel),
                          "Hell und dunkel kennen nicht dieselben Farbnamen")
 

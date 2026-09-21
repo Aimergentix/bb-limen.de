@@ -1,7 +1,7 @@
-"""Schlaegt bei Formulierungen an, die hier schon einmal falsch waren.
+"""Schlägt bei Formulierungen an, die hier schon einmal falsch waren.
 
-Kein Stilwaechter — nur eine kurze Liste benannter Fehler, jeder mit seiner
-Begruendung. Wer eine Zeile ergaenzt, schreibt dazu, warum. Wer eine Zeile
+Kein Stilwächter — nur eine kurze Liste benannter Fehler, jeder mit seiner
+Begründung. Wer eine Zeile ergänzt, schreibt dazu, warum. Wer eine Zeile
 streicht, sollte sicher sein, dass der Fehler nicht wiederkommen kann.
 """
 from __future__ import annotations
@@ -14,16 +14,16 @@ from pathlib import Path
 from site_support import SITE as ROOT, SOURCE
 DATEIEN = sorted(ROOT.glob("*.html")) + sorted((SOURCE / "partials").glob("*.html"))
 
-# (Muster, Begruendung). Die Muster laufen ueber den Quelltext der Seiten.
+# (Muster, Begründung). Die Muster laufen über den Quelltext der Seiten.
 VERBOTEN = [
     (
         r"Aufgabenkreise\b",
-        "Plural aus der Fassung vor dem 01.01.2023. Seither hat ein Betreuer "
+        "R-RECHT-2: Plural aus der Fassung vor dem 01.01.2023. Seither hat ein Betreuer "
         "einen Aufgabenkreis aus mehreren Aufgabenbereichen (§ 1815 Abs. 1 BGB).",
     ),
     (
         r'href="tel:\s*"',
-        "Leerer Telefonverweis. Das war schon einmal der schwerste technische "
+        "R-RECHT-6: Leerer Telefonverweis. Das war schon einmal der schwerste technische "
         "Fehler dieser Seite: ein Anruf, der ins Nichts geht.",
     ),
     (
@@ -36,8 +36,8 @@ VERBOTEN = [
     ),
     (
         r'href="http://(?!127\.0\.0\.1|localhost)',
-        "Unverschluesselter Verweis nach aussen. Behoerden und Ministerien "
-        "liefern durchweg ueber HTTPS aus.",
+        "Unverschlüsselter Verweis nach außen. Behörden und Ministerien "
+        "liefern durchweg über HTTPS aus.",
     ),
     (
         r"\b(TODO|FIXME|XXX|Lorem ipsum)\b",
@@ -48,10 +48,27 @@ VERBOTEN = [
         "Falsche Schreibung ohne Umlaut.",
     ),
     (
-        r"[❦❧✦❖]",
-        "Schmuckzeichen, das in keiner Serifenschrift des Projekts vorkommt. "
-        "Der Browser faellt auf eine Symbol- oder Farb-Emoji-Schrift zurueck. "
-        "Ornamente gehoeren als SVG ins Markup (.zierblatt), siehe AGENTS.md.",
+        # Die Unicode-Bloecke Verschiedene Symbole, Dingbats, Verschiedene Symbole
+        # und Pfeile sowie Emoji samt Variantenwähler. Früher standen hier nur
+        # vier Beispielzeichen; die Regel gilt aber für die ganzen Blöcke.
+        r"[\u2600-\u27BF\u2B00-\u2BFF\uFE0F\U0001F000-\U0001FAFF]",
+        "R-VERBOT-3: Schmuckzeichen, das die Serifenschriften des Projekts nicht "
+        "verlässlich enthalten. Der Browser fällt auf eine Symbol- oder "
+        "Farb-Emoji-Schrift zurück, und auf jedem Gerät steht etwas anderes. "
+        "Ornamente gehören als SVG ins Markup (.zierblatt).",
+    ),
+    (
+        r"(?i)\b(kompetent\w*|individuell\w*|Ihr Partner|professionell\w*|"
+        r"zuverlässig\w*|engagiert\w*|vertrauensvoll\w*|maßgeschneidert\w*|"
+        r"ganzheitlich\w*|aus einer Hand|jahrelange Erfahrung|Experten?|"
+        r"Spezialist\w*)\b",
+        "R-SPRACHE-3: Vertrauensfloskel. Die Seite belegt, statt zu beteuern; "
+        "der Web-Audit vom 20.09.2026 fand keine einzige, und das soll so bleiben.",
+    ),
+    (
+        r"(?i)>\s*(hier|mehr|weiterlesen|mehr erfahren|klicken Sie hier)\s*</a>",
+        "R-SPRACHE-4: Verweistext ohne Ziel. Screenreader lesen Verweise auch "
+        "als Liste vor; dort sagt 'hier' nichts. Der Verweis nennt sein Ziel.",
     ),
 ]
 
@@ -70,7 +87,7 @@ class BegriffsTests(unittest.TestCase):
                     self.assertEqual(treffer, [], f"{grund}\n  " + "\n  ".join(treffer))
 
     def test_aufgabenbereich_wird_verwendet(self) -> None:
-        """Gegenprobe: die richtige Form muss vorkommen, sonst prueft die
+        """Gegenprobe: die richtige Form muss vorkommen, sonst prüft die
         Verbotsliste oben etwas, das es gar nicht mehr gibt."""
         gesamt = " ".join(p.read_text(encoding="utf-8") for p in DATEIEN)
         self.assertIn("Aufgabenbereich", gesamt)

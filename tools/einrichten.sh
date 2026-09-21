@@ -3,9 +3,9 @@
 #
 #     tools/einrichten.sh
 #
-# Git sucht Hooks normalerweise in .git/hooks, und das laesst sich nicht
+# Git sucht Hooks normalerweise in .git/hooks, und das lässt sich nicht
 # versionieren. core.hooksPath zeigt stattdessen auf ein Verzeichnis im
-# Repository — damit gilt fuer jeden dieselbe Pruefung.
+# Repository — damit gilt für jeden dieselbe Prüfung.
 set -eu
 cd "$(git rev-parse --show-toplevel)"
 git config core.hooksPath tools/hooks

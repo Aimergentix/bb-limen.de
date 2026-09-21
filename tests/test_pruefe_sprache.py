@@ -1,31 +1,46 @@
 from __future__ import annotations
 
-import importlib.util
+import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-
-from site_support import REPO as ROOT
-SPEC = importlib.util.spec_from_file_location("pruefe_sprache", ROOT / "tools" / "pruefe-sprache.py")
-assert SPEC and SPEC.loader
-SPRACHE = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(SPRACHE)
+from site_support import REPO as ROOT  # legt tools/ auf den Suchpfad
+import pruefe_sprache as SPRACHE
 
 
 class SprachpruefungTests(unittest.TestCase):
+    def test_language_target_is_advisory(self) -> None:
+        """R-REDAKTION-3: Ein langer redaktioneller Satz blockiert nicht."""
+        from site_support import SITE
+        with tempfile.TemporaryDirectory() as temp:
+            site = Path(temp) / "site"
+            shutil.copytree(SITE, site)
+            langer_satz = " ".join(["Wort"] * 26) + "."
+            (site / "index.html").write_text(
+                f"<main><p>{langer_satz}</p></main>", encoding="utf-8"
+            )
+            result = subprocess.run(
+                [sys.executable, "-B", str(ROOT / "tools/pruefe_sprache.py"),
+                 "--site-dir", str(site), "index.html"],
+                cwd="/tmp", text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0)
+            self.assertIn("R-REDAKTION-3", result.stdout)
+            self.assertIn("über 25: 1", result.stdout)
+
     def test_empty_site_directory_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+            result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe_sprache.py"),
                                      "--site-dir", temp], cwd=temp, text=True, capture_output=True)
             self.assertEqual(result.returncode, 2)
             self.assertIn("unvollständiger Seitenbestand", result.stderr)
 
     def test_unknown_page_is_an_error(self) -> None:
         from site_support import SITE
-        result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe-sprache.py"),
+        result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/pruefe_sprache.py"),
                                  "--site-dir", str(SITE), "unbekannt.html"],
                                 cwd="/tmp", text=True, capture_output=True)
         self.assertEqual(result.returncode, 2)

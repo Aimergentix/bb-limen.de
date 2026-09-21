@@ -11,7 +11,7 @@ LANGUAGES = {
     "einfach": "A2/B1-Ziel",
     "fach": "Fachsprache, nur Statistik",
     "recht": "Pflichttext, nur Statistik",
-    "leicht": "Leichte Sprache, Zielgruppenpruefung bleibt noetig",
+    "leicht": "Leichte Sprache, Zielgruppenprüfung bleibt nötig",
     "fehler": "Fehlerseite, nur Statistik",
 }
 PARTIALS = ("head", "skip", "rail", "foot", "callbar")
@@ -59,7 +59,7 @@ def load_catalog(root: Path = ROOT) -> dict:
         for name in public
     ):
         raise ValueError(f"{path}: ungültige public_files")
-    if len(public) != len(set(public)) or set(public) & {*names, "style.css", "sitemap.xml"}:
+    if len(public) != len(set(public)) or set(public) & {*names, "style.css", "sitemap.xml", "bb-limen.vcf"}:
         raise ValueError(f"{path}: doppelte oder kollidierende öffentliche Dateien")
     if "CNAME" not in public:
         raise ValueError(f"{path}: CNAME fehlt")
