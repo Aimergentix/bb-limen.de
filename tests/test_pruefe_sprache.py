@@ -12,6 +12,17 @@ import pruefe_sprache as SPRACHE
 
 
 class SprachpruefungTests(unittest.TestCase):
+    def test_unclosed_structure_in_main_is_an_error(self) -> None:
+        """R-REDAKTION-3: Technisch unvollständige Auswertung bleibt ein Fehler."""
+        for html in ("<main><p>Ein vollständiger Satz.</p><div></main>",
+                     "<main><p>Ein vollständiger Satz.</p><nav></main>",
+                     "<main><p>Ein vollständiger Satz.</p><h2></main>"):
+            with self.subTest(html=html), tempfile.TemporaryDirectory() as temp:
+                path = Path(temp) / "seite.html"
+                path.write_text(html, encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    SPRACHE.fliesstext(path)
+
     def test_language_target_is_advisory(self) -> None:
         """R-REDAKTION-3: Ein langer redaktioneller Satz blockiert nicht."""
         from site_support import SITE

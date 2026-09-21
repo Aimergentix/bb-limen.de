@@ -7,7 +7,7 @@ from collections import Counter
 from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urljoin
 import xml.etree.ElementTree as ET
 
 
@@ -111,11 +111,21 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual(lastmod, editorial[loc])
                 self.assertLessEqual(date.fromisoformat(lastmod), date.today())
 
-    def test_error_page_base_precedes_relative_resources(self) -> None:
-        text = (ROOT / "404.html").read_text(encoding="utf-8")
-        self.assertEqual(text.count('<base href="/">'), 1)
-        self.assertLess(text.index('<base href="/">'), text.index('<link '))
-        self.assertLess(text.index('<base href="/">'), text.index('</head>'))
+    def test_error_page_links_work_under_nested_missing_addresses(self) -> None:
+        page = self.parsed["404.html"]
+        self.assertEqual(page.tags["base"], 0, "base würde den Sprunglink umleiten")
+        missing = "https://bb-limen.de/ein/tiefer/pfad/"
+        skip = next(attrs["href"] for tag, attrs in page.elements
+                    if tag == "a" and attrs.get("class") == "skip")
+        self.assertEqual(urljoin(missing, skip), missing + "#inhalt")
+        for tag, attrs in page.elements:
+            for key in ("href", "src"):
+                value = attrs.get(key)
+                if not value or value.startswith("#") or urlsplit(value).scheme:
+                    continue
+                with self.subTest(tag=tag, value=value):
+                    self.assertTrue(value.startswith("/"))
+                    self.assertTrue((ROOT / urlsplit(urljoin(missing, value)).path.lstrip("/")).is_file())
 
     def test_local_assets_exist(self) -> None:
         for path in PAGES:
@@ -124,7 +134,7 @@ class SiteStructureTests(unittest.TestCase):
                 url = urlsplit(value)
                 if url.scheme or url.netloc or not url.path or url.path == "/":
                     continue
-                self.assertTrue((ROOT / url.path).is_file(), f"{path.name}: {value}")
+                self.assertTrue((ROOT / url.path.lstrip("/")).is_file(), f"{path.name}: {value}")
             self.assertNotIn("@include", text)
             self.assertNotIn("%%CUR-", text)
 
@@ -147,7 +157,7 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 styles = [attrs.get("href") for tag, attrs in page.elements
                           if tag == "link" and "stylesheet" in (attrs.get("rel") or "").split()]
-                self.assertEqual(styles, ["style.css"])
+                self.assertEqual(styles, ["/style.css" if name == "404.html" else "style.css"])
                 self.assertEqual(page.tags["style"], 0)
                 self.assertFalse(any("style" in attrs for _, attrs in page.elements))
 
@@ -227,7 +237,7 @@ class SiteStructureTests(unittest.TestCase):
                 target = urlsplit(href)
                 if target.scheme or target.netloc or href.startswith(("mailto:", "tel:")):
                     continue
-                target_name = target.path or source_name
+                target_name = "index.html" if target.path == "/" else target.path.lstrip("/") or source_name
                 target_path = ROOT / target_name
                 with self.subTest(source=source_name, href=href):
                     self.assertTrue(target_path.is_file())
@@ -290,7 +300,8 @@ class SiteStructureTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             for target, label in (("impressum.html", "Impressum"), ("datenschutz.html", "Datenschutz")):
                 with self.subTest(page=path.name, link=label):
-                    self.assertGreaterEqual(text.count(f'<a href="{target}">{label}</a>'), 2)
+                    prefix = "/" if path.name == "404.html" else ""
+                    self.assertGreaterEqual(text.count(f'<a href="{prefix}{target}">{label}</a>'), 2)
 
     def test_only_the_mandatory_pages_are_noindex(self) -> None:
         for name, page in self.parsed.items():

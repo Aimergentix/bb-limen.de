@@ -5,7 +5,7 @@ match: ["*.html"]
 errors_only: false
 ignore_re:
   - >-
-    ^"file:[^"]*/dist/[a-z0-9-]+\.html":\d+\.\d+-\d+\.\d+: info warning: Resource violates Content Security Policy \(meta tag\): external stylesheet "style\.css" blocked by "style-src" directive\.$
+    ^"file:[^"]*/dist/[a-z0-9-]+\.html":\d+\.\d+-\d+\.\d+: info warning: Resource violates Content Security Policy \(meta tag\): external stylesheet "(?:/)?style\.css" blocked by "style-src" directive\.$
   - >-
     ^"file:[^"]*/dist/index\.html":\d+\.\d+-\d+\.\d+: info warning: Inline script violates Content Security Policy \(meta tag\): blocked by "script-src" directive \(missing "'unsafe-inline'" or nonce/hash\)\.$
   - >-

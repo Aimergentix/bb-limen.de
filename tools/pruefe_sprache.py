@@ -94,8 +94,8 @@ class MainTextParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         tag = tag.lower()
         if tag == "main" and self.in_main:
-            if self.block_buffers:
-                raise ValueError("main endet innerhalb eines offenen Textblocks")
+            if self.stack or self.block_buffers:
+                raise ValueError("main endet innerhalb eines offenen HTML-Elements")
             self.in_main = False
             return
         if not self.in_main or tag in VOID_TAGS:
@@ -168,7 +168,7 @@ def pruefe(datei: str, zeige: bool = False, language: str = "einfach") -> bool:
     profil = LANGUAGES[language]
 
     print(
-        f"  {marke}{datei:22s} {len(ss):3d} Sätze · Mittel {mittel:5.1f}"
+        f"  {marke}{Path(datei).name:22s} {len(ss):3d} Sätze · Mittel {mittel:5.1f}"
         f" · längster {groesste:3d} · über {ZIEL_MAX}: {len(lang)} · {profil}"
     )
     if zeige:

@@ -193,6 +193,22 @@ class BuildTests(unittest.TestCase):
         self.change_catalog(lambda data: data["pages"].append(data["pages"][0]))
         self.assert_build_fails_without_writes()
 
+    def test_duplicate_catalog_keys_are_rejected(self) -> None:
+        """R-QUELLE-3: Mehrdeutige Katalogwerte dürfen nicht still gewinnen."""
+        path = self.work / "src/seiten.json"
+        path.write_text(path.read_text().replace('"sitemap": true',
+                                               '"sitemap": false, "sitemap": true', 1))
+        self.assert_build_fails_without_writes()
+
+    def test_misplaced_public_files_are_rejected(self) -> None:
+        """R-QUELLE-1, R-QUELLE-3: Keine wirkungslosen Zweitfassungen im Root."""
+        for name in ("robots.txt", "sitemap.xml", "index.html", "style.css"):
+            with self.subTest(file=name):
+                path = self.work / name
+                path.write_text("versehentlich hier geändert", encoding="utf-8")
+                self.assert_build_fails_without_writes()
+                path.unlink()
+
     def test_invalid_catalog_values_are_rejected(self) -> None:
         original = (self.work / "src/seiten.json").read_bytes()
         for field, value in (("file", "../index.html"), ("language", "unbekannt"),

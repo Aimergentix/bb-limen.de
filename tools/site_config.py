@@ -26,9 +26,18 @@ def read_source(path: Path) -> bytes:
     return data
 
 
+def unique_object(pairs: list[tuple]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"seiten.json: doppelter Schlüssel {key}")
+        result[key] = value
+    return result
+
+
 def load_catalog(root: Path = ROOT) -> dict:
     path = root / "src/seiten.json"
-    catalog = json.loads(read_source(path))
+    catalog = json.loads(read_source(path), object_pairs_hook=unique_object)
     if not isinstance(catalog, dict) or set(catalog) != {"pages", "public_files"}:
         raise ValueError(f"{path}: erwartet pages und public_files")
     pages = catalog["pages"]
