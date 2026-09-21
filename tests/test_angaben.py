@@ -39,7 +39,7 @@ STELLEN_ANSCHRIFT = [
     "pages/leichte-sprache.html", "pages/impressum.html",
     "pages/datenschutz.html",
 ]
-STELLEN_GEMEINDEZAHL = [
+STELLEN_EINZUGSGEBIET = [
     "pages/index.html", "pages/betreuung.html", "pages/fachkreise.html",
 ]
 # Die Sprechzeiten stehen je Sprachebene in anderem Wortlaut. Festgehalten
@@ -234,11 +234,15 @@ class AngabenTests(unittest.TestCase):
             with self.subTest(stelle=stelle):
                 self.assertNotRegex(text, r"\d{1,2}(?:[:.]\d{2})? Uhr\b")
 
-    def test_gemeindezahl_steht_im_fliesstext(self) -> None:
-        """R-ANGABEN-2."""
-        for stelle in STELLEN_GEMEINDEZAHL:
+    def test_einzugsgebiet_steht_im_fliesstext_und_genannte_zahlen_stimmen(self) -> None:
+        """R-ANGABEN-2, R-REDAKTION-1: Gebiet prüfen, keinen Wortlaut erzwingen."""
+        for stelle in STELLEN_EINZUGSGEBIET:
             with self.subTest(stelle=stelle):
-                self.assertRegex(quelle(stelle), rf"\b{GEMEINDEN} Städten? und Gemeinden")
+                # Nur den individuellen Inhalt prüfen, nicht die Kolumne
+                # oder den JSON-LD-Block im Kopf der Startseite.
+                main = re.search(r"<main\b[^>]*>(.*?)</main>", quelle(stelle), re.S)[1]
+                self.assertIn("Lörrach", main)
+                self.assertIn("Waldshut", main)
         for pfad in ALLE:
             for zahl in re.findall(r"\b(\d+) Städten? und Gemeinden", pfad.read_text(encoding="utf-8")):
                 with self.subTest(datei=pfad.name):

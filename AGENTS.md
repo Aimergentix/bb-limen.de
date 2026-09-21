@@ -176,7 +176,7 @@ werden (R-ORDNUNG-6).
 | Kennung | Angabe | Steht in |
 | --- | --- | --- |
 | **R-ANGABEN-1** | Telefonnummer und E-Mail | `src/partials/rail.html`, `src/partials/callbar.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, `404.html`, `dist/bb-limen.vcf`, JSON-LD `telephone` und `email` |
-| **R-ANGABEN-2** | Einzugsgebiet, 67 Gemeinden | im Fließtext von `index.html`, `betreuung.html` und `fachkreise.html` und in `index.html` im JSON-LD unter `areaServed` |
+| **R-ANGABEN-2** | Einzugsgebiet: zwei Landkreise, 67 Gemeinden | beide Landkreise im Fließtext von `index.html`, `betreuung.html` und `fachkreise.html`; alle Gemeinden in `index.html` im JSON-LD unter `areaServed`. Nennt ein Text die Zahl, MUSS sie mit dem JSON-LD übereinstimmen |
 | **R-ANGABEN-3** | Anschrift | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, JSON-LD `address`, `dist/bb-limen.vcf` |
 | **R-ANGABEN-4** | Sprechzeiten | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html` — je Sprachebene im eigenen Wortlaut |
 | **R-ANGABEN-5** | Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` im Katalog; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
