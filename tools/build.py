@@ -12,6 +12,7 @@ import sys
 import tempfile
 
 from site_config import ROOT, PARTIALS, base_url, load_catalog, read_source
+from bureau_data import load_office, render_office, vcard
 
 INCLUDE = re.compile(r"<!-- @include ([a-z-]+) -->\n?")
 CURRENT = re.compile(r"%%CUR-([a-z0-9-]+)%%")
@@ -31,6 +32,7 @@ def sitemap(catalog: dict, root: Path) -> bytes:
 
 def render(root: Path = ROOT) -> dict[str, bytes]:
     catalog = load_catalog(root)
+    office = load_office(root)
     pages = catalog["pages"]
     names = {page["file"] for page in pages}
     for directory, expected in (
@@ -77,9 +79,10 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
         if "%%CUR-" in text:
             raise ValueError(f"{path}: ungültiger Navigationsplatzhalter")
-        result[page["file"]] = text.encode("utf-8")
+        result[page["file"]] = render_office(text, office).encode("utf-8")
     result["style.css"] = read_source(root / "src/style.css")
     result["sitemap.xml"] = sitemap(catalog, root)
+    result["bb-limen.vcf"] = vcard(result["index.html"].decode("utf-8"))
     for name in catalog["public_files"]:
         result[name] = read_source(root / "public" / name)
     return result

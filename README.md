@@ -34,7 +34,7 @@ tools/pruefen.sh
 | einen Seitentext oder Seitentitel ändern | `src/pages/<seite>.html` | Sprachebene der Seite: R-SPRACHE-1; Paragraphen: R-RECHT-1 |
 | Navigation, Kolumne oder Anrufleiste ändern | `src/partials/rail.html`, `src/partials/callbar.html` | wirkt auf alle Seiten; R-BESTAND-1 |
 | Farben oder Abstände ändern | `src/style.css` | R-FARBE-1 bis R-FARBE-5; hell, dunkel und schmal ansehen |
-| Telefonnummer, Anschrift oder Sprechzeiten ändern | alle Stellen aus R-ANGABEN-1 bis R-ANGABEN-6 | Erwartungswerte in `tests/site_support.py` nachziehen |
+| Telefonnummer, E-Mail, Anschrift oder Sprechzeiten ändern | `src/bureauangaben.json` | unabhängige Erwartungen in `tests/site_support.py` und `tests/test_angaben.py`; [Büroangaben](docs/architektur.md#büroangaben) |
 | eine Seite hinzufügen | `src/pages/`, `src/seiten.json`, Navigation, Bestandstests | [Erweiterung](docs/architektur.md#erweiterung) |
 | einen Sitemap-Stand ändern | `lastmod` in `src/seiten.json` | R-ORDNUNG-6 |
 | Signet oder Vorschaubild ändern | `src/grafik/` | danach `tools/bilder-erzeugen.sh`; braucht Chromium |

@@ -18,15 +18,15 @@
 	    "name": "BB Limen · A+M Möller",
 	    "description": "Büro in Gründung für rechtliche Betreuung nach §§ 1814 ff. BGB. Die berufliche Tätigkeit beginnt erst nach Erteilung der personenbezogenen Registrierungen.",
     "url": "https://bb-limen.de/",
-    "telephone": "+4917642904270",
-    "email": "info@bb-limen.de",
+    "telephone": "%%BUREAU_JSON:telefon.e164%%",
+    "email": "%%BUREAU_JSON:email%%",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Am Dreispitz 6/6-1",
-      "postalCode": "79589",
-      "addressLocality": "Binzen",
-      "addressRegion": "Baden-Württemberg",
-      "addressCountry": "DE"
+      "streetAddress": "%%BUREAU_JSON:anschrift.strasse%%",
+      "postalCode": "%%BUREAU_JSON:anschrift.plz%%",
+      "addressLocality": "%%BUREAU_JSON:anschrift.ort%%",
+      "addressRegion": "%%BUREAU_JSON:anschrift.bundesland%%",
+      "addressCountry": "%%BUREAU_JSON:anschrift.land%%"
     },
     "founder": [
       {
@@ -490,13 +490,13 @@
 
     <dl class="contact">
       <dt>Telefon</dt>
-      <dd><a href="tel:+4917642904270">+49 176 42904270</a> — Büro</dd>
+      <dd><a href="tel:%%BUREAU:telefon.e164%%">%%BUREAU:telefon.sichtbar%%</a> — Büro</dd>
       <dt>Sprechzeiten</dt>
-      <dd>Dienstag, Mittwoch und Donnerstag von 10 bis 18 Uhr.<br>Sonntag und Montag nach Vereinbarung.</dd>
+      <dd>%%BUREAU:sprechzeiten.text.regulaer%%<br>%%BUREAU:sprechzeiten.text.termin%%</dd>
       <dt>E-Mail</dt>
-      <dd><a href="mailto:info@bb-limen.de">info@bb-limen.de</a></dd>
+      <dd><a href="mailto:%%BUREAU:email%%">%%BUREAU:email%%</a></dd>
       <dt>Post</dt>
-      <dd>BB Limen, A+M Möller, Am Dreispitz 6/6-1, 79589 Binzen</dd>
+      <dd>BB Limen, A+M Möller, %%BUREAU:anschrift.strasse%%, %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%</dd>
     </dl>
 
     <p><a href="bb-limen.vcf" download>Kontaktdaten speichern (Visitenkarte)</a></p>

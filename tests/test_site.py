@@ -276,7 +276,8 @@ class SiteStructureTests(unittest.TestCase):
         self.assertNotIn("Berufliche Betreuung, Binzen", foot)
 
     def test_mobile_contactbar_uses_direct_contact_links(self) -> None:
-        callbar = (SOURCE / "partials" / "callbar.html").read_text(encoding="utf-8")
+        text = (ROOT / "index.html").read_text(encoding="utf-8")
+        callbar = re.search(r"<!-- #callbar -->(.*?)<!-- /#callbar -->", text, re.S)[1]
         self.assertIn(f'href="tel:{TELEFON_TECHNISCH}"', callbar)
         self.assertIn(f'href="mailto:{EMAIL}"', callbar)
         self.assertIn(f'aria-label="Büro BB Limen unter {TELEFON_SICHTBAR} anrufen"', callbar)

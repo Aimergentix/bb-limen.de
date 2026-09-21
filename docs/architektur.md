@@ -12,6 +12,7 @@ src/partials/      gemeinsame HTML-Bausteine
 src/style.css      ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/        bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json    Katalog: Seitenbestand, Sprachprofile, Sitemap, öffentliche Dateien
+src/bureauangaben.json  gemeinsame Kontaktangaben und strukturierte Sprechzeiten
 public/            bewusst öffentliche Dateien, unverändert kopiert
 dist/              die Ausgabe: vollständig erzeugt, unversioniert
 tools/             Build, Prüfung, Bildexport und Commit-Hook
@@ -30,6 +31,8 @@ wird ausschließlich `dist/`.
 
 ```text
 src/pages/*.html + src/partials/*.html ──> vollständige HTML-Seiten
+src/bureauangaben.json ─────────────────> Büroplatzhalter in HTML und JSON-LD
+erzeugtes JSON-LD der Startseite ───────> bb-limen.vcf
 src/style.css ──────────────────────────> style.css
 src/seiten.json + public/CNAME ─────────> sitemap.xml
 public/* (laut Katalog) ────────────────> unveränderte öffentliche Dateien
@@ -48,7 +51,9 @@ Buildwerkzeug.
 | Gemeinsame Navigation und Kontakt | `src/partials/` | eingebaut in jede Seite |
 | Gestaltung | `src/style.css` | `dist/style.css` |
 | Signet und Vorschaubild gestalten | `src/grafik/*.svg` | gezielter Export nach `public/` |
-| Fertige Bilder, vCard und robots.txt | `public/` | unverändert in `dist/` |
+| Fertige Bilder und robots.txt | `public/` | unverändert in `dist/` |
+| Telefon, E-Mail, Anschrift und Sprechzeiten | `src/bureauangaben.json` | sprach- und formatgerechte Werte in den HTML-Seiten |
+| Bürovisitenkarte | erzeugter Organization-Knoten der Startseite | `dist/bb-limen.vcf` |
 | Seitenbestand und Sprachprofil | `src/seiten.json` | Build und Prüfwerkzeuge |
 | Sitemap und Inhaltsstand | `src/seiten.json`, `public/CNAME` | `dist/sitemap.xml` |
 
@@ -85,10 +90,53 @@ die Marken `<!-- #rail -->` und `<!-- /#rail -->` den eingesetzten Baustein. In
 `rail.html` markiert der Build über `%%CUR-<seitenname>%%` den aktuellen
 Navigationspunkt.
 
+## Büroangaben
+
+`src/bureauangaben.json` enthält die fachlichen Werte. `tools/bureau_data.py`
+prüft sie und erzeugt die Darstellungen beim Build, ausschließlich mit der
+Python-Standardbibliothek. Die Datendatei wird nicht veröffentlicht.
+
+`telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
+`telefon.sichtbar` ihre lesbare Schreibweise. Beide müssen dieselben Ziffern
+enthalten. `email` enthält die Büro-E-Mail-Adresse. `anschrift` hat die Felder
+`strasse`, `plz`, `ort`, `bundesland` und `land` (DE).
+
+Unter `sprechzeiten.regulaer` stehen `tage` als Liste deutscher Wochentage
+und `von` sowie `bis` als HH:MM. `nach_vereinbarung` enthält die Termintage.
+Beide Tageslisten sind nicht leer, enthalten keine Wiederholungen und
+überschneiden sich nicht. Ein reguläres Zeitfenster gilt für alle regulären
+Tage. Geteilte oder je Wochentag verschiedene Zeiten benötigen eine bewusste
+Erweiterung des Datenformats und der Sprachvorlagen. Die Reihenfolge der
+Wochentage bestimmt die Ausgabe. Die Leichte Sprache behält ihre kurzen,
+zeilenweise getrennten Sätze. Ihre Zielgruppenprüfung bleibt davon unabhängig.
+
+HTML verwendet beispielsweise `%%BUREAU:telefon.e164%%`,
+`%%BUREAU:email%%` oder `%%BUREAU:anschrift.strasse%%`.
+Sprechzeiten verwenden die Fassungen `sprechzeiten.kurz`, `sprechzeiten.text`
+und `sprechzeiten.leicht`; die vorhandenen Seiten zeigen deren einzelne
+Textfelder. Werte werden für HTML einschließlich Attributen maskiert.
+Im JSON-LD steht ein vollständiger String wie
+`"%%BUREAU_JSON:telefon.e164%%"`. Der Build setzt einen korrekt maskierten
+JSON-String ein und schützt den umgebenden Script-Block. Fehlende Felder,
+unbekannte Schlüssel, widersprüchliche Werte und nicht aufgelöste
+Büroplatzhalter brechen den Build vor dem Schreiben ab.
+
+Die vCard wird aus dem erzeugten Organization-Knoten aufgebaut. Name und
+Websiteadresse bleiben dort redaktionell festgelegt, die Kontaktwerte kommen
+aus den Büroangaben. Der Generator maskiert vCard-Sonderzeichen, faltet lange
+Zeilen an UTF-8-Zeichengrenzen und schreibt CRLF. Die öffentliche Adresse der
+Visitenkarte bleibt gleich. Sie gehört zu den erzeugten Dateien und steht
+deshalb nicht unter `public_files`.
+
+Nach einer Datenänderung werden die unabhängigen Testwerte aktualisiert und
+die erzeugten Verwendungen geprüft. Ein reiner Umbau der Vorlagen ändert
+keinen Inhaltsstand; eine geänderte Büroangabe erfordert dagegen die Prüfung
+der betroffenen Standdaten nach R-ANGABEN-5 und R-ORDNUNG-6.
+
 ## Verhalten des Builds
 
-Der Build prüft Katalog, Dateibestand, Bausteine, Include-Reihenfolge und
-Navigationsplatzhalter, bevor er schreibt. Er erzeugt erst ein vollständiges
+Der Build prüft Katalog, Büroangaben, Dateibestand, Bausteine, Include-Reihenfolge
+und Platzhalter, bevor er schreibt. Er erzeugt erst ein vollständiges
 Arbeitsverzeichnis und ersetzt dann `dist/`. Bei fehlerhaften Eingaben bleiben
 die Quellen und die letzte erfolgreiche Ausgabe erhalten. Nicht mehr benötigte
 Ausgabedateien verschwinden beim nächsten erfolgreichen Build. Dateien, die in
@@ -118,7 +166,8 @@ ihre eigene Richtigkeit.
 | --- | --- |
 | `tests/test_build.py` | Build: Wiederholbarkeit, Fehleingaben, Schutz der Quellen und fremder Verzeichnisse |
 | `tests/test_site.py` | fertige Seiten: Bestand, Verweise, Überschriften, CSP, JSON-LD, Pflichtverweise |
-| `tests/test_angaben.py` | mehrfach gepflegte Büroangaben |
+| `tests/test_angaben.py` | Verwendungen der gemeinsamen Büroangaben |
+| `tests/test_bureau_data.py` | Sprachvarianten, Formatmaskierung und Schutz vor erneuter Mehrfachpflege |
 | `tests/test_begriffe.py` | Formulierungen und Zeichen, die hier schon einmal falsch waren |
 | `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel |
 | `tests/test_pruefe_sprache.py` | die Sprachmessung selbst |

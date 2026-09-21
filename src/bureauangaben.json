@@ -1,0 +1,22 @@
+{
+  "telefon": {
+    "e164": "+4917642904270",
+    "sichtbar": "+49 176 4290 4270"
+  },
+  "email": "info@bb-limen.de",
+  "anschrift": {
+    "strasse": "Am Dreispitz 6/6-1",
+    "plz": "79589",
+    "ort": "Binzen",
+    "bundesland": "Baden-Württemberg",
+    "land": "DE"
+  },
+  "sprechzeiten": {
+    "regulaer": {
+      "tage": ["Dienstag", "Donnerstag"],
+      "von": "10:00",
+      "bis": "12:00"
+    },
+    "nach_vereinbarung": ["Sonntag", "Montag", "Mittwoch"]
+  }
+}

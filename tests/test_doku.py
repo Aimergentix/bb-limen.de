@@ -44,7 +44,7 @@ SEARCH_DIRECTORIES = [
     "tools/hooks", "tests", "docs", ".github", ".github/workflows",
 ]
 # Entsteht erst beim Build und liegt deshalb in keinem Quellverzeichnis.
-GENERATED = {"sitemap.xml"}
+GENERATED = {"sitemap.xml", "bb-limen.vcf"}
 # Unversioniert und lokal; darf fehlen.
 LOCAL_PREFIXES = ("dist/", "docs/lokal/", "reports/", "tmp/")
 FILE_NAME = re.compile(r"[\w.-]+\.(?:html|css|json|py|sh|yml|md|svg|png|ico|vcf|txt|xml)")

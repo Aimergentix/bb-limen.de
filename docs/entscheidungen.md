@@ -178,3 +178,25 @@ Der Gedanke dahinter steht im
 Offene Punkte liegen in `docs/lokal/offen.md` und damit nur lokal: Das
 Repository ist öffentlich, und offene Rechts- und Geschäftsfragen eines Büros
 gehören nicht hinein. Der Preis: Assistenten in der Cloud sehen sie nicht.
+
+## E-13 · Büroangaben als gemeinsame Datenquelle
+
+21.09.2026. Regeln: R-ANGABEN-1, R-ANGABEN-3, R-ANGABEN-4 und R-ANGABEN-6.
+
+Telefonnummer, E-Mail, Anschrift und Sprechzeiten wurden an mehreren Stellen
+von Hand gepflegt. Auf Wunsch des Büros wurden zuerst die Sprechzeiten und
+danach die übrigen Kontaktangaben nach `src/bureauangaben.json` überführt.
+Der vorhandene Python-Build erzeugt daraus die passenden Sprachfassungen und
+maskiert Werte nach ihrem Ausgabeformat. Die vCard entsteht aus dem erzeugten
+Organization-Knoten; die bisherige Kopierdatei unter `public/` entfällt.
+
+Die unabhängigen Erwartungswerte der Tests bleiben erhalten. Zusätzlich
+prüfen Änderungen an Testdaten, ob alle Verwendungen nachgezogen werden und
+fehlerhafte Eingaben die letzte erfolgreiche Ausgabe erhalten. Die Migration
+ändert weder die veröffentlichten Inhalte noch deren redaktionelle Standdaten.
+Der Datenfluss steht unter [Büroangaben](architektur.md#büroangaben).
+
+Im Anschluss hat das Büro die Sprechzeiten in der neuen Datendatei geändert
+und die sichtbare Telefonnummer neu gruppiert. Diese Inhaltsänderung ist
+getrennt von der Migration zu bewerten; die betroffenen Inhaltsstände werden
+auf den 21.09.2026 gesetzt. Die Prüferwartungen folgen den geänderten Angaben.

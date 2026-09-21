@@ -32,7 +32,7 @@ check_output(render(), SITE)
 
 # Erwartete Büroangaben (AGENTS.md, R-ANGABEN).
 TELEFON_TECHNISCH = "+4917642904270"
-TELEFON_SICHTBAR = "+49 176 42904270"
+TELEFON_SICHTBAR = "+49 176 4290 4270"
 EMAIL = "info@bb-limen.de"
 STRASSE = "Am Dreispitz 6/6-1"
 PLZ_ORT = ("79589", "Binzen")

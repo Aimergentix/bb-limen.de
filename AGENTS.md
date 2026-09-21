@@ -143,25 +143,28 @@ Einzelheiten und Messung: [docs/redaktion.md](docs/redaktion.md).
 
 Bedeutung der Farben: [docs/gestaltung.md](docs/gestaltung.md).
 
-## 6. Mehrfach gepflegte Angaben
+## 6. Gemeinsame Angaben
 
-Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte. Jede
-Angabe MUSS an allen genannten Stellen stehen und übereinstimmen. Nach einer
-Änderung gegenzählen, nicht schätzen — und die Erwartungswerte in
-`tests/site_support.py` und `tests/test_angaben.py` nachziehen.
+Telefonnummer, E-Mail, Anschrift und Sprechzeiten MÜSSEN ausschließlich in
+`src/bureauangaben.json` gepflegt werden. Seiten und Bausteine MÜSSEN diese
+Werte über Büroplatzhalter beziehen. Jede Angabe MUSS in der erzeugten Ausgabe
+an allen genannten Stellen stehen und übereinstimmen. Nach einer Änderung
+MÜSSEN die unabhängigen Erwartungswerte in `tests/site_support.py` und
+`tests/test_angaben.py` nachgezogen und die betroffenen Inhaltsstände geprüft
+werden (R-ORDNUNG-6).
 
 | Kennung | Angabe | Steht in |
 | --- | --- | --- |
-| **R-ANGABEN-1** | Telefonnummer | `src/partials/rail.html`, `src/partials/callbar.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, `404.html`, `public/bb-limen.vcf`, JSON-LD `telephone` |
+| **R-ANGABEN-1** | Telefonnummer und E-Mail | `src/partials/rail.html`, `src/partials/callbar.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, `404.html`, `dist/bb-limen.vcf`, JSON-LD `telephone` und `email` |
 | **R-ANGABEN-2** | Einzugsgebiet, 67 Gemeinden | im Fließtext von `index.html`, `betreuung.html` und `fachkreise.html` und in `index.html` im JSON-LD unter `areaServed` |
-| **R-ANGABEN-3** | Anschrift | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, JSON-LD `address`, `public/bb-limen.vcf` |
+| **R-ANGABEN-3** | Anschrift | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, JSON-LD `address`, `dist/bb-limen.vcf` |
 | **R-ANGABEN-4** | Sprechzeiten | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html` — je Sprachebene im eigenen Wortlaut |
 | **R-ANGABEN-5** | Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` im Katalog; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
 
-- **R-ANGABEN-6** `public/bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte.
+- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame Bürovisitenkarte.
   Name, Telefonnummer, E-Mail, Anschrift und Website MÜSSEN mit dem JSON-LD der
   Startseite übereinstimmen. Die Datei MUSS in UTF-8 mit CRLF-Zeilenenden
-  bleiben; sie DARF NICHT in ein Suchen-und-Ersetzen über viele Dateien geraten.
+  bleiben; eine zweite, manuell gepflegte vCard DARF NICHT hinzukommen.
 
 ## 7. Bestand, der bleibt
 

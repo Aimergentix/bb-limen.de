@@ -254,18 +254,18 @@
 
     <dl class="contact">
       <dt>Telefon</dt>
-      <dd><a href="tel:+4917642904270">+49 176 42904270</a><br>Das ist die Nummer vom Büro.</dd>
+      <dd><a href="tel:%%BUREAU:telefon.e164%%">%%BUREAU:telefon.sichtbar%%</a><br>Das ist die Nummer vom Büro.</dd>
       <dt>Wann?</dt>
       <dd>
-        Am Dienstag, Mittwoch und Donnerstag.<br>
-        Von 10 Uhr bis 18 Uhr.<br>
-        Am Sonntag und am Montag geht es auch.<br>
-        Aber nur mit einem Termin.
+        %%BUREAU:sprechzeiten.leicht.tage%%<br>
+        %%BUREAU:sprechzeiten.leicht.zeit%%<br>
+        %%BUREAU:sprechzeiten.leicht.termin%%<br>
+        %%BUREAU:sprechzeiten.leicht.hinweis%%
       </dd>
       <dt>E-Mail</dt>
-      <dd><a href="mailto:info@bb-limen.de">info@bb-limen.de</a></dd>
+      <dd><a href="mailto:%%BUREAU:email%%">%%BUREAU:email%%</a></dd>
       <dt>Post</dt>
-      <dd>BB Limen, A+M Möller<br>Am Dreispitz 6/6-1<br>79589 Binzen</dd>
+      <dd>BB Limen, A+M Möller<br>%%BUREAU:anschrift.strasse%%<br>%%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%</dd>
     </dl>
 
     <p>

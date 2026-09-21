@@ -1,8 +1,8 @@
 """Hält die Angaben zusammen, die an mehreren Stellen stehen.
 
-AGENTS.md (R-ANGABEN) nennt sie die klassische Bruchstelle: ein Suchen-und-Ersetzen
-erwischt die Hälfte, und danach steht in der Kolumne eine andere Nummer
-als im Impressum. Diese Datei zählt nach, statt zu schätzen.
+R-ANGABEN verlangt übereinstimmende Werte an jeder vorgesehenen Stelle.
+Unabhängige Erwartungen prüfen die erzeugten Inhalte einschließlich JSON-LD
+und Bürovisitenkarte. Die Bausteine werden für Seitentests ausgeblendet.
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from site_support import (
 )
 SEITEN = sorted(ROOT.glob("*.html"))
 BAUSTEINE = sorted((SOURCE / "partials").glob("*.html"))
-ALLE = SEITEN + BAUSTEINE
+ALLE = SEITEN
 
 # Fremde Nummern, die bewusst auf der Seite stehen. Wer eine hinzufügt,
 # trägt sie hier ein — sonst fällt sie auf, und das ist der Sinn.
@@ -27,8 +27,8 @@ FREMDE_NUMMERN = {
 }
 
 # Wo jede Angabe laut AGENTS.md (R-ANGABEN) stehen MUSS. Geprüft wird die
-# Quelle der Seite, nicht die fertige Seite: Dort steht die Kolumne mit
-# Nummer und Anschrift ohnehin überall und würde jede Lücke verdecken.
+# erzeugte Seite ohne Bausteine: Die Kolumne mit Nummer und Anschrift
+# würde sonst jede Lücke im eigentlichen Seiteninhalt verdecken.
 STELLEN_TELEFON = [
     "partials/rail.html", "partials/callbar.html", "pages/index.html",
     "pages/fachkreise.html", "pages/leichte-sprache.html",
@@ -46,21 +46,26 @@ STELLEN_GEMEINDEZAHL = [
 # ist deshalb der Wortlaut je Stelle, nicht ein gemeinsamer.
 SPRECHZEITEN = {
     "partials/rail.html": [
-        "Di–Do 10–18 Uhr", "So, Mo nach Vereinbarung"],
+        "Di, Do 10–12 Uhr", "So, Mo, Mi nach Vereinbarung"],
     "pages/index.html": [
-        "Dienstag, Mittwoch und Donnerstag von 10 bis 18 Uhr.",
-        "Sonntag und Montag nach Vereinbarung."],
+        "Dienstag und Donnerstag von 10 bis 12 Uhr.",
+        "Sonntag, Montag und Mittwoch nach Vereinbarung."],
     "pages/fachkreise.html": [
-        "Dienstag, Mittwoch und Donnerstag von 10 bis 18 Uhr.",
-        "Sonntag und Montag nach Vereinbarung."],
+        "Dienstag und Donnerstag von 10 bis 12 Uhr.",
+        "Sonntag, Montag und Mittwoch nach Vereinbarung."],
     "pages/leichte-sprache.html": [
-        "Am Dienstag, Mittwoch und Donnerstag.", "Von 10 Uhr bis 18 Uhr.",
-        "Am Sonntag und am Montag geht es auch.", "Aber nur mit einem Termin."],
+        "Am Dienstag und Donnerstag.", "Von 10 Uhr bis 12 Uhr.",
+        "Am Sonntag, am Montag und am Mittwoch geht es auch.", "Aber nur mit einem Termin."],
 }
 
 
 def quelle(stelle: str) -> str:
-    return (SOURCE / stelle).read_text(encoding="utf-8")
+    kind, name = stelle.split("/")
+    text = (ROOT / ("index.html" if kind == "partials" else name)).read_text(encoding="utf-8")
+    if kind == "partials":
+        block = name.removesuffix(".html")
+        return re.search(rf"<!-- #{block} -->(.*?)<!-- /#{block} -->", text, re.S)[1]
+    return re.sub(r"<!-- #([a-z-]+) -->.*?<!-- /#\1 -->", "", text, flags=re.S)
 
 
 def organisation() -> dict:
@@ -134,10 +139,9 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(anschrift["postalCode"], PLZ_ORT[0])
         self.assertEqual(anschrift["addressLocality"], PLZ_ORT[1])
 
-        for path in (SOURCE / "partials/rail.html", ROOT / "impressum.html"):
-            name = path.name
-            text = path.read_text(encoding="utf-8")
-            with self.subTest(datei=name):
+        for stelle in ("partials/rail.html", "pages/impressum.html"):
+            text = quelle(stelle)
+            with self.subTest(datei=stelle):
                 self.assertIn(STRASSE, text)
                 self.assertIn(PLZ_ORT[0], text)
                 self.assertIn(PLZ_ORT[1], text)
@@ -198,7 +202,8 @@ class AngabenTests(unittest.TestCase):
         for stelle in STELLEN_TELEFON:
             with self.subTest(stelle=stelle):
                 self.assertIn(f'href="tel:{TELEFON_TECHNISCH}"', quelle(stelle))
-        karte = (SOURCE.parent / "public/bb-limen.vcf").read_text(encoding="utf-8")
+                self.assertIn(f'href="mailto:{EMAIL}"', quelle(stelle))
+        karte = (ROOT / "bb-limen.vcf").read_text(encoding="utf-8")
         self.assertIn(TELEFON_TECHNISCH, karte)
 
     def test_anschrift_steht_an_jeder_vertragsstelle(self) -> None:
@@ -223,7 +228,7 @@ class AngabenTests(unittest.TestCase):
         und gehört dann in SPRECHZEITEN und in AGENTS.md."""
         for pfad in sorted((SOURCE / "pages").glob("*.html")) + BAUSTEINE:
             stelle = f"{pfad.parent.name}/{pfad.name}"
-            text = pfad.read_text(encoding="utf-8")
+            text = quelle(stelle)
             for zeile in SPRECHZEITEN.get(stelle, []):
                 text = text.replace(zeile, "")
             with self.subTest(stelle=stelle):
