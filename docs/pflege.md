@@ -159,7 +159,8 @@ das Paket auf einem neuen CI-Läufer ausfällt — dann auf das npm-Paket
 
 Vorschaubild und die beiden Symbole entstehen aus den SVG-Quellen in
 `src/grafik/` und liegen fertig in `public/`, damit der Build keinen Browser
-braucht. Nach einer Änderung an Signet oder Palette:
+braucht. Die SVG-Quellen tragen die Farben der Palette als feste Werte (siehe
+„Gestaltung"); nach jeder Änderung an ihnen:
 
 ```sh
 tools/bilder-erzeugen.sh
@@ -282,6 +283,14 @@ PALETTE in `src/style.css` (R-FARBE-1).
   keine Bedienfarbe.
 - **Terrakotta** (`--leicht-ink`) und `--st-1` bis `--st-5` — nur auf der
   Leichte-Sprache-Seite; Farbe hilft dort beim Wiederfinden.
+
+Einige Stellen können den Block PALETTE nicht lesen und tragen seine Werte
+als Kopie: `theme-color` in `src/partials/head.html` (`--paper`, hell und
+dunkel) und die SVG-Quellen in `src/grafik/` für Signet und Vorschaubild. Wer
+die Palette ändert, zieht diese Kopien nach und erzeugt die Bilder neu. Das
+Favicon als Datei-URI in `head.html` hat einen eigenen Farbton, der zu keiner
+Variablen gehört. Der Druck hat im Block PALETTE einen eigenen Satz in Schwarz
+und Weiß.
 
 Das Zierzeichen zwischen den Haarlinien ist dasselbe Blatt wie die Marke der
 Kolumne, als SVG (`.zierblatt`). Auf schmalen Bildschirmen wird aus der

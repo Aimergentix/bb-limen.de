@@ -38,7 +38,7 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 | einen Seitentext oder Seitentitel ändern | `src/pages/<seite>.html` |
 | Telefonnummer, E-Mail, Anschrift oder Sprechzeiten ändern | `src/bureauangaben.json` — nur dort, alle Seiten folgen |
 | Navigation, Kolumne oder Anrufleiste ändern | `src/partials/rail.html`, `src/partials/callbar.html` — wirkt auf alle Seiten |
-| Farben oder Abstände ändern | `src/style.css`; danach hell, dunkel und schmal ansehen |
+| Farben oder Abstände ändern | `src/style.css`, Block PALETTE; die Kopien der Werte in `src/partials/head.html` und `src/grafik/` nachziehen ([docs/pflege.md](docs/pflege.md#gestaltung)); danach hell, dunkel und schmal ansehen |
 | eine Gemeinde ergänzen oder streichen | JSON-LD in `src/pages/index.html`, Liste `areaServed` |
 | Signet oder Vorschaubild ändern | `src/grafik/`, danach `tools/bilder-erzeugen.sh` (braucht Chromium) |
 | eine Seite hinzufügen | [docs/pflege.md](docs/pflege.md#eine-seite-hinzufügen) |
@@ -55,9 +55,11 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
-1. `impressum.html`: im Personenblock die Zeile „Registrierung … beantragt",
-   darunter der Absatz der Person mit Stand-Datum und Registrierungsnummer,
-   und der Satz „Bis zur Erteilung …".
+1. `impressum.html`: unter „Anbieter" der Absatz „… bereiten … ihre Tätigkeit
+   … vor. Jede Person wird ihren Beruf eigenständig ausüben …", im
+   Personenblock die Zeile „Registrierung … beantragt", darunter der Absatz
+   der Person mit Stand-Datum und Registrierungsnummer, und der Satz „Bis zur
+   Erteilung …".
 2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
    `aufgaben.html`, `vorsorge.html` und `fachkreise.html` (R-BESTAND-3).
 3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
