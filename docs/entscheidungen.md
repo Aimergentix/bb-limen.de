@@ -200,3 +200,37 @@ Im Anschluss hat das Büro die Sprechzeiten in der neuen Datendatei geändert
 und die sichtbare Telefonnummer neu gruppiert. Diese Inhaltsänderung ist
 getrennt von der Migration zu bewerten; die betroffenen Inhaltsstände werden
 auf den 21.09.2026 gesetzt. Die Prüferwartungen folgen den geänderten Angaben.
+
+## E-14 · Die Fehlerseite kommt ohne `base` aus
+
+21.09.2026. Regeln: R-QUELLE-1, R-QUELLE-3.
+
+`404.html` trug `<base href="/">`, damit Stylesheet und Navigation auch unter
+`/ein/tiefer/pfad/` funktionieren. Das Element lenkt aber jeden relativen
+Verweis um, auch den Sprunglink: „Zum Inhalt springen" führte von der
+Fehlerseite auf die Startseite. Wer mit der Tastatur oder einem Screenreader
+unterwegs ist, verlor damit die Seite, auf der er gerade war.
+
+Seitdem setzt der Build in dieser einen Seite die relativen Dateiverweise an
+die Domainwurzel und lässt reine Sprungziele stehen. Die Quelle bleibt wie
+jede andere Seite geschrieben; die Bausteine brauchen keine Sonderfassung.
+Die Validator-Ausnahme für das eigene Stylesheet nennt deshalb beide
+Schreibweisen, `style.css` und `/style.css`.
+
+Im selben Zug lehnt der Build Dateien im Wurzelverzeichnis ab, die wie
+veröffentlichte Dateien heißen. Anlass waren ein `robots.txt` und ein
+`sitemap.xml` neben dem README: nie ausgeliefert, mit den Pflichtseiten in der
+Sitemap und damit im Widerspruch zu R-BESTAND-4. Maßgeblich bleiben
+`public/robots.txt` und die erzeugte Sitemap.
+
+## E-15 · Die Gemeindezahl ist im Fließtext keine Pflichtangabe
+
+21.09.2026. Regeln: R-ANGABEN-2, R-REDAKTION-1.
+
+Das Büro hat den Gebietssatz der Startseite neu gefasst, ohne die Zahl der
+Gemeinden. Der Test verlangte bis dahin auf drei Seiten den Wortlaut
+„67 Städte und Gemeinden" und hätte die redaktionelle Fassung blockiert.
+Verlangt wird seitdem, was sich sachlich prüfen lässt: Beide Landkreise stehen
+im Fließtext der drei Seiten, das JSON-LD führt alle Gemeinden, und wo der
+Text eine Zahl nennt, stimmt sie mit dem JSON-LD überein. Den Wortlaut
+bestimmt das Büro.

@@ -142,7 +142,18 @@ die Quellen und die letzte erfolgreiche Ausgabe erhalten. Nicht mehr benötigte
 Ausgabedateien verschwinden beim nächsten erfolgreichen Build. Dateien, die in
 `src/pages/`, `src/partials/` oder `public/` liegen, aber nicht eingetragen
 sind, führen zum Fehler; innerhalb des Repositorys ist ausschließlich `dist/`
-als Ausgabe erlaubt.
+als Ausgabe erlaubt. Dasselbe gilt für eine Datei im Wurzelverzeichnis, die
+wie eine Seite, eine öffentliche oder eine erzeugte Datei heißt — etwa
+`robots.txt` oder `sitemap.xml`: Sie sähe wie eine Quelle aus, würde aber nie
+veröffentlicht (R-QUELLE-1, R-QUELLE-3).
+
+GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
+`/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
+relativen Dateiverweise an die Domainwurzel (`/style.css`, `/index.html`).
+Der Sprunglink `#inhalt` bleibt unverändert und damit auf der Fehlerseite;
+warum kein `base`-Element, steht in [entscheidungen.md](entscheidungen.md)
+unter E-14. Lokal lässt sich die Fehlerseite deshalb nur über einen Server
+ansehen, nicht als Datei.
 
 Bei einem Buildfehler zuerst die genannte Quelldatei und Zeile bearbeiten.
 `tools/build.sh --check` meldet eine veränderte oder unvollständige Ausgabe,
@@ -172,6 +183,7 @@ ihre eigene Richtigkeit.
 | `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel |
 | `tests/test_pruefe_sprache.py` | die Sprachmessung selbst |
 | `tests/test_doku.py` | genannte Dateien, Verweise, Kennungen und Begriffe der Dokumentation |
+| `tests/test_tools.py` | Fehlerfälle von Bildexport und Verweisprüfung, mit nachgestelltem Browser und `curl` statt Netz |
 
 **Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook.
 Geprüft wird der Arbeitsbaum, nicht nur der Git-Index; der Hook verändert und
@@ -183,7 +195,10 @@ Prüfbefehl aus und validiert danach das fertige HTML. Auf `main` ruft
 
 **Einmal im Monat** baut `.github/workflows/verweise.yml` die Website und ruft
 mit `tools/verweise-pruefen.sh` ihre Verweise nach außen ab; das Skript läuft
-genauso lokal. Bei nicht erreichbaren Adressen entsteht ein Issue. Was dann zu tun ist, steht in
+genauso lokal. Es liest die Verweise mit einem HTML-Parser aus der Ausgabe,
+lässt nur die eigene Domain aus `public/CNAME` aus und wertet auch einen
+abgebrochenen Abruf als Fehler. Bei nicht erreichbaren Adressen entsteht ein
+Issue. Was dann zu tun ist, steht in
 [redaktion.md](redaktion.md#verweise-nach-außen-pflegen).
 
 ### HTML-Validierung
@@ -231,6 +246,10 @@ Palette neu rendern; das Skript braucht Chromium oder Chrome und Python:
 ```sh
 tools/bilder-erzeugen.sh
 ```
+
+Das Skript rendert in ein Arbeitsverzeichnis, prüft die Maße der drei Bilder
+und ersetzt die Dateien in `public/` erst danach. Bricht der Export ab, bleibt
+der versionierte Satz unverändert.
 
 ## Erweiterung
 

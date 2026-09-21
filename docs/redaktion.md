@@ -26,8 +26,8 @@ auf welcher er sich befindet:
   warum, steht in [entscheidungen.md](entscheidungen.md) unter E-03.
 
 Zum Begriffspaar Aufgabenkreis und Aufgabenbereich gilt R-RECHT-2. Eine
-abschließende Liste der Aufgabenbereiche gibt es nicht — Register VI auf
-`aufgaben.html` sagt das ausdrücklich.
+abschließende Liste der Aufgabenbereiche gibt es nicht — der Abschnitt „Die
+üblichen Bereiche" und Register VII auf `aufgaben.html` sagen das ausdrücklich.
 
 ## Satzlängen messen
 
@@ -67,7 +67,8 @@ Formulare werden verlinkt, nicht gehostet (R-VERBOT-2, Begründung E-02).
 
 Auf jeder Angabe steht der Stand des Dokuments. Ob die Adressen erreichbar
 sind, prüft `tools/verweise-pruefen.sh` — einmal im Monat von selbst als
-Workflow, der bei einem toten Verweis ein Issue anlegt, und jederzeit von Hand. Was er nicht prüft: ob der genannte Stand noch stimmt. Ein
+Workflow, der bei einem toten Verweis ein Issue anlegt, und jederzeit von
+Hand. Was er nicht prüft: ob der genannte Stand noch stimmt. Ein
 Ministerium kann dieselbe Adresse behalten und den Inhalt austauschen. Deshalb
 **zweimal im Jahr von Hand prüfen**, ob Verweis und Stand noch stimmen.
 
@@ -101,13 +102,25 @@ Betreuung führen. Wo der Gründungshinweis steht, regelt R-BESTAND-3.
 Befreiung nach § 4 Nr. 16 Satz 1 Buchstabe k UStG mit der Ausnahme für
 Leistungen nach § 1877 Abs. 3 BGB.
 
-**Vergütung.** Die Vergütungsangaben in `aufgaben.html` (sechzehn reguläre
-Fallpauschalen, 98 bis 427 Euro; Sondervergütung für Sterilisations- und
-Ergänzungsbetreuer) gelten nach dem zum 1. Januar 2026 geänderten VBVG.
-Die Tabelle ist die Anlage zu § 8 Abs. 1 VBVG (Fundstelle BGBl. 2025 I
-Nr. 109), die Bemessung regelt § 9 VBVG. Der Geldbetrag von
+**Vergütung.** Maßgeblich ist das zum 1. Januar 2026 geänderte VBVG: sechzehn
+reguläre Fallpauschalen von 98 bis 427 Euro in der Anlage zu § 8 Abs. 1 VBVG
+(Fundstelle BGBl. 2025 I Nr. 109); die Bemessung regelt § 9 VBVG.
+`aufgaben.html` nennt feste Monatspauschalen und einen Mittelwert. Der
+Mittelwert ist eine redaktionelle Angabe des Büros; er stützt sich nach dessen
+Angabe vom 21.09.2026 auf Erhebungen und ist nicht aus der Anlage errechnet
+(R-REDAKTION-1, R-REDAKTION-2). `fachkreise.html` nennt die seit 1. Januar 2026
+geltende Fassung und die Vergütung nach Zeitaufwand für Sterilisations- und
+Ergänzungsbetreuer (§ 11 Abs. 1 in Verbindung mit § 3 VBVG). Der Geldbetrag von
 grundsätzlich 10.000 Euro ist nur ein Teil des geschützten
 Vermögens. Bei der nächsten Anpassung der Gesetze alle Angaben nachziehen.
+
+**Ärztliche Zwangsmaßnahmen.** Der Krankenhausvorbehalt in § 1832 Abs. 1 Satz 1
+Nr. 7 BGB ist nach dem Beschluss des Bundesverfassungsgerichts vom 26.11.2024
+(1 BvL 1/24) mit dem Grundgesetz unvereinbar. Das bisherige Recht gilt fort,
+bis der Gesetzgeber neu regelt; die Frist dafür endet am 31.12.2026 (amtliche
+Fußnote zu § 1832 BGB, nachgeschlagen am 21.09.2026). Sobald die Neuregelung in
+Kraft tritt, die Aussagen zu § 1832 BGB in `fachkreise.html` und zu § 1820
+Abs. 2 BGB samt Formularhinweis in `vorsorge.html` neu nachschlagen (R-RECHT-4).
 
 **Gemeinsame Verantwortung.** Die veröffentlichte Aufgabenverteilung nach
 Art. 26 DSGVO entspricht der
@@ -121,5 +134,6 @@ nachziehen.
 (35 Gemeinden) und
 Waldshut (32 Gemeinden), zusammen 67. Die vollständige Liste steht an genau
 einer Stelle im JSON-LD unter `areaServed`. Bei einer Gebietsänderung bitte
-anpassen. Wo die Zahl außerdem steht, regelt R-ANGABEN-2; die Kurzfassung ohne
-Zahl — nur die beiden Landkreisnamen — steht in `src/partials/rail.html`.
+anpassen. Wo das Gebiet im Fließtext steht und dass eine dort genannte Zahl
+stimmen muss, regelt R-ANGABEN-2; die Kurzfassung ohne Zahl — nur die beiden
+Landkreisnamen — steht in `src/partials/rail.html`.
