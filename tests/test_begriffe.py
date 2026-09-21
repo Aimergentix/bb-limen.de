@@ -48,10 +48,27 @@ VERBOTEN = [
         "Falsche Schreibung ohne Umlaut.",
     ),
     (
-        r"[❦❧✦❖]",
-        "Schmuckzeichen, das in keiner Serifenschrift des Projekts vorkommt. "
-        "Der Browser faellt auf eine Symbol- oder Farb-Emoji-Schrift zurueck. "
-        "Ornamente gehoeren als SVG ins Markup (.zierblatt), siehe AGENTS.md.",
+        # Die Unicode-Bloecke Verschiedene Symbole, Dingbats, Verschiedene Symbole
+        # und Pfeile sowie Emoji samt Variantenwaehler. Frueher standen hier nur
+        # vier Beispielzeichen; die Regel gilt aber fuer die ganzen Bloecke.
+        r"[\u2600-\u27BF\u2B00-\u2BFF\uFE0F\U0001F000-\U0001FAFF]",
+        "R-VERBOT-3: Schmuckzeichen, das die Serifenschriften des Projekts nicht "
+        "verlaesslich enthalten. Der Browser faellt auf eine Symbol- oder "
+        "Farb-Emoji-Schrift zurueck, und auf jedem Geraet steht etwas anderes. "
+        "Ornamente gehoeren als SVG ins Markup (.zierblatt).",
+    ),
+    (
+        r"(?i)\b(kompetent\w*|individuell\w*|Ihr Partner|professionell\w*|"
+        r"zuverlässig\w*|engagiert\w*|vertrauensvoll\w*|maßgeschneidert\w*|"
+        r"ganzheitlich\w*|aus einer Hand|jahrelange Erfahrung|Experten?|"
+        r"Spezialist\w*)\b",
+        "R-SPRACHE-3: Vertrauensfloskel. Die Seite belegt, statt zu beteuern; "
+        "der Web-Audit vom 20.09.2026 fand keine einzige, und das soll so bleiben.",
+    ),
+    (
+        r"(?i)>\s*(hier|mehr|weiterlesen|mehr erfahren|klicken Sie hier)\s*</a>",
+        "R-SPRACHE-4: Verweistext ohne Ziel. Screenreader lesen Verweise auch "
+        "als Liste vor; dort sagt 'hier' nichts. Der Verweis nennt sein Ziel.",
     ),
 ]
 

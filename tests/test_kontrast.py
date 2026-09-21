@@ -95,8 +95,9 @@ class KontrastTests(unittest.TestCase):
                     self.assertIn(vorn, werte, f"{vorn} fehlt im Block PALETTE")
                     self.assertIn(hinten, werte, f"{hinten} fehlt im Block PALETTE")
                     wert = kontrast(werte[vorn], werte[hinten])
+                    # Ungerundet: 4,496:1 ist nicht bestanden.
                     self.assertGreaterEqual(
-                        round(wert, 2),
+                        wert,
                         AA_TEXT,
                         f"{vorn} auf {hinten} ({modus}) traegt nur {wert:.2f}:1, "
                         f"noetig sind {AA_TEXT}:1",

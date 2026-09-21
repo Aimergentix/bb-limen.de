@@ -12,24 +12,55 @@ import unittest
 from pathlib import Path
 
 
-from site_support import SITE as ROOT, SOURCE
+from site_support import (
+    EMAIL, GEMEINDEN, KREISE, PLZ_ORT, SITE as ROOT, SOURCE, STRASSE,
+    TELEFON_SICHTBAR, TELEFON_TECHNISCH,
+)
 SEITEN = sorted(ROOT.glob("*.html"))
 BAUSTEINE = sorted((SOURCE / "partials").glob("*.html"))
 ALLE = SEITEN + BAUSTEINE
-
-TELEFON_TECHNISCH = "+4917642904270"
 
 # Fremde Nummern, die bewusst auf der Seite stehen. Wer eine hinzufuegt,
 # traegt sie hier ein — sonst faellt sie auf, und das ist der Sinn.
 FREMDE_NUMMERN = {
     "+497751864950": "Betreuungsbehörde Landkreis Waldshut",
 }
-TELEFON_SICHTBAR = "+49 176 42904270"
-EMAIL = "info@bb-limen.de"
-STRASSE = "Am Dreispitz 6/6-1"
-PLZ_ORT = ("79589", "Binzen")
-KREISE = ["Landkreis Lörrach", "Landkreis Waldshut"]
-GEMEINDEN = 67  # Lörrach 35 + Waldshut 32
+
+# Wo jede Angabe laut AGENTS.md (R-ANGABEN) stehen MUSS. Geprueft wird die
+# Quelle der Seite, nicht die fertige Seite: Dort steht die Kolumne mit
+# Nummer und Anschrift ohnehin ueberall und wuerde jede Luecke verdecken.
+STELLEN_TELEFON = [
+    "partials/rail.html", "partials/callbar.html", "pages/index.html",
+    "pages/fachkreise.html", "pages/leichte-sprache.html",
+    "pages/impressum.html", "pages/datenschutz.html", "pages/404.html",
+]
+STELLEN_ANSCHRIFT = [
+    "partials/rail.html", "pages/index.html", "pages/fachkreise.html",
+    "pages/leichte-sprache.html", "pages/impressum.html",
+    "pages/datenschutz.html",
+]
+STELLEN_GEMEINDEZAHL = [
+    "pages/index.html", "pages/betreuung.html", "pages/fachkreise.html",
+]
+# Die Sprechzeiten stehen je Sprachebene in anderem Wortlaut. Festgehalten
+# ist deshalb der Wortlaut je Stelle, nicht ein gemeinsamer.
+SPRECHZEITEN = {
+    "partials/rail.html": [
+        "Di–Do 10–18 Uhr", "So, Mo nach Vereinbarung"],
+    "pages/index.html": [
+        "Dienstag, Mittwoch und Donnerstag von 10 bis 18 Uhr.",
+        "Sonntag und Montag nach Vereinbarung."],
+    "pages/fachkreise.html": [
+        "Dienstag, Mittwoch und Donnerstag von 10 bis 18 Uhr.",
+        "Sonntag und Montag nach Vereinbarung."],
+    "pages/leichte-sprache.html": [
+        "Am Dienstag, Mittwoch und Donnerstag.", "Von 10 Uhr bis 18 Uhr.",
+        "Am Sonntag und am Montag geht es auch.", "Aber nur mit einem Termin."],
+}
+
+
+def quelle(stelle: str) -> str:
+    return (SOURCE / stelle).read_text(encoding="utf-8")
 
 
 def organisation() -> dict:
@@ -158,6 +189,53 @@ class AngabenTests(unittest.TestCase):
         for kreis in KREISE:
             with self.subTest(kreis=kreis):
                 self.assertIn(kreis, rail)
+
+    def test_telefon_steht_an_jeder_vertragsstelle(self) -> None:
+        """R-ANGABEN-1. Die uebrigen Tests pruefen nur, dass vorhandene
+        Nummern gleich sind — nicht, dass die Nummer ueberhaupt dasteht."""
+        for stelle in STELLEN_TELEFON:
+            with self.subTest(stelle=stelle):
+                self.assertIn(f'href="tel:{TELEFON_TECHNISCH}"', quelle(stelle))
+        karte = (SOURCE.parent / "public/bb-limen.vcf").read_text(encoding="utf-8")
+        self.assertIn(TELEFON_TECHNISCH, karte)
+
+    def test_anschrift_steht_an_jeder_vertragsstelle(self) -> None:
+        """R-ANGABEN-3."""
+        for stelle in STELLEN_ANSCHRIFT:
+            text = quelle(stelle)
+            with self.subTest(stelle=stelle):
+                self.assertIn(STRASSE, text)
+                self.assertIn(PLZ_ORT[0], text)
+                self.assertIn(PLZ_ORT[1], text)
+
+    def test_sprechzeiten_stehen_an_jeder_vertragsstelle(self) -> None:
+        """R-ANGABEN-4."""
+        for stelle, zeilen in SPRECHZEITEN.items():
+            text = quelle(stelle)
+            for zeile in zeilen:
+                with self.subTest(stelle=stelle, zeile=zeile):
+                    self.assertIn(zeile, text)
+
+    def test_keine_weitere_uhrzeit_neben_den_sprechzeiten(self) -> None:
+        """R-ANGABEN-4, Gegenprobe: Eine neue Stelle mit Uhrzeit faellt auf
+        und gehoert dann in SPRECHZEITEN und in AGENTS.md."""
+        for pfad in sorted((SOURCE / "pages").glob("*.html")) + BAUSTEINE:
+            stelle = f"{pfad.parent.name}/{pfad.name}"
+            text = pfad.read_text(encoding="utf-8")
+            for zeile in SPRECHZEITEN.get(stelle, []):
+                text = text.replace(zeile, "")
+            with self.subTest(stelle=stelle):
+                self.assertNotRegex(text, r"\d{1,2}(?:[:.]\d{2})? Uhr\b")
+
+    def test_gemeindezahl_steht_im_fliesstext(self) -> None:
+        """R-ANGABEN-2."""
+        for stelle in STELLEN_GEMEINDEZAHL:
+            with self.subTest(stelle=stelle):
+                self.assertRegex(quelle(stelle), rf"\b{GEMEINDEN} Städten? und Gemeinden")
+        for pfad in ALLE:
+            for zahl in re.findall(r"\b(\d+) Städten? und Gemeinden", pfad.read_text(encoding="utf-8")):
+                with self.subTest(datei=pfad.name):
+                    self.assertEqual(int(zahl), GEMEINDEN)
 
 
 if __name__ == "__main__":
