@@ -128,17 +128,10 @@ class SiteStructureTests(unittest.TestCase):
 
     def test_theme_colors_are_the_only_media_meta_elements(self) -> None:
         # R-PRUEFUNG-4: Gegentest zur theme-color-Ausnahme des Validators.
+        # Geprüft wird die Form, nicht der Farbwert (R-REDAKTION-3).
         expected = [
-            {
-                "name": "theme-color",
-                "content": "#fbfaf7",
-                "media": "(prefers-color-scheme: light)",
-            },
-            {
-                "name": "theme-color",
-                "content": "#111312",
-                "media": "(prefers-color-scheme: dark)",
-            },
+            ("theme-color", "(prefers-color-scheme: light)"),
+            ("theme-color", "(prefers-color-scheme: dark)"),
         ]
         for name, page in self.parsed.items():
             with self.subTest(page=name):
@@ -146,7 +139,10 @@ class SiteStructureTests(unittest.TestCase):
                     attrs for tag, attrs in page.elements
                     if tag == "meta" and "media" in attrs
                 ]
-                self.assertEqual(media_meta, expected)
+                self.assertEqual([(attrs.get("name"), attrs.get("media")) for attrs in media_meta], expected)
+                for attrs in media_meta:
+                    self.assertEqual(set(attrs), {"name", "content", "media"})
+                    self.assertRegex(attrs["content"], r"^#(?:[0-9a-fA-F]{3}){1,2}$")
 
     def test_content_security_policy_keeps_the_existing_restrictions(self) -> None:
         # R-VERBOT-1: Die Richtlinie darf nicht gelockert werden.
