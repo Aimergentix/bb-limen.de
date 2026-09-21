@@ -1,7 +1,30 @@
 # Architektur von bb-limen.de
 
-Stand der Strukturentscheidung: 21.09.2026. Verbindliche Regeln stehen in
-[AGENTS.md](../AGENTS.md), die Arbeitsabläufe im [Handbuch](../README.md).
+Wie das Repository funktioniert: Verzeichnisse, Build, Prüfkette. Die Regeln
+dazu stehen in [AGENTS.md](../AGENTS.md), die Gründe in
+[entscheidungen.md](entscheidungen.md).
+
+## Verzeichnisse
+
+```text
+src/pages/         Seiten als Quellen, mit Include-Zeilen statt Bausteinen
+src/partials/      gemeinsame HTML-Bausteine
+src/style.css      ein Stylesheet; alle Farbwerte im Block PALETTE
+src/grafik/        bearbeitbare SVG-Originale für Signet und Vorschaubild
+src/seiten.json    Katalog: Seitenbestand, Sprachprofile, Sitemap, öffentliche Dateien
+public/            bewusst öffentliche Dateien, unverändert kopiert
+dist/              die Ausgabe: vollständig erzeugt, unversioniert
+tools/             Build, Prüfung, Bildexport und Commit-Hook
+tests/             Regressionstests
+docs/              diese Dokumentation, versioniert
+docs/lokal/        persönliche Unterlagen und offene Punkte, unversioniert — kann fehlen
+reports/           Auditberichte, unversioniert — kann fehlen
+.github/           Workflows für Prüfung, Veröffentlichung, Verweise; Dependabot
+```
+
+Vertrag, README, Lizenz sowie Git- und Editor-Konfiguration liegen im
+Wurzelverzeichnis. `.gitignore` bestimmt, was versioniert wird; ausgeliefert
+wird ausschließlich `dist/`.
 
 ## Dateifluss
 
@@ -14,13 +37,10 @@ public/* (laut Katalog) ────────────────> unver�
                                          └── dist/ ──> Pages-Artefakt
 ```
 
-Der Build wird über `tools/build.sh` aufgerufen. `tools/build.py` verarbeitet
-UTF-8, Includes und die Ausgabe; `tools/site_config.py` validiert den Katalog.
-Python ist schon für die Projektprüfungen nötig und verarbeitet JSON ohne
-zusätzliche Pakete. Der Browser erhält weiterhin ausschließlich statische
-Dateien. Es gibt keine Laufzeitabhängigkeit vom Buildwerkzeug.
-
-## Maßgebliche Quellen
+`tools/build.sh` ruft `tools/build.py` auf; `tools/site_config.py` prüft den
+Katalog. Beides braucht nur die Python-Standardbibliothek. Der Browser erhält
+ausschließlich statische Dateien; zur Laufzeit gibt es keine Abhängigkeit vom
+Buildwerkzeug.
 
 | Aufgabe | Quelle | Ausgabe |
 | --- | --- | --- |
@@ -32,28 +52,24 @@ Dateien. Es gibt keine Laufzeitabhängigkeit vom Buildwerkzeug.
 | Seitenbestand und Sprachprofil | `src/seiten.json` | Build und Prüfwerkzeuge |
 | Sitemap und Inhaltsstand | `src/seiten.json`, `public/CNAME` | `dist/sitemap.xml` |
 
-Die Bildexporte bleiben versioniert. Sie entstehen mit `tools/vorschau.sh`,
-der Chromium/Chrome und Python benötigt. Der normale Build kopiert sie nur.
-Büroangaben werden weiterhin an den in AGENTS §6 genannten Stellen gepflegt;
-die Strukturmigration hat diese inhaltliche Mehrfachpflege nicht verändert.
+Die öffentliche Adresse hängt am Namen in der Ausgabe, nicht am Quellpfad:
+`src/pages/betreuung.html` wird zu `dist/betreuung.html` und ist unter
+`/betreuung.html` erreichbar.
 
 ## Katalog und Includes
 
 `src/seiten.json` enthält `pages` und `public_files`. Ein Seiteneintrag hat:
 
 - `file`: flacher HTML-Dateiname, zugleich Name in der Ausgabe;
-- `language`: `einfach`, `fach`, `recht`, `leicht` oder `fehler`;
+- `language`: das Sprachprofil — `einfach`, `fach`, `recht`, `leicht` oder `fehler`;
 - `sitemap`: bewusste Entscheidung über die Aufnahme;
 - `lastmod`: nur für Sitemap-Seiten, geprüfter Inhaltsstand als `YYYY-MM-DD`.
 
-`lastmod` wurde bei der Migration aus der bestehenden Sitemap übernommen.
-Es wird redaktionell bei einer tatsächlichen Inhaltsänderung aktualisiert.
-Die frühere automatische Datierung über den Git-Pfad wurde ersetzt, damit
-Dateiumzüge, flache Klone und Builds ohne Git keinen falschen Stand erzeugen.
-Git bleibt der Nachweis für die Änderung; der Build benötigt seine Historie
-nicht. `tools/sitemap.sh` zeigt die Sitemap zur Kontrolle, ohne zu schreiben.
+Der Build benötigt keine Git-Historie. `tools/sitemap.sh` zeigt die Sitemap zur
+Kontrolle, ohne zu schreiben.
 
-Alle Seiten enthalten genau diese Include-Zeilen in dieser Reihenfolge:
+Jede Seite enthält genau diese Include-Zeilen, in dieser Reihenfolge und
+jeweils allein auf einer Zeile:
 
 ```html
 <!-- @include head -->
@@ -63,29 +79,63 @@ Alle Seiten enthalten genau diese Include-Zeilen in dieser Reihenfolge:
 <!-- @include callbar -->
 ```
 
-Zwischen ihnen stehen die individuellen Metadaten, HTML-Struktur und Inhalte.
-Includes dürfen nicht verschachtelt werden. In `rail.html` markiert der Build
-über `%%CUR-<seitenname>%%` den aktuellen Navigationspunkt. Unbekannte Ziele,
-fehlende oder doppelte Includes sowie alter generierter Inhalt in einer
-Quellseite führen vor dem Schreiben zum Fehler.
+Zwischen ihnen stehen die individuellen Metadaten, die HTML-Struktur und der
+Inhalt. Includes dürfen nicht verschachtelt werden. In der Ausgabe umschließen
+die Marken `<!-- #rail -->` und `<!-- /#rail -->` den eingesetzten Baustein. In
+`rail.html` markiert der Build über `%%CUR-<seitenname>%%` den aktuellen
+Navigationspunkt.
 
-## Prüfung und Fehlerbehebung
+## Verhalten des Builds
 
-`tools/pruefen.sh` ist der gemeinsame Einstieg. Er baut temporär, führt die
-Tests und Sprachmessung aus und räumt auf. Er verändert keine bearbeiteten
-Dateien, keine bestehende Vorschau und keinen Git-Index. Die HTML-Validierung
-läuft zusätzlich in der CI. Visuell wird nach README §3 von Hand geprüft.
-
-Die Tests nutzen eine frisch erzeugte Ausgabe, auch wenn `dist/` fehlt.
-`tests/site_support.py` stellt sie bereit. Fest erwartete Seitennamen, URLs,
-Kontaktangaben und öffentliche Dateien bleiben unabhängig vom Katalog in
-Regressionstests festgehalten. Dadurch bestätigt eine falsche Katalogangabe
-nicht automatisch ihre eigene Richtigkeit.
+Der Build prüft Katalog, Dateibestand, Bausteine, Include-Reihenfolge und
+Navigationsplatzhalter, bevor er schreibt. Er erzeugt erst ein vollständiges
+Arbeitsverzeichnis und ersetzt dann `dist/`. Bei fehlerhaften Eingaben bleiben
+die Quellen und die letzte erfolgreiche Ausgabe erhalten. Nicht mehr benötigte
+Ausgabedateien verschwinden beim nächsten erfolgreichen Build. Dateien, die in
+`src/pages/`, `src/partials/` oder `public/` liegen, aber nicht eingetragen
+sind, führen zum Fehler; innerhalb des Repositorys ist ausschließlich `dist/`
+als Ausgabe erlaubt.
 
 Bei einem Buildfehler zuerst die genannte Quelldatei und Zeile bearbeiten.
-Bei veralteter Vorschau `tools/build.sh` aufrufen und neu laden.
-`tools/build.sh --check` meldet eine veränderte oder unvollständige Ausgabe.
-Ein fehlgeschlagener Build erhält die letzte erfolgreiche Ausgabe.
+`tools/build.sh --check` meldet eine veränderte oder unvollständige Ausgabe,
+ohne sie zu berichtigen.
+
+## Prüfkette
+
+`tools/pruefen.sh` ist der gemeinsame Einstieg für Menschen, Commit-Hook und
+CI. Er baut in ein temporäres Verzeichnis, führt die Tests und die
+Sprachmessung aus und räumt auf. Mit `--veroeffentlichung` sind offene
+Platzhalter ein Fehler statt eines Hinweises; so ruft ihn der
+Veröffentlichungsworkflow auf.
+
+Die Tests prüfen immer eine frisch erzeugte Ausgabe, auch wenn `dist/` fehlt;
+`tests/site_support.py` stellt sie bereit. Erwartete Seitennamen, Adressen,
+Büroangaben und öffentliche Dateien stehen dort und in den Tests ein zweites
+Mal, unabhängig von den Quellen. Dadurch bestätigt eine falsche Angabe nicht
+ihre eigene Richtigkeit.
+
+| Testdatei | Gegenstand |
+| --- | --- |
+| `tests/test_build.py` | Build: Wiederholbarkeit, Fehleingaben, Schutz der Quellen und fremder Verzeichnisse |
+| `tests/test_site.py` | fertige Seiten: Bestand, Verweise, Überschriften, CSP, JSON-LD, Pflichtverweise |
+| `tests/test_angaben.py` | mehrfach gepflegte Büroangaben |
+| `tests/test_begriffe.py` | Formulierungen und Zeichen, die hier schon einmal falsch waren |
+| `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel |
+| `tests/test_pruefe_sprache.py` | die Sprachmessung selbst |
+| `tests/test_doku.py` | genannte Dateien, Verweise, Kennungen und Begriffe der Dokumentation |
+
+**Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook.
+Geprüft wird der Arbeitsbaum, nicht nur der Git-Index; der Hook verändert und
+merkt nichts vor. `git commit --no-verify` überspringt nur den lokalen Hook.
+
+**Bei Push und Pull Request** führt `.github/workflows/pruefung.yml` den
+Prüfbefehl aus und validiert danach das fertige HTML. Auf `main` ruft
+`.github/workflows/veroeffentlichung.yml` diese Prüfung als Voraussetzung auf.
+
+**Einmal im Monat** baut `.github/workflows/verweise.yml` die Website und ruft
+ihre Verweise nach außen ab. Bei nicht erreichbaren Adressen entsteht ein
+Issue. Was dann zu tun ist, steht in
+[redaktion.md](redaktion.md#verweise-nach-außen-pflegen).
 
 ### HTML-Validierung
 
@@ -115,22 +165,52 @@ Ereignisattribute und JavaScript-Verweise. Andere Ressourcen, Seiten oder
 Validator-Meldungen werden durch die Ausnahmen nicht verdeckt. Die CSP selbst
 wird dafür nicht gelockert.
 
-## Erweiterung und Benennung
+Mit installiertem Java und `html5validator` läuft dieselbe Prüfung lokal:
 
-Eine neue Seite erhält einen sachbezogenen Namen in Kleinbuchstaben mit
-Bindestrichen, eine Quelle unter `src/pages/`, einen Katalogeintrag und eine
-bewusste Navigationsentscheidung. Ihre Metadaten bleiben in der Seite.
-Danach unabhängige Bestands- und Navigationstests nachziehen, bauen, prüfen
-und ansehen. Neue öffentliche Kopierdateien gehören nach `public/` und in
-`public_files`. Unerwartete Dateien in diesen Bereichen werden abgelehnt.
+```sh
+tools/build.sh
+html5validator --config tools/html5validator.yml
+```
 
-Die öffentliche URL hängt am Ausgabepfad, nicht am Quellpfad. Daher bleiben
-alle bisherigen `.html`-Adressen, Asset-Adressen und Downloads erhalten.
+## Bildexport
 
-## Veröffentlichung und lokale Unterlagen
+Vorschaubild und die beiden Symbole entstehen aus den zwei SVG-Quellen in
+`src/grafik/`. Die fertigen Bilder liegen versioniert in `public/`, damit der
+normale Build keinen Browser braucht. Nach einer Änderung an Signet oder
+Palette neu rendern; das Skript braucht Chromium oder Chrome und Python:
 
-Nur `dist/` wird veröffentlicht. Vor der ersten Übertragung der Migration
-muss Pages auf GitHub Actions umgestellt sein; der Ablauf steht in README §4.
-Bis zur bestätigten Umstellung bleibt `_config.yml` als Übergangsschutz.
-`docs/lokal/`, `reports/`, `tmp/` und lokale KI-Einstellungen sind ignoriert.
-Gemeinsame technische Dokumentation unter `docs/` wird dagegen versioniert.
+```sh
+tools/vorschau.sh
+```
+
+## Erweiterung
+
+Eine neue Seite erhält einen sachbezogenen Namen nach R-BESTAND-2, eine Quelle
+unter `src/pages/` mit den fünf Include-Zeilen, einen Katalogeintrag und eine
+bewusste Navigationsentscheidung. Ihre Metadaten bleiben in der Seite
+(R-QUELLE-2). Danach die Bestandstests in `tests/test_site.py` nachziehen, bei
+einer Seite mit Büroangaben auch `tests/test_angaben.py` und die Tabelle unter
+R-ANGABEN; dann bauen, prüfen und ansehen. Neue öffentliche Kopierdateien
+gehören nach `public/` und in `public_files`.
+
+## Anhang: Arbeitsgrundsätze
+
+Eine Erinnerung für Menschen, nach welchen bewährten Verfahren dieses
+Repository gepflegt wird — und warum. Verbindlich sind die Regeln in
+[AGENTS.md](../AGENTS.md); hier steht der Gedanke dahinter.
+
+| Grundsatz | Herkunft | Hier heißt das |
+| --- | --- | --- |
+| **Eine Quelle der Wahrheit** | „Don't repeat yourself", Hunt und Thomas, *The Pragmatic Programmer* | Jede Aussage hat ein Zuhause; wer sie zweimal braucht, verweist (R-ORDNUNG-1). Was doppelt steht, widerspricht sich irgendwann. |
+| **Dokumente nach der Frage trennen** | Diátaxis (Daniele Procida) | Regeln, Funktionsweise, Anleitung und Begründung sind vier Dinge. Die Tabelle „Wo steht was" im README ordnet jeder Frage ein Dokument zu. |
+| **Entscheidungen datiert festhalten** | Architecture Decision Records, Michael Nygard | `entscheidungen.md` wird nur ergänzt. Wer in einem Jahr fragt „warum kein Kartendienst?", findet Antwort und Datum. |
+| **Eindeutige Verbindlichkeit** | RFC 2119 | MUSS, DARF NICHT, SOLL, KANN statt „sollte möglichst". Ein Mensch überliest die Unschärfe, ein Sprachmodell rät. |
+| **Rückverfolgbarkeit** | Anforderungsmanagement | Jede Regel trägt eine Kennung, die auch im Test steht. Eine Suche zeigt Regel, Prüfung und Begründung zusammen. |
+| **Ausführbare Regeln** | testgetriebene Entwicklung | Was sich prüfen lässt, prüft ein Test; die Prosa dazu entfällt. Bei Widerspruch gilt: Test vor Code vor Vertrag vor Erklärung. |
+| **Unabhängiger Erwartungswert** | Test-Orakel | Tests lesen ihre Sollwerte nicht aus der geprüften Datei. Sonst bestätigt jeder Fehler sich selbst. |
+| **Jeder Test muss rot werden können** | Mutationstest | Ein neuer Test wird einmal gegen eine absichtlich beschädigte Kopie ausgeführt. Bleibt er grün, prüft er nichts. |
+| **Fehler früh und laut** | „fail fast", Poka Yoke | Der Build lehnt Unbekanntes ab, statt zu raten, und nennt in der Meldung den nächsten Schritt. |
+| **Reproduzierbarkeit** | hermetische Builds | Feste Versionen in der CI, keine Netzabhängigkeit im Build. Eine rote CI muss sich aus einem Commit erklären lassen. |
+| **Sparsamer Kontext** | Kontextgestaltung für Sprachmodelle | `AGENTS.md` wird in jede KI-Sitzung geladen. Deshalb nur Regeln dort, Wichtiges oben, Einzelheiten hinter Verweisen — lange Texte werden in der Mitte unzuverlässiger gelesen. |
+| **Ein Befehl für „stimmt alles?"** | agentisches Arbeiten | `tools/pruefen.sh` gibt Mensch und Assistent dasselbe eindeutige Signal. |
+| **Der Mensch gibt frei** | „human in the loop" | Assistenten arbeiten auf einem Zweig; veröffentlicht wird erst nach Freigabe (R-COMMIT-3). |

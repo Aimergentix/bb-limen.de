@@ -1,6 +1,6 @@
 """Haelt die Angaben zusammen, die an mehreren Stellen stehen.
 
-AGENTS.md §6 nennt sie die klassische Bruchstelle: ein Suchen-und-Ersetzen
+AGENTS.md (R-ANGABEN) nennt sie die klassische Bruchstelle: ein Suchen-und-Ersetzen
 erwischt die Haelfte, und danach steht in der Kolumne eine andere Nummer
 als im Impressum. Diese Datei zaehlt nach, statt zu schaetzen.
 """
@@ -74,6 +74,7 @@ def organisation() -> dict:
 
 class AngabenTests(unittest.TestCase):
     def test_buero_hat_genau_eine_eigene_telefonnummer(self) -> None:
+        # R-RECHT-6.
         eigene_nummern = set()
         for pfad in ALLE:
             text = pfad.read_text(encoding="utf-8")
@@ -147,6 +148,7 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(org["email"], EMAIL)
 
     def test_visitenkarte_stimmt_mit_dem_buero_ueberein(self) -> None:
+        # R-ANGABEN-6.
         org = organisation()
         zeilen = (ROOT / "bb-limen.vcf").read_text(encoding="utf-8").splitlines()
         werte = {}

@@ -1,6 +1,6 @@
 """Rechnet die Farbpaarungen des Stylesheets gegen WCAG AA durch.
 
-Das README verlangt, nach jeder Aenderung am Block PALETTE neu zu rechnen.
+AGENTS.md (R-FARBE-5) verlangt WCAG AA fuer jede Textpaarung, hell und dunkel.
 Diese Datei macht daraus eine Pruefung: sie liest die Werte aus style.css,
 bildet die Paarungen, die auf der Seite tatsaechlich vorkommen, und faellt
 unter 4,5:1. Die schwaechste Paarung liegt bei 4,61:1 — es ist wenig Luft,

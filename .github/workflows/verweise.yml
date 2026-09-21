@@ -1,7 +1,7 @@
 # Prueft die Verweise nach aussen. Monatlich, und auf Zuruf.
 #
 # Die Seiten vorsorge.html und leichte-sprache.html verweisen auf Ministerien,
-# Behoerden, die Bundesnotarkammer, Lebenshilfe und KVJS. README §2a sagt,
+# Behoerden, die Bundesnotarkammer, Lebenshilfe und KVJS. docs/redaktion.md sagt,
 # das sei zweimal im Jahr von Hand zu pruefen — das hier nimmt die Handarbeit
 # ab und legt bei einem toten Verweis ein Issue an.
 #
@@ -75,7 +75,7 @@ jobs:
             echo "Bitte die betroffene Stelle auf der herausgebenden Seite suchen und"
             echo "Adresse **und** Standangabe in \`vorsorge.html\` bzw."
             echo "\`leichte-sprache.html\` nachziehen. Ein veralteter Stand ist"
-            echo "schlimmer als kein Stand — siehe README §2a."
+            echo "schlimmer als kein Stand — siehe docs/redaktion.md."
           } > meldung.md
 
           gh issue create \

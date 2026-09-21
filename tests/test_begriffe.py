@@ -18,12 +18,12 @@ DATEIEN = sorted(ROOT.glob("*.html")) + sorted((SOURCE / "partials").glob("*.htm
 VERBOTEN = [
     (
         r"Aufgabenkreise\b",
-        "Plural aus der Fassung vor dem 01.01.2023. Seither hat ein Betreuer "
+        "R-RECHT-2: Plural aus der Fassung vor dem 01.01.2023. Seither hat ein Betreuer "
         "einen Aufgabenkreis aus mehreren Aufgabenbereichen (§ 1815 Abs. 1 BGB).",
     ),
     (
         r'href="tel:\s*"',
-        "Leerer Telefonverweis. Das war schon einmal der schwerste technische "
+        "R-RECHT-6: Leerer Telefonverweis. Das war schon einmal der schwerste technische "
         "Fehler dieser Seite: ein Anruf, der ins Nichts geht.",
     ),
     (

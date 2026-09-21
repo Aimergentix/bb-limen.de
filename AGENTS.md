@@ -3,257 +3,236 @@
 Diese Datei ist der **Vertrag**: kurze, prüfbare Regeln für alle, die an
 diesem Repository arbeiten — Menschen wie Sprachmodelle.
 
-`README.md` ist das **Handbuch**: es erklärt das Warum. Wo eine Regel eine
-Begründung hat, steht hier der Verweis statt einer Wiederholung. Wer eine
-Regel ändert, ändert beide Dateien im selben Commit.
-
 Diese Website gehört einem Büro für rechtliche Betreuung. Sie wird von
 Gerichten, Behörden, Kliniken und von Menschen in einer Ausnahmesituation
 gelesen. Ein falscher Paragraph ist hier kein Schönheitsfehler.
 
----
+**Verbindlichkeit.** MUSS und DARF NICHT gelten ohne Ausnahme. SOLL gilt im
+Regelfall; wer abweicht, begründet es im Commit. KANN ist erlaubt.
 
-## 1. Quellen bearbeiten, Ausgabe erzeugen
+**Kennungen.** Jede Regel hat eine feste Kennung wie `R-RECHT-2`. Tests,
+Kommentare und Begründungen nennen dieselbe Kennung: `grep -rn R-RECHT-2`
+findet alles dazu. Kennungen werden nie neu vergeben.
 
-**Bearbeite ausschließlich die Quellen unter `src/` und die bewusst
-öffentlichen Dateien unter `public/`, wenn du Website-Inhalte änderst.
-`dist/` ist vollständig generiert.**
+Hier stehen nur Regeln. Wie etwas funktioniert und warum es so entschieden
+wurde, steht in den Dokumenten, die das [README](README.md#wo-steht-was)
+aufführt.
 
-Individuelle Seiten stehen in `src/pages/`. Sie enthalten je einen Include
-für `head`, `skip`, `rail`, `foot`, `callbar`, in dieser Reihenfolge und
-jeweils allein auf einer Zeile, etwa `<!-- @include rail -->`.
-Gemeinsame Inhalte stehen in `src/partials/`. Danach:
+## Begriffe
 
-    tools/build.sh
+| Begriff | Bedeutung |
+| --- | --- |
+| Seite | eine HTML-Datei unter `src/pages/`; der Bestand steht im Katalog |
+| Katalog | `src/seiten.json` |
+| Sprachprofil | der Wert `language` einer Seite im Katalog |
+| Pflichtseiten | `impressum.html` und `datenschutz.html` |
+| Baustein | Datei unter `src/partials/`, über eine Include-Zeile in jede Seite eingesetzt |
+| Kolumne | die stehende linke Spalte mit Navigation und Kontakt, Baustein `rail`; am Telefon ein Kopfband |
+| Anrufleiste | die untere Leiste am Telefon, Baustein `callbar` |
+| Ausgabe | `dist/`, vollständig erzeugt |
+| Vorschaubild | `public/vorschau.png` für Open Graph; die Ausgabe im Browser heißt „lokale Ansicht" |
 
-Die vollständigen Seiten entstehen in `dist/`; dort bleiben die bisherigen
-Marken `<!-- #rail -->` und `<!-- /#rail -->` zur Orientierung erhalten.
-Direkte Änderungen an der Ausgabe gehen beim nächsten Build verloren.
-`tools/build.sh --check` meldet eine Abweichung, ohne Dateien zu verändern.
+Kurze Seitennamen wie `index.html` meinen die Quelle unter `src/pages/`.
 
-Titel, `description`, `canonical` und die individuellen `og:`-Angaben
-bleiben in der jeweiligen Quelle unter `src/pages/`.
+## 1. Quellen und Ausgabe
 
----
+- **R-QUELLE-1** Inhalte MÜSSEN in `src/` und `public/` geändert werden.
+  `dist/` DARF NICHT von Hand bearbeitet werden; `tools/build.sh` erzeugt es
+  neu, und jede Änderung dort geht verloren.
+- **R-QUELLE-2** Titel, `description`, `canonical` und die individuellen
+  `og:`-Angaben MÜSSEN in der jeweiligen Seite stehen, nicht in einem Baustein.
+- **R-QUELLE-3** Jede neue Datei MUSS eine eindeutige Rolle haben: Seiten nach
+  `src/pages/` und in den Katalog, öffentliche Kopierdateien nach `public/`
+  und in dessen `public_files`. Der Build lehnt nicht eingetragene Dateien ab.
 
-## 2. Was niemals hinzukommt
+Mechanik: [docs/architektur.md](docs/architektur.md).
 
-- **Kein JavaScript.** Keine Webfonts, kein CDN, keine Karte, kein
-  Analytics, kein Kontaktformular, kein Cookie-Banner.
+## 2. Was nicht hinzukommt
 
-  Das ist keine Geschmacksfrage: `datenschutz.html` behauptet, dass es
-  nichts davon gibt. Jede Einbindung macht die Datenschutzerklärung unwahr
-  und aus einem Gestaltungswunsch ein Rechtsproblem. Die Content-Security-
-  Policy in `src/partials/head.html` setzt das technisch durch — wer sie
-  lockern muss, baut gerade etwas ein, das hier nicht hingehört.
+- **R-VERBOT-1** Es DARF kein JavaScript hinzukommen, ebenso keine Webfonts,
+  kein CDN, keine Karte, kein Analytics, kein Kontaktformular, kein
+  Cookie-Banner. `datenschutz.html` behauptet, dass es nichts davon gibt; jede
+  Einbindung macht die Datenschutzerklärung unwahr. Die
+  Content-Security-Policy in `src/partials/head.html` setzt das durch und DARF
+  NICHT gelockert werden.
+- **R-VERBOT-2** Fremde Formulare DÜRFEN NICHT im Repository liegen. Verlinken,
+  nicht hosten.
+- **R-VERBOT-3** Schmuckzeichen wie ❦ ❧ ✦ ❖ DÜRFEN NICHT als Textzeichen
+  stehen. Ornamente gehören als SVG ins Markup (`.zierblatt`). Wer ein
+  Textzeichen braucht: U+00B7 ist in jeder Schrift, U+2042 und U+2058 immerhin
+  in Noto Serif.
+- **R-VERBOT-4** Es DARF kein Fallbeispiel, keine Klientengeschichte, kein
+  Zitat einer betreuten Person und keine Bewertung auf der Website stehen,
+  auch nicht anonymisiert.
+- **R-VERBOT-5** Es DÜRFEN keine Ortsseiten entstehen, also keine
+  Seitenvarianten mit getauschtem Ortsnamen. Die Gemeinden stehen im JSON-LD.
+- **R-VERBOT-6** Das JSON-LD MUSS beim Typ `Organization` mit `PostalAddress`
+  bleiben. `LocalBusiness` und seine Untertypen DÜRFEN NICHT verwendet werden.
 
-- **Keine fremden Formulare im Repo.** Verlinken, nicht hosten. Eine
-  veraltete Vorsorgevollmacht versagt genau dann, wenn sie gebraucht wird
-  (Begründung: `README.md` §2a).
-
-- **Jede neue Datei erhält eine eindeutige Rolle.** Seitenquellen gehören
-  nach `src/pages/` und in `src/seiten.json`, öffentliche Kopierdateien nach
-  `public/` und in dessen `public_files`. Der Build lehnt nicht registrierte
-  Dateien in diesen Bereichen ab. Projektkonfiguration bleibt im Root;
-  veröffentlicht wird ausschließlich das erzeugte `dist/`.
-
-- **Kein Schmuckzeichen, das nicht in der Serifenschrift steht.** Zeichen
-  wie ❦ ❧ ✦ ❖ kommen weder in Noto Serif noch in Georgia oder Times New
-  Roman vor. Der Browser greift dann zu irgendeiner Symbol- oder
-  Farb-Emoji-Schrift, und auf jedem Gerät steht etwas anderes auf der Seite
-  — meist ein bunter Fleck. Ornamente gehören als SVG ins Markup
-  (`.zierblatt`), nicht als Buchstabe. Wer doch ein Textzeichen braucht:
-  U+00B7 ist in jeder Schrift, U+2042 und U+2058 immerhin in Noto Serif.
-
----
+Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
 
 ## 3. Recht
 
-- **Jede Paragraphenangabe vor der Änderung nachschlagen** unter
-  <https://www.gesetze-im-internet.de/>. **Nie aus dem Gedächtnis
-  paraphrasieren.** Genau so ist der schwerste Fehler dieser Seite
-  entstanden: eine erfundene Aufzählung zu § 1820 Abs. 2 BGB, die im Gesetz
-  nicht steht.
-- **Betreuungsrecht seit 01.01.2023:** Ein Betreuer hat *einen*
+- **R-RECHT-1** Jede Paragraphenangabe MUSS vor der Änderung nachgeschlagen
+  werden unter <https://www.gesetze-im-internet.de/>. Sie DARF NICHT aus dem
+  Gedächtnis paraphrasiert werden. Genau so ist der schwerste Fehler dieser
+  Seite entstanden: eine erfundene Aufzählung zu § 1820 Abs. 2 BGB, die im
+  Gesetz nicht steht.
+- **R-RECHT-2** Betreuungsrecht seit 01.01.2023: Ein Betreuer hat *einen*
   Aufgabenkreis, und der besteht aus einem oder mehreren *Aufgabenbereichen*
   (§ 1815 Abs. 1 BGB). Der Plural „Aufgabenkreise" ist die alte Fassung und
-  darf nirgends auftauchen.
-- **Vergütung** nach VBVG in der Fassung vom 01.01.2026.
-- Ändert sich ein Gesetz, ändern sich auch die Jahreszahlen im Text. Ein
-  Stand, der nicht mehr gilt, ist schlimmer als kein Stand.
+  DARF NICHT auftauchen.
+- **R-RECHT-3** Vergütung nach VBVG in der Fassung vom 01.01.2026.
+- **R-RECHT-4** Ändert sich ein Gesetz, MÜSSEN sich auch die Jahreszahlen im
+  Text ändern. Ein Stand, der nicht mehr gilt, ist schlimmer als kein Stand.
+- **R-RECHT-5** Text in `[eckigen Klammern]` ist ein bewusster Platzhalter für
+  eine Angabe, die noch niemand entschieden hat. Er DARF NICHT erfunden
+  ausgefüllt werden, die Klammern DÜRFEN NICHT entfernt werden, damit es
+  fertig aussieht, und er DARF NICHT veröffentlicht werden. Finden:
+  `grep -rn '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/`
+- **R-RECHT-6** BB Limen veröffentlicht genau eine gemeinsame
+  Büro-Telefonnummer. Sie DARF keiner Person zugeordnet werden. Eine zweite
+  persönliche Telefonnummer und ein leeres `href="tel:"` DÜRFEN NICHT
+  hinzukommen.
 
-### Platzhalter
-
-Text in `[eckigen Klammern]` ist ein **bewusster** Platzhalter für eine
-Angabe, die noch niemand entschieden hat.
-
-- Nie erfinden.
-- Nie die Klammern entfernen, damit es fertig aussieht.
-- Offene Stellen finden: `grep -rn '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/`
-
-BB Limen veröffentlicht genau **eine gemeinsame Büro-Telefonnummer**. Sie
-wird keiner Person zugeordnet. Eine zweite persönliche Telefonnummer und ein
-leeres `href="tel:"` dürfen nicht hinzukommen.
-
----
+Geltende Rechtsstände: [docs/redaktion.md](docs/redaktion.md#rechtsstände).
 
 ## 4. Sprache
 
-Vier Ebenen. **Nicht vermischen, und niemals den Stil einer Seite nach dem
-Maßstab einer anderen „verbessern".**
+- **R-SPRACHE-1** Die vier Sprachebenen DÜRFEN NICHT vermischt werden, und der
+  Stil einer Seite DARF NICHT nach dem Maßstab einer anderen „verbessert"
+  werden.
 
-| Datei | Ebene |
-| --- | --- |
-| `leichte-sprache.html` | Leichte Sprache (etwa A1), ein Satz je Zeile |
-| `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
-| `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
-| alle übrigen Inhaltsseiten | Einfache Sprache (A2–B1) |
+  | Seite | Ebene | Sprachprofil |
+  | --- | --- | --- |
+  | `leichte-sprache.html` | Leichte Sprache (etwa A1), ein Satz je Zeile | `leicht` |
+  | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung | `fach` |
+  | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch | `recht` |
+  | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) | `einfach` |
+  | `404.html` | kurz und einfach, wird nur gezählt | `fehler` |
 
-Einzelheiten und Begründung: `README.md` §2b. Messen:
+- **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine
+  Prüfgruppe aus Menschen mit Lernschwierigkeiten sie gegengelesen hat. Das
+  steht aus. Bis dahin DARF das Europäische Leichte-Sprache-Logo NICHT
+  verwendet werden.
+- **R-SPRACHE-3** Vertrauensfloskeln DÜRFEN NICHT auf der Website stehen:
+  kompetent, individuell, professionell, zuverlässig, vertrauensvoll,
+  ganzheitlich und ihresgleichen. Die Seite belegt, statt zu beteuern.
+- **R-SPRACHE-4** Jeder Verweis MUSS sein Ziel nennen. „hier" und „mehr" sind
+  keine Verweistexte.
 
-    python3 tools/pruefe-sprache.py
-
-Die Leichte Sprache gilt erst dann als geprüft, wenn eine **Prüfgruppe** aus
-Menschen mit Lernschwierigkeiten sie gegengelesen hat. Das steht aus. Bis
-dahin kein Europäisches Leichte-Sprache-Logo verwenden.
-
----
+Einzelheiten und Messung: [docs/redaktion.md](docs/redaktion.md).
 
 ## 5. Farbe
 
-- Alle Werte stehen im Block `PALETTE` in `src/style.css`. Ein Rückbau ist immer
-  dieser eine Block, nie eine Suche durchs Stylesheet.
-- **`--gut` (Salbei) steht an genau vier Stellen im Fließtext**
-  (`index` 1, `betreuung` 1, `aufgaben` 2). Die Farbe bedeutet Entlastung;
-  eine fünfte Stelle nimmt ihr die Bedeutung.
-- **Stahlblau bedeutet anklickbar:** `--link-ink` auf Papier,
+- **R-FARBE-1** Alle Farbwerte MÜSSEN im Block `PALETTE` in `src/style.css`
+  stehen. Ein Rückbau ist immer dieser eine Block, nie eine Suche durchs
+  Stylesheet.
+- **R-FARBE-2** `--gut` (Salbei) steht an genau vier Stellen im Fließtext:
+  `index.html` 1, `betreuung.html` 1, `aufgaben.html` 2. Die Farbe bedeutet
+  Entlastung; eine fünfte Stelle DARF NICHT hinzukommen.
+- **R-FARBE-3** Stahlblau bedeutet anklickbar: `--link-ink` auf Papier,
   `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
-  Kolumne verwenden `--meta-on-carrier`. Ausnahmen sind die Wortmarke, der
-  goldene aktuelle Standort und die goldene primäre Aktion „Anrufen“.
-- **Kein Hell-/Dunkel-Schalter.** Die Darstellung folgt ausschließlich
-  `prefers-color-scheme`; ohne JavaScript wäre die Wahl nicht verlässlich
-  über alle `.html`-Seiten haltbar.
-- Nach jeder Änderung an `PALETTE` **WCAG AA neu rechnen, hell und dunkel.**
-  Die schwächste Paarung liegt bei 4,61:1 — es ist wenig Luft.
+  Kolumne MÜSSEN `--meta-on-carrier` verwenden. Ausnahmen sind die Wortmarke,
+  der goldene aktuelle Standort und die goldene primäre Aktion „Anrufen".
+- **R-FARBE-4** Es DARF keinen Hell-/Dunkel-Schalter geben. Die Darstellung
+  folgt ausschließlich `prefers-color-scheme`; ohne JavaScript wäre die Wahl
+  nicht verlässlich über alle Seiten haltbar.
+- **R-FARBE-5** Jede Textpaarung MUSS WCAG AA erfüllen, hell und dunkel. Wer
+  eine neue Paarung einführt, trägt sie in `tests/test_kontrast.py` ein.
 
-Begründung: `README.md` §2c.
+Bedeutung der Farben: [docs/gestaltung.md](docs/gestaltung.md).
 
----
+## 6. Mehrfach gepflegte Angaben
 
-## 6. Doppelt gepflegte Angaben
+Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte. Jede
+Angabe MUSS an allen genannten Stellen stehen und übereinstimmen. Nach einer
+Änderung gegenzählen, nicht schätzen — und die Erwartungswerte in
+`tests/site_support.py` und `tests/test_angaben.py` nachziehen.
 
-Kurze Seitennamen in diesem Vertrag beziehen sich auf `src/pages/`.
+| Kennung | Angabe | Steht in |
+| --- | --- | --- |
+| **R-ANGABEN-1** | Telefonnummer | `src/partials/rail.html`, `src/partials/callbar.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, `404.html`, `public/bb-limen.vcf`, JSON-LD `telephone` |
+| **R-ANGABEN-2** | Einzugsgebiet, 67 Gemeinden | im Fließtext von `index.html`, `betreuung.html` und `fachkreise.html` und in `index.html` im JSON-LD unter `areaServed` |
+| **R-ANGABEN-3** | Anschrift | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html`, `impressum.html`, `datenschutz.html`, JSON-LD `address`, `public/bb-limen.vcf` |
+| **R-ANGABEN-4** | Sprechzeiten | `src/partials/rail.html`, `index.html`, `fachkreise.html`, `leichte-sprache.html` — je Sprachebene im eigenen Wortlaut |
+| **R-ANGABEN-5** | Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` im Katalog; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
 
-Die klassische Bruchstelle: ein Suchen-und-Ersetzen erwischt die Hälfte.
+- **R-ANGABEN-6** `public/bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte.
+  Name, Telefonnummer, E-Mail, Anschrift und Website MÜSSEN mit dem JSON-LD der
+  Startseite übereinstimmen. Die Datei MUSS in UTF-8 mit CRLF-Zeilenenden
+  bleiben; sie DARF NICHT in ein Suchen-und-Ersetzen über viele Dateien geraten.
 
-| Angabe | Steht in |
-| --- | --- |
-| Telefonnummer | `src/partials/rail.html`, `src/partials/callbar.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, `404`, `public/bb-limen.vcf` |
-| Einzugsgebiet (67 Gemeinden) | im Fließtext von `index`, `betreuung` und `fachkreise` **und** in `index.html` im JSON-LD unter `areaServed` |
-| Anschrift | `src/partials/rail.html`, `index`, `fachkreise`, `leichte-sprache`, `impressum`, `datenschutz`, JSON-LD `address`, `public/bb-limen.vcf` |
-| Sprechzeiten | `src/partials/rail.html`, `index`, `fachkreise`, `leichte-sprache` |
-| Datum des Stands | `impressum.html`, `datenschutz.html`, `lastmod` in `src/seiten.json`; gesonderter Prüfstand für Rückrufe und Abwesenheit in `fachkreise.html` |
+## 7. Bestand, der bleibt
 
-Nach einer solchen Änderung immer gegenzählen, nicht schätzen.
+- **R-BESTAND-1** Impressum und Datenschutz stehen im Seitenfuß jeder Seite
+  und in der Kolumne, nicht in der Hauptnavigation. § 5 DDG verlangt „leicht
+  erkennbar, unmittelbar erreichbar und ständig verfügbar". Das ist erfüllt,
+  solange die Verweise wörtlich *Impressum* und *Datenschutz* heißen, auf jeder
+  Seite stehen und ohne JavaScript funktionieren. Sie DÜRFEN beim Umbau der
+  Navigation NICHT angefasst werden.
+- **R-BESTAND-2** Die Adressen bleiben bei `.html`. Der Dateiname bezeichnet
+  das Sachthema in Kleinbuchstaben; mehrere Wörter werden mit Bindestrichen
+  verbunden. Menütexte dürfen eine grammatische Ergänzung enthalten, aber kein
+  anderes Sachthema verwenden. `index.html` ist die technische Startdatei für
+  `https://bb-limen.de/`. Eine Seite DARF NICHT umbenannt oder in eine
+  Verzeichnisform überführt werden ohne Entscheidung über bestehende Verweise.
+- **R-BESTAND-3** Der Gründungshinweis steht auf `index.html`,
+  `betreuung.html`, `aufgaben.html`, `vorsorge.html` und `fachkreise.html` und
+  im Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
+  verschwindet erst mit der Registrierungsnummer, und dann MUSS er überall
+  gleichzeitig verschwinden.
+- **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
+  nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.
 
-`public/bb-limen.vcf` ist eine gemeinsame Bürovisitenkarte. Name, Telefonnummer,
-E-Mail, Anschrift und Website müssen mit dem JSON-LD der Startseite
-übereinstimmen. Die Datei bleibt in UTF-8 mit CRLF-Zeilenenden;
-`.editorconfig` und `.gitattributes` sichern das beim Bearbeiten und in Git.
+## 8. Prüfen und fertig werden
 
----
+- **R-PRUEFUNG-1** Nach jeder Änderung MUSS `tools/pruefen.sh` bestehen. Der
+  Befehl baut in ein temporäres Verzeichnis und verändert weder Quellen noch
+  `dist/` noch den Git-Index. `tools/einrichten.sh` schaltet ihn einmalig als
+  Commit-Hook ein.
+- **R-PRUEFUNG-2** Wer Seiten, Bausteine oder das Stylesheet ändert, MUSS das
+  Ergebnis ansehen: breit, schmal (390 px) und in Dunkeldarstellung. Das ist
+  Handarbeit und bleibt es.
+- **R-PRUEFUNG-3** Nach jedem Push MUSS das Ergebnis der CI angesehen werden:
+  `gh run list --limit 3`. Eine rote CI heißt: nicht fertig.
+- **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
+  sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
+  DÜRFEN NICHT pauschal unterdrückt werden.
+- **R-PRUEFUNG-5** Eine neue Regel, die sich prüfen lässt, SOLL einen Test
+  bekommen, der ihre Kennung nennt. Eine neue Seite MUSS in den Katalog, in die
+  Navigationsentscheidung und in die Bestandstests.
 
-## 7. Was nicht angetastet wird
+**Fertig heißt:** `tools/pruefen.sh` besteht · die Änderung ist angesehen ·
+mehrfach gepflegte Angaben sind gegengezählt · die CI ist grün.
 
-- **Impressum und Datenschutz** stehen im Seitenfuß jeder Seite und in der
-  Kolumne, nicht in der Hauptnavigation. § 5 DDG verlangt „leicht erkennbar,
-  unmittelbar erreichbar und ständig verfügbar". Das ist erfüllt, solange
-  die Verweise wörtlich *Impressum* und *Datenschutz* heißen, auf jeder
-  Seite stehen und ohne JavaScript funktionieren. Beim Umbau der Navigation
-  nicht anfassen.
-- **Die Adressen bleiben bei `.html`.** Der Dateiname bezeichnet das
-  Sachthema in Kleinbuchstaben; mehrere Wörter werden mit Bindestrichen
-  verbunden. Menütexte dürfen eine grammatische Ergänzung enthalten, aber
-  kein anderes Sachthema verwenden. `index.html` ist die technische
-  Startdatei für `https://bb-limen.de/`. Keine Verzeichnisform und keine
-  spätere Umbenennung ohne Entscheidung über bestehende Verweise.
-  Entschieden am 20.09.2026.
-- **Der Gründungshinweis** steht auf allen fünf Inhaltsseiten und im
-  Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
-  verschwindet erst mit der Registrierungsnummer, und dann überall
-  gleichzeitig.
+## 9. Ordnung
 
----
+- **R-ORDNUNG-1** Jede Aussage MUSS genau ein Zuhause haben. Regeln stehen
+  hier, alles andere in dem Dokument, das das README dafür nennt. Wer etwas ein
+  zweites Mal aufschreiben will, setzt stattdessen einen Verweis.
+- **R-ORDNUNG-2** Vertrag und Handbücher beschreiben den Zustand, nicht den
+  Weg dorthin. Geschichte gehört in Git, Entscheidungen mit Datum nach
+  `docs/entscheidungen.md`; dort wird nur ergänzt, nie umgeschrieben.
+- **R-ORDNUNG-3** Zahlen in der Dokumentation SOLLEN nur dort stehen, wo ein
+  Test sie nachzählt.
+- **R-ORDNUNG-4** Verzeichnisse heißen nach Web-Konvention englisch (`src`,
+  `public`, `dist`, `tools`, `tests`, `docs`), Fachliches heißt deutsch.
+  Dateinamen sind ASCII in Kleinbuchstaben: HTML und Shell mit Bindestrich,
+  Python mit Unterstrich.
+- **R-ORDNUNG-5** Alle Textdateien sind UTF-8. Kommentare und Dokumentation
+  MÜSSEN echte Umlaute verwenden, keine Umschrift; Bezeichner im Code bleiben
+  ASCII und je Datei in einer Sprache, in neuen Dateien englisch.
+- **R-ORDNUNG-6** `lastmod` im Katalog bezeichnet eine tatsächliche
+  Inhaltsänderung. Builddatum, Dateiverschiebung oder eine technische
+  Formatierung DÜRFEN es NICHT neu setzen.
 
-## 8. Nach jeder Änderung, ohne Ausnahme
+## 10. Commits und Zweige
 
-    tools/pruefen.sh
-    tools/build.sh
-    tools/build.sh --check
-
-Der gemeinsame Prüfbefehl erzeugt seine Ausgabe temporär und verändert weder
-Quellen noch `dist/` noch Git-Index. Er führt Buildprüfung, Regressionstests
-und Sprachmessung aus. Einzelaufrufe bleiben möglich:
-
-    python3 -m unittest discover -s tests -v
-    python3 tools/pruefe-sprache.py
-
-Die Sprachprüfung verwendet standardmäßig `dist/` und bricht bei fehlendem
-oder unvollständigem Seitenbestand ab. Die Tests erzeugen unabhängig davon
-eine frische temporäre Ausgabe. `tools/einrichten.sh` aktiviert den Hook,
-der ebenfalls `tools/pruefen.sh` ausführt; er merkt keine Dateien vor.
-Bei teilweise vorgemerkten Änderungen prüft er den gesamten Arbeitsbaum.
-
-Die CI verwendet denselben Prüfbefehl und zusätzlich die HTML-Validierung.
-Die zwei begrenzten CSP-Ausnahmen und die begrenzte `theme-color`-Ausnahme in
-`tools/html5validator.yml` benötigen die Gegenkontrollen in
-`tests/test_site.py`; Begründung: README §3a und `docs/architektur.md`. Keine
-pauschale Unterdrückung von Warnungen.
-Die Veröffentlichung darf erst nach erfolgreicher Prüfung erfolgen und nur
-`dist/` hochladen. Eine neue Seite erfordert den Eintrag im Seitenkatalog,
-ihre bewusst gewählte Navigation und angepasste unabhängige Bestandstests.
-
-Ansehen — breit, schmal (390 px) und in Dunkeldarstellung:
-
-    python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
-
-Dann http://localhost:8391 öffnen. Die Sichtprüfung bleibt Handarbeit.
-
----
-
-## 9. Ordnung im Repository
-
-    src/pages/       acht Inhaltsseiten und 404.html als Quellen
-    src/partials/    gemeinsame HTML-Bausteine
-    src/style.css    ein Stylesheet, PALETTE bleibt ein Block
-    src/grafik/      bearbeitbare SVG-Originale
-    src/seiten.json  Seitenbestand, Sprachprofile, Sitemap und öffentliche Dateien
-    public/          unverändert kopierte öffentliche Dateien, auch bb-limen.vcf
-    dist/            vollständig erzeugte Website, unversioniert
-    tools/           Werkzeuge und Commit-Hook, nicht ausgeliefert
-    tests/           Regressionstests, nicht ausgeliefert
-    docs/            technische Projektdokumentation, versioniert
-    docs/lokal/      persönliche Arbeitsunterlagen, unversioniert — kann fehlen
-    reports/         Auditberichte, unversioniert — kann fehlen
-
-`.gitignore` steuert die Versionierung. Die Auslieferung wird durch den
-Workflow begrenzt: Nur `dist/` wird hochgeladen. `_config.yml` bleibt als
-Übergangsschutz, bis GitHub Pages bestätigt auf **GitHub Actions** umgestellt
-ist; vorher darf die Migration nicht nach `main` gepusht werden. Siehe README
-§4. Kein `.nojekyll` anlegen. Die alte Veröffentlichung aus dem Root ist mit
-der neuen Quellstruktur nicht kompatibel.
-
-`lastmod` im Katalog bezeichnet eine tatsächliche Inhaltsänderung. Builddatum,
-Dateiverschiebung oder eine technische Formatierung setzen es nicht neu.
-Weitere Datenzentralisierung wird als eigener inhaltlicher Umbau behandelt.
-
----
-
-## 10. Commits
-
-- Deutsch, beschreibend, in der Reihe der bisherigen.
-- Modellgestützte Änderungen kenntlich machen, wie bisher: `(claude code)`,
-  `(chatgpt)`.
-- Eine Regel geändert? `AGENTS.md` **und** die betroffene README-Stelle im
-  selben Commit nachziehen. Eine Regel, die nur noch in einer von beiden
-  Dateien steht, ist ab da falsch.
+- **R-COMMIT-1** Commit-Nachrichten sind deutsch und beschreibend, in der
+  Reihe der bisherigen.
+- **R-COMMIT-2** Modellgestützte Änderungen MÜSSEN kenntlich sein, wie bisher:
+  `(claude code)`, `(chatgpt)`.
+- **R-COMMIT-3** Jeder Push nach `main` veröffentlicht die Website.
+  Assistenten MÜSSEN deshalb auf einem eigenen Zweig arbeiten; nach `main`
+  gelangt nur, was das Büro freigegeben hat.

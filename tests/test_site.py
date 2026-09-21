@@ -76,6 +76,7 @@ class SiteStructureTests(unittest.TestCase):
         cls.parsed = {path.name: parse_page(path) for path in PAGES}
 
     def test_public_page_inventory_uses_the_intended_names(self) -> None:
+        # R-BESTAND-2: Die Adressen bleiben.
         self.assertEqual({path.name for path in PAGES}, EXPECTED_PAGE_NAMES)
 
     def test_output_contains_only_the_expected_public_files(self) -> None:
@@ -96,7 +97,7 @@ class SiteStructureTests(unittest.TestCase):
             "https://bb-limen.de/aufgaben.html", "https://bb-limen.de/vorsorge.html",
             "https://bb-limen.de/fachkreise.html", "https://bb-limen.de/leichte-sprache.html",
         })
-        # R-ORDNUNG-3: lastmod ist der redaktionelle Stand aus dem Katalog,
+        # R-ORDNUNG-6: lastmod ist der redaktionelle Stand aus dem Katalog,
         # kein Builddatum — und liegt deshalb nie in der Zukunft.
         catalog = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))
         editorial = {
@@ -128,7 +129,8 @@ class SiteStructureTests(unittest.TestCase):
             self.assertNotIn("%%CUR-", text)
 
     def test_scripts_are_only_the_index_json_ld_data_block(self) -> None:
-        # Die eng begrenzte Validator-Ausnahme darf kein JavaScript verdecken.
+        # R-VERBOT-1, R-PRUEFUNG-4: Die eng begrenzte Validator-Ausnahme darf
+        # kein JavaScript verdecken.
         for name, page in self.parsed.items():
             with self.subTest(page=name):
                 scripts = [attrs for tag, attrs in page.elements if tag == "script"]
@@ -150,6 +152,7 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertFalse(any("style" in attrs for _, attrs in page.elements))
 
     def test_theme_colors_are_the_only_media_meta_elements(self) -> None:
+        # R-PRUEFUNG-4: Gegentest zur theme-color-Ausnahme des Validators.
         expected = [
             {
                 "name": "theme-color",
@@ -171,6 +174,7 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual(media_meta, expected)
 
     def test_content_security_policy_keeps_the_existing_restrictions(self) -> None:
+        # R-VERBOT-1: Die Richtlinie darf nicht gelockert werden.
         expected = {
             "default-src": ["'self'"], "img-src": ["'self'", "data:"],
             "style-src": ["'self'"], "font-src": ["'self'"],
@@ -189,6 +193,7 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual({parts[0]: parts[1:] for parts in directives}, expected)
 
     def test_canonical_and_og_urls_follow_page_names(self) -> None:
+        # R-QUELLE-2, R-BESTAND-2.
         for path in PAGES:
             if path.name == "404.html":
                 continue
