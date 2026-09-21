@@ -48,7 +48,7 @@ VERBOTEN = [
         "Falsche Schreibung ohne Umlaut.",
     ),
     (
-        # Die Unicode-Bloecke Verschiedene Symbole, Dingbats, Verschiedene Symbole
+        # Die Unicode-Blöcke Verschiedene Symbole, Dingbats, Verschiedene Symbole
         # und Pfeile sowie Emoji samt Variantenwähler. Früher standen hier nur
         # vier Beispielzeichen; die Regel gilt aber für die ganzen Blöcke.
         r"[\u2600-\u27BF\u2B00-\u2BFF\uFE0F\U0001F000-\U0001FAFF]",

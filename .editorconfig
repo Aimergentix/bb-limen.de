@@ -1,5 +1,5 @@
 # UTF-8, LF, zwei Leerzeichen und Zeilenumbruch am Ende.
-# Visitenkarten verwenden die vom Dateiformat vorgesehenen CRLF-Umbrueche.
+# Visitenkarten verwenden die vom Dateiformat vorgesehenen CRLF-Umbrüche.
 root = true
 
 [*]

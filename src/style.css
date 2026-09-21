@@ -60,7 +60,7 @@
   --leicht-ink: #8a4b32; /* Terrakotta auf Papier, 6,42:1 */
 
   /* Salbei — die zweite Stimme. Sie steht ausschließlich dort, wo die
-     Nachricht entlastet: keine Kosten, keine Entmuendigung, eigene Wahl
+     Nachricht entlastet: keine Kosten, keine Entmündigung, eigene Wahl
      des Betreuers, der Weg zurück. Nie als Schmuck. Geprüft: 6,53:1
      auf Papier, 6,14:1 auf Fläche. */
   --gut:         #3a6350;
@@ -1035,7 +1035,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   /* Am Telefon wird aus der stehenden Kolumne ein schmales Kopfband:
      Signet, Name, Rolle, Blatttrenner und darunter die Navigation.
      Kontaktblock und Rechtszeile entfallen — der Kontakt steht in der
-     Anrufleiste, die Rechtstexte in Navigation und Seitenfuss. Damit
+     Anrufleiste, die Rechtstexte im Seitenfuß. Damit
      beginnt die Überschrift im ersten Bildschirmdrittel statt erst
      nach der halben Seite. */
   .rail { padding: var(--s1) var(--s2) 0; }
@@ -1056,7 +1056,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   .rail-ornament { margin: 0.7rem 0; }
   .rail-spacer { display: none; }
   .rail-contact { display: none; }   /* steht unten in der Anrufleiste */
-  .rail-legal { display: none; }     /* steht in der Navigation und im Fuß */
+  .rail-legal { display: none; }     /* steht im Seitenfuß */
 
   .rail-ls { margin-bottom: 0.45rem; }
   .rail-ls a { font-size: 0.8rem; }
@@ -1094,7 +1094,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
   .sheet {
     min-width: 0;
-    /* Silbentrennung, mit Umbruch als Rückfall ohne Browser-Woerterbuch. */
+    /* Silbentrennung, mit Umbruch als Rückfall ohne Browser-Wörterbuch. */
     hyphens: auto;
     overflow-wrap: anywhere;
     padding: var(--s2) var(--s2) calc(7rem + env(safe-area-inset-bottom, 0px));
