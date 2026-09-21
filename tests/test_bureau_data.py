@@ -4,16 +4,17 @@ from __future__ import annotations
 import json
 import unittest
 
-from site_support import REPO, EMAIL, PLZ_ORT, STRASSE, TELEFON_SICHTBAR, TELEFON_TECHNISCH
+from fixture_site import office
+from site_support import REPO
 from bureau_data import load_office, office_values, render_office, vcard
 
 
 class BureauDataTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.data = load_office(REPO)
+        self.data = office()
 
     def test_disjoint_days_do_not_become_a_range(self) -> None:
-        """R-SPRACHE-1, R-ANGABEN-4: Keine erfundenen Zwischentage."""
+        """R-ANGABEN-1: Keine erfundenen Zwischentage."""
         self.data["sprechzeiten"]["regulaer"] = {
             "tage": ["Dienstag", "Donnerstag", "Samstag"], "von": "10:00", "bis": "18:00",
         }
@@ -24,7 +25,7 @@ class BureauDataTests(unittest.TestCase):
                          "Am Montag, am Mittwoch und am Freitag geht es auch.")
 
     def test_html_json_and_vcard_escape_the_same_address(self) -> None:
-        """R-ANGABEN-3, R-ANGABEN-6: Sonderzeichen bleiben Daten."""
+        """R-ANGABEN-1, R-ANGABEN-6: Sonderzeichen bleiben Daten."""
         street = 'Äußere "Straße" & Hof; Eingang, \\ </script>' + "ö" * 60
         self.data["anschrift"]["strasse"] = street
         html = render_office('<p title="%%BUREAU:anschrift.strasse%%">Adresse</p>', self.data)
@@ -51,10 +52,16 @@ class BureauDataTests(unittest.TestCase):
         self.assertIn("ö" * 60 + ";Testort;Testland;12345;DE\r\n", unfolded)
 
     def test_contact_literals_are_not_maintained_in_templates(self) -> None:
-        """R-ANGABEN-1, R-ANGABEN-3: Keine erneute Mehrfachpflege."""
+        """R-ANGABEN-1: Keine erneute Mehrfachpflege.
+
+        Die Werte kommen hier aus der Quelle selbst: Geprüft wird nicht, ob
+        sie stimmen, sondern dass sie nur an einer Stelle stehen.
+        """
+        live = load_office(REPO)
+        values = (*live["telefon"].values(), live["email"], live["anschrift"]["strasse"])
         for path in [*(REPO / "src/pages").glob("*.html"), *(REPO / "src/partials").glob("*.html")]:
             text = path.read_text(encoding="utf-8")
-            for value in (TELEFON_TECHNISCH, TELEFON_SICHTBAR, EMAIL, STRASSE, PLZ_ORT[0]):
+            for value in values:
                 with self.subTest(path=path.name, value=value):
                     self.assertNotIn(value, text)
 

@@ -1,12 +1,8 @@
-"""Gemeinsame Grundlage der Tests: eine frisch erzeugte Website und die
-erwarteten Büroangaben.
+"""Gemeinsame Grundlage der Tests: die frisch erzeugte echte Website.
 
-Die Website wird immer neu erzeugt, auch ohne vorhandenes dist/.
-
-Die Büroangaben stehen hier bewusst ein zweites Mal, unabhängig von den
-Quellen unter src/: Ein Test, der seinen Erwartungswert aus der geprüften
-Datei liest, bestätigt jeden Fehler. Wer eine Angabe ändert, ändert sie in
-den Quellen und genau einmal hier.
+Sie wird immer neu erzeugt, auch ohne vorhandenes dist/. Erwartungswerte zum
+Inhalt stehen hier bewusst nicht: Geprüft wird Technik, nie Wortlaut
+(R-REDAKTION-3).
 """
 from __future__ import annotations
 
@@ -29,12 +25,3 @@ else:
     SITE = Path(TEMP.name) / "site"
     write_output(render(), SITE)
 check_output(render(), SITE)
-
-# Erwartete Büroangaben (AGENTS.md, R-ANGABEN).
-TELEFON_TECHNISCH = "+4917642904270"
-TELEFON_SICHTBAR = "+49 176 4290 4270"
-EMAIL = "info@bb-limen.de"
-STRASSE = "Am Dreispitz 6/6-1"
-PLZ_ORT = ("79589", "Binzen")
-KREISE = ["Landkreis Lörrach", "Landkreis Waldshut"]
-GEMEINDEN = 67  # Lörrach 35 + Waldshut 32

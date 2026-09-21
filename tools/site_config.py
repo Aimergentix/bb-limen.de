@@ -7,13 +7,6 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-LANGUAGES = {
-    "einfach": "A2/B1-Ziel",
-    "fach": "Fachsprache, nur Statistik",
-    "recht": "Pflichttext, nur Statistik",
-    "leicht": "Leichte Sprache, Zielgruppenprüfung bleibt nötig",
-    "fehler": "Fehlerseite, nur Statistik",
-}
 PARTIALS = ("head", "skip", "rail", "foot", "callbar")
 
 
@@ -45,13 +38,13 @@ def load_catalog(root: Path = ROOT) -> dict:
         raise ValueError(f"{path}: pages muss eine nicht leere Liste sein")
     names = []
     for page in pages:
-        if not isinstance(page, dict) or set(page) - {"file", "language", "sitemap", "lastmod"}:
+        if not isinstance(page, dict) or set(page) - {"file", "sitemap", "lastmod"}:
             raise ValueError(f"{path}: ungültiger Seiteneintrag")
         name = page.get("file")
         if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*\.html", name):
             raise ValueError(f"{path}: ungültiger Dateiname {name!r}")
-        if not isinstance(page.get("language"), str) or page["language"] not in LANGUAGES or type(page.get("sitemap")) is not bool:
-            raise ValueError(f"{path}: {name}: language oder sitemap ist ungültig")
+        if type(page.get("sitemap")) is not bool:
+            raise ValueError(f"{path}: {name}: sitemap muss true oder false sein")
         if page["sitemap"]:
             value = page.get("lastmod")
             if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):

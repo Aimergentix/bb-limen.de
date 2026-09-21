@@ -1,3 +1,5 @@
+"""Der Build gegen eine erfundene Test-Website: Fehleingaben, Schutz der Quellen
+und fremder Verzeichnisse. Die echten Seiten sind hier nicht beteiligt."""
 from __future__ import annotations
 
 import json
@@ -7,6 +9,7 @@ import subprocess
 import tempfile
 import unittest
 
+from fixture_site import OFFICE, write_site
 from site_support import REPO
 
 
@@ -15,9 +18,10 @@ class BuildTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="bb-limen-build-test-")
         self.addCleanup(self.temp.cleanup)
         self.work = Path(self.temp.name)
-        for name in ("src", "public", "tools"):
-            shutil.copytree(REPO / name, self.work / name, ignore=shutil.ignore_patterns("__pycache__"))
-        self.assertEqual(self.run_build().returncode, 0)
+        shutil.copytree(REPO / "tools", self.work / "tools", ignore=shutil.ignore_patterns("__pycache__"))
+        write_site(self.work)
+        result = self.run_build()
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def run_build(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["sh", str(self.work / "tools/build.sh"), *args],
@@ -45,7 +49,7 @@ class BuildTests(unittest.TestCase):
         path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
     def test_office_change_reaches_pages_json_ld_and_vcard(self) -> None:
-        """R-ANGABEN-1, R-ANGABEN-3, R-ANGABEN-4, R-ANGABEN-6."""
+        """R-ANGABEN-1, R-ANGABEN-6: Eine Quelle, alle Verwendungen."""
         self.change_office(lambda data: data.update(
             telefon={"e164": "+4930123456", "sichtbar": "+49 30 123456"},
             email="kontakt@example.org",
@@ -65,15 +69,13 @@ class BuildTests(unittest.TestCase):
                 self.assertIn("12345 Testort", text)
                 self.assertIn("Fr 9:30–12:45 Uhr", text)
                 self.assertIn("Sa nach Vereinbarung", text)
-                for old in ("42904270", "info@bb-limen.de", "Am Dreispitz", "79589", "10–18", "%%BUREAU"):
+                for old in (OFFICE["telefon"]["e164"], OFFICE["email"], OFFICE["anschrift"]["strasse"],
+                            OFFICE["anschrift"]["plz"], "10–12", "%%BUREAU"):
                     self.assertNotIn(old, text)
-        for name in ("index.html", "fachkreise.html"):
-            self.assertIn("Freitag von 9:30 bis 12:45 Uhr.<br>Samstag nach Vereinbarung.",
-                          (self.work / "dist" / name).read_text(encoding="utf-8"))
-        easy = (self.work / "dist/leichte-sprache.html").read_text(encoding="utf-8")
-        for sentence in ("Am Freitag.", "Von 9:30 Uhr bis 12:45 Uhr.", "Am Samstag geht es auch."):
-            self.assertIn(sentence, easy)
         index = (self.work / "dist/index.html").read_text(encoding="utf-8")
+        for sentence in ("Freitag von 9:30 bis 12:45 Uhr. Samstag nach Vereinbarung.",
+                         "Am Freitag. Von 9:30 Uhr bis 12:45 Uhr. Am Samstag geht es auch."):
+            self.assertIn(sentence, index)
         for field in ('"telephone": "+4930123456"', '"email": "kontakt@example.org"',
                       '"addressLocality": "Testort"', '"addressRegion": "Testland"'):
             self.assertIn(field, index)
@@ -138,6 +140,14 @@ class BuildTests(unittest.TestCase):
         for name in before:
             self.assertEqual(before[name], self.snapshot(name))
 
+    def test_error_page_links_are_anchored_at_the_domain_root(self) -> None:
+        """404.html wird auch unter /ein/tiefer/pfad/ ausgeliefert."""
+        text = (self.work / "dist/404.html").read_text(encoding="utf-8")
+        for link in ('href="/style.css"', 'href="/favicon.ico"', 'href="/index.html"', 'href="/zweite.html"',
+                     'href="#inhalt"'):
+            self.assertIn(link, text)
+        self.assertIn('href="style.css"', (self.work / "dist/index.html").read_text(encoding="utf-8"))
+
     def test_build_is_repeatable_and_preserves_sources(self) -> None:
         before = {name: self.snapshot(name) for name in ("src", "public", "dist")}
         self.assertEqual(self.run_build().returncode, 0)
@@ -182,7 +192,7 @@ class BuildTests(unittest.TestCase):
         self.assert_build_fails_without_writes()
 
     def test_missing_page_is_rejected(self) -> None:
-        (self.work / "src/pages/vorsorge.html").unlink()
+        (self.work / "src/pages/zweite.html").unlink()
         self.assert_build_fails_without_writes()
 
     def test_empty_catalog_is_rejected(self) -> None:
@@ -211,8 +221,8 @@ class BuildTests(unittest.TestCase):
 
     def test_invalid_catalog_values_are_rejected(self) -> None:
         original = (self.work / "src/seiten.json").read_bytes()
-        for field, value in (("file", "../index.html"), ("language", "unbekannt"),
-                             ("language", []), ("sitemap", "ja"), ("lastmod", "2026-02-30")):
+        for field, value in (("file", "../index.html"), ("unbekannt", "Wert"),
+                             ("sitemap", "ja"), ("lastmod", "2026-02-30")):
             with self.subTest(field=field):
                 (self.work / "src/seiten.json").write_bytes(original)
                 self.change_catalog(lambda data: data["pages"][0].update({field: value}))
