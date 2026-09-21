@@ -6,10 +6,11 @@ Der Parser betrachtet nur ``main``. Navigation, Kontaktlisten, Ortslisten,
 ist nur ein Layoutumbruch und beendet keinen Satz.
 
 Für die Seiten mit dem Sprachprofil ``einfach`` gilt das redaktionelle Ziel:
-im Mittel höchstens 15 Wörter und kein Satz über 25 Wörter. Fachseite,
-Pflichttexte und Leichte Sprache werden separat ausgewiesen, aber nicht an
-diesem A2/B1-Ziel gemessen. Die Statistik ersetzt weder eine redaktionelle
-Prüfung noch die Prüfung Leichter Sprache durch die vorgesehene Zielgruppe.
+im Mittel höchstens 15 Wörter und kein Satz über 25 Wörter. Nach
+R-REDAKTION-3 sind Überschreitungen Hinweise und keine Freigabesperren.
+Fachseite, Pflichttexte und Leichte Sprache werden separat ausgewiesen. Die
+Statistik ersetzt weder eine redaktionelle Prüfung noch die Prüfung Leichter
+Sprache durch die vorgesehene Zielgruppe.
 
     python3 tools/pruefe_sprache.py               alle Seiten
     python3 tools/pruefe_sprache.py index.html    eine Seite, mit den langen Sätzen
@@ -182,7 +183,10 @@ def main(argumente: list[str]) -> int:
     parser.add_argument("--site-dir", type=Path, default=ROOT / "dist")
     parser.add_argument("seiten", nargs="*", help="Dateinamen aus src/seiten.json")
     args = parser.parse_args(argumente)
-    print(f"Redaktionelles A2/B1-Ziel: Mittel ≤ {ZIEL_MITTEL:.0f} Wörter, kein Satz > {ZIEL_MAX}\n")
+    print(
+        f"Redaktioneller Hinweis nach R-REDAKTION-3: Mittel ≤ {ZIEL_MITTEL:.0f} Wörter, "
+        f"kein Satz > {ZIEL_MAX}\n"
+    )
     try:
         pages = {page["file"]: page for page in load_catalog()["pages"]}
         found = {path.name for path in args.site_dir.glob("*.html")}
@@ -192,12 +196,19 @@ def main(argumente: list[str]) -> int:
         unknown = set(names) - set(pages)
         if unknown:
             raise ValueError(f"Unbekannte Seiten: {sorted(unknown)}")
-        ergebnisse = [pruefe(str(args.site_dir / name), zeige=bool(args.seiten),
-                            language=pages[name]["language"]) for name in names]
+        for name in names:
+            pruefe(
+                str(args.site_dir / name),
+                zeige=bool(args.seiten),
+                language=pages[name]["language"],
+            )
     except (OSError, ValueError) as fehler:
         print(f"FEHLER: {fehler}", file=sys.stderr)
         return 2
-    return 0 if all(ergebnisse) else 1
+    # R-REDAKTION-3: Zielüberschreitungen bleiben sichtbar, blockieren aber
+    # weder Prüfung noch Veröffentlichung. Strukturelle Auswertungsfehler
+    # werden oben weiterhin mit Rückgabewert 2 beendet.
+    return 0
 
 
 if __name__ == "__main__":

@@ -97,7 +97,27 @@ Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
 
 Geltende Rechtsstände: [docs/redaktion.md](docs/redaktion.md#rechtsstände).
 
-## 4. Sprache
+## 4. Sprache und redaktionelle Hoheit
+
+- **R-REDAKTION-1** Sichtbare Website-Texte, die das Büro selbst geändert
+  oder ausdrücklich als final bezeichnet hat, haben redaktionellen Vorrang.
+  Assistenten DÜRFEN sie ohne einen ausdrücklichen Auftrag zur Änderung der
+  konkret betroffenen Textstelle NICHT umformulieren, ergänzen, kürzen,
+  entfernen oder durch eine vermeintlich sicherere Aussage ersetzen. Ein
+  allgemeiner Auftrag zum Prüfen, Fertigstellen, Committen, Mergen oder zu den
+  „nötigen Maßnahmen" ist keine solche Erlaubnis.
+- **R-REDAKTION-2** Bedenken gegen einen redaktionell gesetzten Text MÜSSEN
+  mit genauer Fundstelle und Begründung getrennt von der Umsetzung berichtet
+  und dem Büro zur Entscheidung vorgelegt werden. Eine Quelle, die einem
+  Assistenten nicht vorliegt, ist kein Beleg dafür, dass eine Aussage
+  unbegründet oder falsch ist. Das Fehlen einer solchen Quelle im Repository
+  oder im Arbeitskontext DARF allein weder eine Textänderung noch eine
+  Veröffentlichungssperre auslösen.
+- **R-REDAKTION-3** Messwerte zu Satzlänge und Sprachniveau sind
+  redaktionelle Hinweise, keine Freigabesperren. Eine Überschreitung der
+  Zielwerte DARF `tools/pruefen.sh` nicht fehlschlagen lassen und berechtigt
+  Assistenten nicht zur Änderung eines sichtbaren Textes. Fehler im
+  Seitenbestand oder bei der technischen Auswertung bleiben Fehler.
 
 - **R-SPRACHE-1** Die vier Sprachebenen DÜRFEN NICHT vermischt werden, und der
   Stil einer Seite DARF NICHT nach dem Maßstab einer anderen „verbessert"
