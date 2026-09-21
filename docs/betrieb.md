@@ -16,13 +16,13 @@ Fassung bleibt dann online.
 
 Einstellungen bei GitHub, die dazu gehören:
 
-- **Settings → Pages → Source: GitHub Actions.**
+- **Settings → Pages → Source: GitHub Actions.**  > Ok vom user gemacht!
 - **Custom domain** `bb-limen.de` und **Enforce HTTPS**. `public/CNAME` bleibt
   Teil der Ausgabe, ersetzt beim eigenen Workflow aber nicht die
-  Domain-Einstellung bei GitHub.
+  Domain-Einstellung bei GitHub.   > Ok vom user gemacht!
 - **Settings → Branches → Schutz für `main`:** Pull Request erforderlich,
   Statusprüfung `pruefung` erforderlich, kein erzwungener Push. So gelangt
-  nichts ungeprüft und ohne Freigabe auf die Website.
+  nichts ungeprüft und ohne Freigabe auf die Website. > Ok vom user gemacht!
 
   GitHub bietet beim Einrichten nur Checks zur Auswahl an, die schon einmal
   auf einem Pull Request gemeldet wurden — der Anzeigename „Prüfung" des
