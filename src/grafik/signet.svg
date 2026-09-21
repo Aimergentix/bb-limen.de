@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Quelle fuer favicon.ico und apple-touch-icon.png. Dasselbe Blatt wie
+<!-- Quelle für favicon.ico und apple-touch-icon.png. Dasselbe Blatt wie
      in der Kolumne und im Datei-URI-Favicon in partials/head.html.
      Rendern:  tools/bilder-erzeugen.sh -->
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 180 180" preserveAspectRatio="xMidYMid meet">

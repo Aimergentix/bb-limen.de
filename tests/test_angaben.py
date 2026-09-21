@@ -1,8 +1,8 @@
-"""Haelt die Angaben zusammen, die an mehreren Stellen stehen.
+"""Hält die Angaben zusammen, die an mehreren Stellen stehen.
 
 AGENTS.md (R-ANGABEN) nennt sie die klassische Bruchstelle: ein Suchen-und-Ersetzen
-erwischt die Haelfte, und danach steht in der Kolumne eine andere Nummer
-als im Impressum. Diese Datei zaehlt nach, statt zu schaetzen.
+erwischt die Hälfte, und danach steht in der Kolumne eine andere Nummer
+als im Impressum. Diese Datei zählt nach, statt zu schätzen.
 """
 from __future__ import annotations
 
@@ -20,15 +20,15 @@ SEITEN = sorted(ROOT.glob("*.html"))
 BAUSTEINE = sorted((SOURCE / "partials").glob("*.html"))
 ALLE = SEITEN + BAUSTEINE
 
-# Fremde Nummern, die bewusst auf der Seite stehen. Wer eine hinzufuegt,
-# traegt sie hier ein — sonst faellt sie auf, und das ist der Sinn.
+# Fremde Nummern, die bewusst auf der Seite stehen. Wer eine hinzufügt,
+# trägt sie hier ein — sonst fällt sie auf, und das ist der Sinn.
 FREMDE_NUMMERN = {
     "+497751864950": "Betreuungsbehörde Landkreis Waldshut",
 }
 
-# Wo jede Angabe laut AGENTS.md (R-ANGABEN) stehen MUSS. Geprueft wird die
+# Wo jede Angabe laut AGENTS.md (R-ANGABEN) stehen MUSS. Geprüft wird die
 # Quelle der Seite, nicht die fertige Seite: Dort steht die Kolumne mit
-# Nummer und Anschrift ohnehin ueberall und wuerde jede Luecke verdecken.
+# Nummer und Anschrift ohnehin überall und würde jede Lücke verdecken.
 STELLEN_TELEFON = [
     "partials/rail.html", "partials/callbar.html", "pages/index.html",
     "pages/fachkreise.html", "pages/leichte-sprache.html",
@@ -98,7 +98,7 @@ class AngabenTests(unittest.TestCase):
                         treffer,
                         erlaubt,
                         "Unbekannte Telefonnummer. Wenn sie richtig ist, in "
-                        "FREMDE_NUMMERN eintragen und dazuschreiben, wem sie gehoert.",
+                        "FREMDE_NUMMERN eintragen und dazuschreiben, wem sie gehört.",
                     )
                     self.assertEqual(treffer, treffer.replace(" ", ""),
                                      "tel: braucht die Nummer ohne Leerzeichen")
@@ -106,8 +106,8 @@ class AngabenTests(unittest.TestCase):
     def test_sichtbare_nummer_ist_ueberall_gleich_geschrieben(self) -> None:
         """Findet Schreibweisen wie 0176/42904270 neben der kanonischen.
 
-        Geprueft wird nur der sichtbare Text: Attributwerte und das JSON-LD
-        fuehren die Nummer bewusst in der technischen Form ohne Leerzeichen.
+        Geprüft wird nur der sichtbare Text: Attributwerte und das JSON-LD
+        führen die Nummer bewusst in der technischen Form ohne Leerzeichen.
         """
         muster = re.compile(r"(?<!\d)(?:\+49|0)[\s/()\-]*1\d{2}[\s/()\-]*\d[\d\s/()\-]{5,}")
         for pfad in ALLE:
@@ -186,15 +186,15 @@ class AngabenTests(unittest.TestCase):
         self.assertEqual(len(orte), GEMEINDEN)
         self.assertEqual(len(set(orte)), len(orte), "Gemeinde doppelt im JSON-LD")
 
-        # Dieselben zwei Landkreise muessen auch sichtbar auf der Seite stehen.
+        # Dieselben zwei Landkreise müssen auch sichtbar auf der Seite stehen.
         rail = (SOURCE / "partials" / "rail.html").read_text(encoding="utf-8")
         for kreis in KREISE:
             with self.subTest(kreis=kreis):
                 self.assertIn(kreis, rail)
 
     def test_telefon_steht_an_jeder_vertragsstelle(self) -> None:
-        """R-ANGABEN-1. Die uebrigen Tests pruefen nur, dass vorhandene
-        Nummern gleich sind — nicht, dass die Nummer ueberhaupt dasteht."""
+        """R-ANGABEN-1. Die übrigen Tests prüfen nur, dass vorhandene
+        Nummern gleich sind — nicht, dass die Nummer überhaupt dasteht."""
         for stelle in STELLEN_TELEFON:
             with self.subTest(stelle=stelle):
                 self.assertIn(f'href="tel:{TELEFON_TECHNISCH}"', quelle(stelle))
@@ -219,8 +219,8 @@ class AngabenTests(unittest.TestCase):
                     self.assertIn(zeile, text)
 
     def test_keine_weitere_uhrzeit_neben_den_sprechzeiten(self) -> None:
-        """R-ANGABEN-4, Gegenprobe: Eine neue Stelle mit Uhrzeit faellt auf
-        und gehoert dann in SPRECHZEITEN und in AGENTS.md."""
+        """R-ANGABEN-4, Gegenprobe: Eine neue Stelle mit Uhrzeit fällt auf
+        und gehört dann in SPRECHZEITEN und in AGENTS.md."""
         for pfad in sorted((SOURCE / "pages").glob("*.html")) + BAUSTEINE:
             stelle = f"{pfad.parent.name}/{pfad.name}"
             text = pfad.read_text(encoding="utf-8")

@@ -1,7 +1,7 @@
-"""Schlaegt bei Formulierungen an, die hier schon einmal falsch waren.
+"""Schlägt bei Formulierungen an, die hier schon einmal falsch waren.
 
-Kein Stilwaechter — nur eine kurze Liste benannter Fehler, jeder mit seiner
-Begruendung. Wer eine Zeile ergaenzt, schreibt dazu, warum. Wer eine Zeile
+Kein Stilwächter — nur eine kurze Liste benannter Fehler, jeder mit seiner
+Begründung. Wer eine Zeile ergänzt, schreibt dazu, warum. Wer eine Zeile
 streicht, sollte sicher sein, dass der Fehler nicht wiederkommen kann.
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ from pathlib import Path
 from site_support import SITE as ROOT, SOURCE
 DATEIEN = sorted(ROOT.glob("*.html")) + sorted((SOURCE / "partials").glob("*.html"))
 
-# (Muster, Begruendung). Die Muster laufen ueber den Quelltext der Seiten.
+# (Muster, Begründung). Die Muster laufen über den Quelltext der Seiten.
 VERBOTEN = [
     (
         r"Aufgabenkreise\b",
@@ -36,8 +36,8 @@ VERBOTEN = [
     ),
     (
         r'href="http://(?!127\.0\.0\.1|localhost)',
-        "Unverschluesselter Verweis nach aussen. Behoerden und Ministerien "
-        "liefern durchweg ueber HTTPS aus.",
+        "Unverschlüsselter Verweis nach außen. Behörden und Ministerien "
+        "liefern durchweg über HTTPS aus.",
     ),
     (
         r"\b(TODO|FIXME|XXX|Lorem ipsum)\b",
@@ -49,13 +49,13 @@ VERBOTEN = [
     ),
     (
         # Die Unicode-Bloecke Verschiedene Symbole, Dingbats, Verschiedene Symbole
-        # und Pfeile sowie Emoji samt Variantenwaehler. Frueher standen hier nur
-        # vier Beispielzeichen; die Regel gilt aber fuer die ganzen Bloecke.
+        # und Pfeile sowie Emoji samt Variantenwähler. Früher standen hier nur
+        # vier Beispielzeichen; die Regel gilt aber für die ganzen Blöcke.
         r"[\u2600-\u27BF\u2B00-\u2BFF\uFE0F\U0001F000-\U0001FAFF]",
         "R-VERBOT-3: Schmuckzeichen, das die Serifenschriften des Projekts nicht "
-        "verlaesslich enthalten. Der Browser faellt auf eine Symbol- oder "
-        "Farb-Emoji-Schrift zurueck, und auf jedem Geraet steht etwas anderes. "
-        "Ornamente gehoeren als SVG ins Markup (.zierblatt).",
+        "verlässlich enthalten. Der Browser fällt auf eine Symbol- oder "
+        "Farb-Emoji-Schrift zurück, und auf jedem Gerät steht etwas anderes. "
+        "Ornamente gehören als SVG ins Markup (.zierblatt).",
     ),
     (
         r"(?i)\b(kompetent\w*|individuell\w*|Ihr Partner|professionell\w*|"
@@ -87,7 +87,7 @@ class BegriffsTests(unittest.TestCase):
                     self.assertEqual(treffer, [], f"{grund}\n  " + "\n  ".join(treffer))
 
     def test_aufgabenbereich_wird_verwendet(self) -> None:
-        """Gegenprobe: die richtige Form muss vorkommen, sonst prueft die
+        """Gegenprobe: die richtige Form muss vorkommen, sonst prüft die
         Verbotsliste oben etwas, das es gar nicht mehr gibt."""
         gesamt = " ".join(p.read_text(encoding="utf-8") for p in DATEIEN)
         self.assertIn("Aufgabenbereich", gesamt)

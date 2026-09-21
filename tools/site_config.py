@@ -11,7 +11,7 @@ LANGUAGES = {
     "einfach": "A2/B1-Ziel",
     "fach": "Fachsprache, nur Statistik",
     "recht": "Pflichttext, nur Statistik",
-    "leicht": "Leichte Sprache, Zielgruppenpruefung bleibt noetig",
+    "leicht": "Leichte Sprache, Zielgruppenprüfung bleibt nötig",
     "fehler": "Fehlerseite, nur Statistik",
 }
 PARTIALS = ("head", "skip", "rail", "foot", "callbar")
