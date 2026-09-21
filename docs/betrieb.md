@@ -21,8 +21,14 @@ Einstellungen bei GitHub, die dazu gehören:
   Teil der Ausgabe, ersetzt beim eigenen Workflow aber nicht die
   Domain-Einstellung bei GitHub.
 - **Settings → Branches → Schutz für `main`:** Pull Request erforderlich,
-  Statusprüfung „Prüfung" erforderlich, kein erzwungener Push. So gelangt nichts
-  ungeprüft und ohne Freigabe auf die Website.
+  Statusprüfung `pruefung` erforderlich, kein erzwungener Push. So gelangt
+  nichts ungeprüft und ohne Freigabe auf die Website.
+
+  GitHub bietet beim Einrichten nur Checks zur Auswahl an, die schon einmal
+  auf einem Pull Request gemeldet wurden — der Anzeigename „Prüfung" des
+  Workflows zählt dafür nicht, gesucht wird der Job-Name `pruefung`. Vor der
+  ersten Einrichtung deshalb einmal einen Pull Request nach `main` öffnen
+  (auch ohne Änderung), den Lauf abwarten und danach die Regel anlegen.
 
 Offizielle Anleitungen:
 
