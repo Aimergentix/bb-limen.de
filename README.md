@@ -333,9 +333,10 @@ ruft der Veröffentlichungsworkflow diese Prüfung als Voraussetzung auf;
 andere Branches und Pull Requests werden ohne Veröffentlichung geprüft.
 
 `tools/html5validator.yml` lässt Warnungen fehlschlagen und nimmt nur zwei
-bekannte CSP-Meldungen der lokalen Dateiprüfung aus. Separate Regressionen
-sichern Stylesheet, JSON-LD und CSP ab; Begründung und Quellen stehen in der
-[Architekturbeschreibung](docs/architektur.md#html-validierung).
+bekannte CSP-Meldungen sowie den bekannten `theme-color`-Fehltreffer des
+gebündelten Prüfstands aus. Separate Regressionen sichern Stylesheet, JSON-LD,
+CSP und die zwei erlaubten `theme-color`-Elemente ab; Begründung und Quellen
+stehen in der [Architekturbeschreibung](docs/architektur.md#html-validierung).
 Mit installiertem Java und `html5validator` läuft dieselbe Zusatzprüfung lokal:
 
 ```sh

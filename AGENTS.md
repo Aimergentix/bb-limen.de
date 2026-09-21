@@ -205,9 +205,10 @@ der ebenfalls `tools/pruefen.sh` ausführt; er merkt keine Dateien vor.
 Bei teilweise vorgemerkten Änderungen prüft er den gesamten Arbeitsbaum.
 
 Die CI verwendet denselben Prüfbefehl und zusätzlich die HTML-Validierung.
-Die zwei begrenzten CSP-Ausnahmen in `tools/html5validator.yml` benötigen die
-Gegenkontrollen in `tests/test_site.py`; Begründung: README §3a und
-`docs/architektur.md`. Keine pauschale Unterdrückung von Warnungen.
+Die zwei begrenzten CSP-Ausnahmen und die begrenzte `theme-color`-Ausnahme in
+`tools/html5validator.yml` benötigen die Gegenkontrollen in
+`tests/test_site.py`; Begründung: README §3a und `docs/architektur.md`. Keine
+pauschale Unterdrückung von Warnungen.
 Die Veröffentlichung darf erst nach erfolgreicher Prüfung erfolgen und nur
 `dist/` hochladen. Eine neue Seite erfordert den Eintrag im Seitenkatalog,
 ihre bewusst gewählte Navigation und angepasste unabhängige Bestandstests.

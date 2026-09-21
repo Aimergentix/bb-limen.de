@@ -91,7 +91,7 @@ Ein fehlgeschlagener Build erhält die letzte erfolgreiche Ausgabe.
 
 Die CI führt nach den Regressionstests `html5validator --config
 tools/html5validator.yml` auf `dist/` aus. Alle HTML-Fehler und Warnungen
-blockieren die Prüfung, ausgenommen zwei genau bezeichnete CSP-Meldungen:
+blockieren die Prüfung, ausgenommen drei genau bezeichnete Befundgruppen:
 
 - Beim Prüfen lokaler Dateien fehlt die Web-Origin für `'self'`. Deshalb
   wird nur die Meldung über das eigene `style.css` ausgenommen; siehe die
@@ -100,13 +100,20 @@ blockieren die Prüfung, ausgenommen zwei genau bezeichnete CSP-Meldungen:
   JavaScript gemeldet. `application/ld+json` ist nach dem
   [HTML-Standard](https://html.spec.whatwg.org/multipage/scripting.html#data-block)
   ein Datenblock. Nur diese Inline-CSP-Meldung der Startseite wird ausgenommen.
+- Der gebündelte Prüfstand meldet `media` auf `meta` pauschal als Fehler.
+  Für `meta name="theme-color"` erlaubt der
+  [HTML-Standard](https://html.spec.whatwg.org/multipage/semantics.html#meta-theme-color)
+  das Attribut ausdrücklich. Ausgenommen wird nur diese Fehlermeldung auf den
+  erzeugten Seiten.
 
 Die Gegenkontrollen in `tests/test_site.py` verlangen genau einen lokalen
 Stylesheet-Verweis, den einzigen Script-Tag als JSON-LD ohne `src` auf der
-Startseite, gültiges JSON und die unveränderten CSP-Direktiven. Sie verbieten
-Inline-Stile, Ereignisattribute und JavaScript-Verweise. Andere Ressourcen,
-Seiten oder Validator-Meldungen werden durch die Ausnahmen nicht verdeckt.
-Die CSP selbst wird dafür nicht gelockert.
+Startseite, gültiges JSON, die unveränderten CSP-Direktiven und genau die zwei
+vorgesehenen `theme-color`-Elemente für Hell- und Dunkeldarstellung. Sie
+verbieten andere `meta`-Elemente mit `media`, Inline-Stile,
+Ereignisattribute und JavaScript-Verweise. Andere Ressourcen, Seiten oder
+Validator-Meldungen werden durch die Ausnahmen nicht verdeckt. Die CSP selbst
+wird dafür nicht gelockert.
 
 ## Erweiterung und Benennung
 

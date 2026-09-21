@@ -123,6 +123,27 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual(page.tags["style"], 0)
                 self.assertFalse(any("style" in attrs for _, attrs in page.elements))
 
+    def test_theme_colors_are_the_only_media_meta_elements(self) -> None:
+        expected = [
+            {
+                "name": "theme-color",
+                "content": "#fbfaf7",
+                "media": "(prefers-color-scheme: light)",
+            },
+            {
+                "name": "theme-color",
+                "content": "#111312",
+                "media": "(prefers-color-scheme: dark)",
+            },
+        ]
+        for name, page in self.parsed.items():
+            with self.subTest(page=name):
+                media_meta = [
+                    attrs for tag, attrs in page.elements
+                    if tag == "meta" and "media" in attrs
+                ]
+                self.assertEqual(media_meta, expected)
+
     def test_content_security_policy_keeps_the_existing_restrictions(self) -> None:
         expected = {
             "default-src": ["'self'"], "img-src": ["'self'", "data:"],
