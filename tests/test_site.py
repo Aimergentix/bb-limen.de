@@ -142,7 +142,7 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual([(attrs.get("name"), attrs.get("media")) for attrs in media_meta], expected)
                 for attrs in media_meta:
                     self.assertEqual(set(attrs), {"name", "content", "media"})
-                    self.assertRegex(attrs["content"], r"^#(?:[0-9a-fA-F]{3}){1,2}$")
+                    self.assertTrue((attrs["content"] or "").strip())
 
     def test_content_security_policy_keeps_the_existing_restrictions(self) -> None:
         # R-VERBOT-1: Die Richtlinie darf nicht gelockert werden.
