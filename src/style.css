@@ -117,6 +117,39 @@
   }
 }
 
+/* Druck: Schwarz auf Weiß, ohne Flächen. Gilt auch, wenn der Bildschirm
+   dunkel eingestellt ist, weil der dunkle Satz nur für screen gilt. */
+@media print {
+  :root {
+    --paper: #fff;
+    --surface: #fff;
+    --ink: #000;
+    --body: #000;
+    --muted: #333;
+    --line: #999;
+    --carrier: #fff;
+    --carrier-line: #333;
+    --on-carrier: #000;
+    --meta-on-carrier: #333;
+    --link-ink: #000;
+    --link-on-carrier: #000;
+    --accent: #000;
+    --accent-ink: #000;
+    --accent-on-carrier: #000;
+    --brand-leaf: #000;
+    --leicht-ink: #000;
+    --gut: #000;
+    --gut-ink: #000;
+    --gut-flaeche: #fff;
+    --hauch: #fff;
+    --st-1: #000;
+    --st-2: #000;
+    --st-3: #000;
+    --st-4: #000;
+    --st-5: #000;
+  }
+}
+
 /* ================= Maße, Schrift ================= */
 
 :root {
@@ -1139,9 +1172,11 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* Ab etwa 2000 px wächst die Seite proportional mit, damit sie auf
    4K-Schirmen nicht verloren wirkt. Zeilenlänge bleibt unverändert,
-   weil Satzbreite und Schriftgrad beide in rem stehen. */
+   weil Satzbreite und Schriftgrad beide in rem stehen. Prozent statt
+   Pixel: Wer im Browser eine größere Grundschrift eingestellt hat,
+   behält sie; bei 16 px ergibt das wie bisher 17,5 px. */
 @media (min-width: 125rem) {
-  html { font-size: 17.5px; }
+  html { font-size: 109.375%; }
 }
 
 /* ================= Bedienbarkeit, Bewegung, Druck ================= */
@@ -1193,47 +1228,19 @@ h1::after { animation: zieh-linie 560ms cubic-bezier(0.22, 0.61, 0.36, 1) both; 
 }
 
 @media print {
-  :root {
-    --paper: #fff;
-    --surface: #fff;
-    --ink: #000;
-    --body: #000;
-    --muted: #333;
-    --line: #999;
-    --carrier: #fff;
-    --carrier-line: #333;
-    --on-carrier: #000;
-    --meta-on-carrier: #333;
-    --link-ink: #000;
-    --link-on-carrier: #000;
-    --accent: #000;
-    --accent-ink: #000;
-    --accent-on-carrier: #000;
-    --brand-leaf: #000;
-    --leicht-ink: #000;
-    --gut: #000;
-    --gut-ink: #000;
-    --gut-flaeche: #fff;
-    --hauch: #fff;
-    --st-1: #000;
-    --st-2: #000;
-    --st-3: #000;
-    --st-4: #000;
-    --st-5: #000;
-  }
   .shell { display: block; }
-  .rail { background: none; color: #000; padding: 0 0 1rem; border-bottom: 1pt solid #000;
+  .rail { background: none; color: var(--ink); padding: 0 0 1rem; border-bottom: 1pt solid var(--ink);
           box-shadow: none; position: static; height: auto; overflow: visible; }
   .rail nav, .rail-legal, .rail-ornament, .rail-ls, .rail-spacer, .callbar { display: none; }
   /* Kontaktblock bleibt: ein Ausdruck ohne Telefon und Anschrift ist
      für die Leser, die ausdrucken, wertlos. */
   .rail-contact { display: block; }
-  .rail-name, .rail-contact dd, .rail-contact dd a { color: #000; }
-  .rail-role, .rail-contact dt { color: #333; }
+  .rail-name, .rail-contact dd, .rail-contact dd a { color: var(--ink); }
+  .rail-role, .rail-contact dt { color: var(--meta-on-carrier); }
   .sheet { padding: 1rem 0; }
-  body { background: #fff; color: #000; font-size: 11pt; }
-  h1::after { animation: none; transform: none; background: #000; }
-  a { color: #000; }
+  body { background: var(--paper); color: var(--body); font-size: 11pt; }
+  h1::after { animation: none; transform: none; background: var(--ink); }
+  a { color: var(--ink); }
   .note, .gut, dl.contact { background: none; }
   .sheet a[href^="http"]::after {
     content: " (" attr(href) ")";
