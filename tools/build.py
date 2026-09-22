@@ -6,16 +6,57 @@ Alle Eingaben werden vor dem Ersetzen der bisherigen Ausgabe verarbeitet.
 from __future__ import annotations
 
 import argparse
+from html.parser import HTMLParser
 from pathlib import Path
 import re
 import sys
 import tempfile
+from urllib.parse import urlsplit, urljoin
 
 from site_config import ROOT, PARTIALS, base_url, load_catalog, read_source
 from bureau_data import load_office, render_office, vcard
 
 INCLUDE = re.compile(r"<!-- @include ([a-z-]+) -->\n?")
 CURRENT = re.compile(r"%%CUR-([a-z0-9-]+)%%")
+
+
+def error_page_links(source: str) -> str:
+    """Dateiziele der 404-Seite bleiben auch unter tiefen Fehleradressen gültig.
+
+    Ein base-Element würde auch den Sprunglink auf die Startseite umlenken.
+    Deshalb werden nur relative Dateiziele in HTML-Tags absolut zur Domain.
+    """
+    # HTMLParser zählt Zeilen nur an \n. str.splitlines trennt auch an \r,
+    # \x85 oder U+2028 und verschöbe dann jede folgende Ersetzung.
+    offsets = [0]
+    for line in source.split("\n"):
+        offsets.append(offsets[-1] + len(line) + 1)
+    replacements = []
+
+    def replace(match: re.Match) -> str:
+        value = match[3]
+        url = urlsplit(value)
+        if url.scheme or url.netloc or not url.path or value.startswith("/"):
+            return match[0]
+        return match[1] + match[2] + urljoin("/", value) + match[2]
+
+    class Links(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            raw = self.get_starttag_text()
+            updated = re.sub(r'''(\b(?:href|src)\s*=\s*)(["'])(.*?)\2''', replace, raw)
+            if raw != updated:
+                line, column = self.getpos()
+                start = offsets[line - 1] + column
+                if source[start:start + len(raw)] != raw:
+                    raise ValueError(f"404.html:{line}: Verweis nicht eindeutig zu verankern")
+                replacements.append((start, start + len(raw), updated))
+
+    parser = Links(convert_charrefs=False)
+    parser.feed(source)
+    parser.close()
+    for start, end, updated in reversed(replacements):
+        source = source[:start] + updated + source[end:]
+    return source
 
 
 def sitemap(catalog: dict, root: Path) -> bytes:
@@ -35,6 +76,13 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     office = load_office(root)
     pages = catalog["pages"]
     names = {page["file"] for page in pages}
+    # R-QUELLE-1, R-QUELLE-3: Root-Kopien sehen wie Quellen aus, werden aber
+    # nicht veröffentlicht. Eine Änderung dort darf nicht unbemerkt bleiben.
+    misplaced = sorted(path.name for path in root.iterdir()
+                       if path.name in names | set(catalog["public_files"]) |
+                       {"style.css", "sitemap.xml", "bb-limen.vcf"})
+    if misplaced:
+        raise ValueError(f"{root}: öffentliche Dateien am falschen Ort: {misplaced}; Quellen gehören nach src/ oder public/")
     for directory, expected in (
         (root / "src/pages", names),
         (root / "src/partials", {f"{name}.html" for name in PARTIALS}),
@@ -79,7 +127,10 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
         if "%%CUR-" in text:
             raise ValueError(f"{path}: ungültiger Navigationsplatzhalter")
-        result[page["file"]] = render_office(text, office).encode("utf-8")
+        text = render_office(text, office)
+        if page["file"] == "404.html":
+            text = error_page_links(text)
+        result[page["file"]] = text.encode("utf-8")
     result["style.css"] = read_source(root / "src/style.css")
     result["sitemap.xml"] = sitemap(catalog, root)
     result["bb-limen.vcf"] = vcard(result["index.html"].decode("utf-8"))
@@ -131,13 +182,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="bestehende Ausgabe nur prüfen")
     parser.add_argument("--output", type=Path, default=ROOT / "dist", help="neues Ausgabe-Verzeichnis (Standard: dist/)")
-    parser.add_argument("--sitemap", action="store_true", help="Sitemap nur auf stdout ausgeben")
     args = parser.parse_args()
     try:
         files = render()
-        if args.sitemap:
-            sys.stdout.buffer.write(files["sitemap.xml"])
-        elif args.check:
+        if args.check:
             check_output(files, args.output)
             print(f"Geprüft: {len(files)} Dateien entsprechen den Quellen.")
         else:

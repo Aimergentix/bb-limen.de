@@ -1,6 +1,6 @@
 # Prüft die Verweise nach außen, monatlich und auf Zuruf. Die Logik steht in
 # tools/verweise-pruefen.sh und läuft genauso lokal; bei einem toten Verweis
-# entsteht hier ein Issue. Was dann zu tun ist: docs/redaktion.md.
+# entsteht hier ein Issue. Was dann zu tun ist: docs/pflege.md.
 name: Verweise nach außen
 
 on:
@@ -50,7 +50,7 @@ jobs:
             echo "Bitte die betroffene Stelle auf der herausgebenden Seite suchen und"
             echo "Adresse **und** Standangabe in \`vorsorge.html\` bzw."
             echo "\`leichte-sprache.html\` nachziehen. Ein veralteter Stand ist"
-            echo "schlimmer als kein Stand — siehe docs/redaktion.md."
+            echo "schlimmer als kein Stand — siehe docs/pflege.md."
           } > meldung.md
 
           gh issue create \

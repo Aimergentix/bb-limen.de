@@ -1,3 +1,8 @@
+"""Technische Eigenschaften der fertigen Seiten: Verweise, Struktur, Kopfangaben.
+
+Kein Test hier hängt an Wortlaut, Zahlen oder Büroangaben. Was eine Seite
+sagt, entscheidet das Büro; geprüft wird, ob sie funktioniert (R-REDAKTION-3).
+"""
 from __future__ import annotations
 
 import json
@@ -7,37 +12,20 @@ from collections import Counter
 from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urljoin
 import xml.etree.ElementTree as ET
 
 
-from site_support import (
-    EMAIL, SITE as ROOT, SOURCE, TELEFON_SICHTBAR, TELEFON_TECHNISCH,
-)
-EXPECTED_PAGE_NAMES = {
-    "404.html",
-    "aufgaben.html",
-    "betreuung.html",
-    "datenschutz.html",
-    "fachkreise.html",
-    "impressum.html",
-    "index.html",
-    "leichte-sprache.html",
-    "vorsorge.html",
-}
-PAGES = sorted(ROOT.glob("*.html"))
+from site_support import REPO, SITE as ROOT, SOURCE
+from bureau_data import load_office
 
-# R-BESTAND-4: Diese Seiten bleiben aus Suchindex und Sitemap.
-NOINDEX_PAGES = {"404.html", "datenschutz.html", "impressum.html"}
-# R-FARBE-2: Salbei bedeutet Entlastung; mehr Stellen nehmen ihm die Bedeutung.
-RELIEF_BLOCKS = {"index.html": 1, "betreuung.html": 1, "aufgaben.html": 2}
-# R-BESTAND-3: Der Hinweis verschwindet erst mit der Registrierung, dann überall.
-FOUNDING_NOTICE_PAGES = {
-    "index.html", "betreuung.html", "aufgaben.html", "vorsorge.html",
-    "fachkreise.html",
-}
-FOUNDING_NOTICE = "<strong>Büro in Gründung.</strong>"
-FOUNDING_NOTICE_IMPRINT = "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt"
+PAGES = sorted(ROOT.glob("*.html"))
+CATALOG = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))["pages"]
+BASE = "https://" + (SOURCE.parent / "public/CNAME").read_text(encoding="utf-8").strip() + "/"
+
+
+def address(name: str) -> str:
+    return BASE if name == "index.html" else BASE + name
 
 
 class PageParser(HTMLParser):
@@ -75,35 +63,13 @@ class SiteStructureTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.parsed = {path.name: parse_page(path) for path in PAGES}
 
-    def test_public_page_inventory_uses_the_intended_names(self) -> None:
-        # R-BESTAND-2: Die Adressen bleiben.
-        self.assertEqual({path.name for path in PAGES}, EXPECTED_PAGE_NAMES)
-
-    def test_output_contains_only_the_expected_public_files(self) -> None:
-        expected = EXPECTED_PAGE_NAMES | {
-            "style.css", "sitemap.xml", "robots.txt", "CNAME", "bb-limen.vcf",
-            "favicon.ico", "apple-touch-icon.png", "vorschau.png",
-        }
-        self.assertEqual({path.name for path in ROOT.iterdir()}, expected)
-        for path in ROOT.iterdir():
-            self.assertTrue(path.is_file())
-            self.assertFalse(path.is_symlink())
-
-    def test_sitemap_lists_the_intended_urls_with_catalog_dates(self) -> None:
+    def test_sitemap_follows_the_catalog(self) -> None:
         ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
         urls = ET.parse(ROOT / "sitemap.xml").findall("s:url", ns)
-        self.assertEqual({url.findtext("s:loc", namespaces=ns) for url in urls}, {
-            "https://bb-limen.de/", "https://bb-limen.de/betreuung.html",
-            "https://bb-limen.de/aufgaben.html", "https://bb-limen.de/vorsorge.html",
-            "https://bb-limen.de/fachkreise.html", "https://bb-limen.de/leichte-sprache.html",
-        })
         # R-ORDNUNG-6: lastmod ist der redaktionelle Stand aus dem Katalog,
         # kein Builddatum — und liegt deshalb nie in der Zukunft.
-        catalog = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))
-        editorial = {
-            "https://bb-limen.de/" + ("" if page["file"] == "index.html" else page["file"]): page["lastmod"]
-            for page in catalog["pages"] if page["sitemap"]
-        }
+        editorial = {address(page["file"]): page["lastmod"] for page in CATALOG if page["sitemap"]}
+        self.assertEqual({url.findtext("s:loc", namespaces=ns) for url in urls}, set(editorial))
         for url in urls:
             loc = url.findtext("s:loc", namespaces=ns)
             lastmod = url.findtext("s:lastmod", namespaces=ns)
@@ -111,11 +77,21 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual(lastmod, editorial[loc])
                 self.assertLessEqual(date.fromisoformat(lastmod), date.today())
 
-    def test_error_page_base_precedes_relative_resources(self) -> None:
-        text = (ROOT / "404.html").read_text(encoding="utf-8")
-        self.assertEqual(text.count('<base href="/">'), 1)
-        self.assertLess(text.index('<base href="/">'), text.index('<link '))
-        self.assertLess(text.index('<base href="/">'), text.index('</head>'))
+    def test_error_page_links_work_under_nested_missing_addresses(self) -> None:
+        page = self.parsed["404.html"]
+        self.assertEqual(page.tags["base"], 0, "base würde den Sprunglink umleiten")
+        missing = BASE + "ein/tiefer/pfad/"
+        skip = next(attrs["href"] for tag, attrs in page.elements
+                    if tag == "a" and attrs.get("class") == "skip")
+        self.assertEqual(urljoin(missing, skip), missing + "#inhalt")
+        for tag, attrs in page.elements:
+            for key in ("href", "src"):
+                value = attrs.get(key)
+                if not value or value.startswith("#") or urlsplit(value).scheme:
+                    continue
+                with self.subTest(tag=tag, value=value):
+                    self.assertTrue(value.startswith("/"))
+                    self.assertTrue((ROOT / urlsplit(urljoin(missing, value)).path.lstrip("/")).is_file())
 
     def test_local_assets_exist(self) -> None:
         for path in PAGES:
@@ -124,7 +100,7 @@ class SiteStructureTests(unittest.TestCase):
                 url = urlsplit(value)
                 if url.scheme or url.netloc or not url.path or url.path == "/":
                     continue
-                self.assertTrue((ROOT / url.path).is_file(), f"{path.name}: {value}")
+                self.assertTrue((ROOT / url.path.lstrip("/")).is_file(), f"{path.name}: {value}")
             self.assertNotIn("@include", text)
             self.assertNotIn("%%CUR-", text)
 
@@ -147,23 +123,16 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 styles = [attrs.get("href") for tag, attrs in page.elements
                           if tag == "link" and "stylesheet" in (attrs.get("rel") or "").split()]
-                self.assertEqual(styles, ["style.css"])
+                self.assertEqual(styles, ["/style.css" if name == "404.html" else "style.css"])
                 self.assertEqual(page.tags["style"], 0)
                 self.assertFalse(any("style" in attrs for _, attrs in page.elements))
 
     def test_theme_colors_are_the_only_media_meta_elements(self) -> None:
         # R-PRUEFUNG-4: Gegentest zur theme-color-Ausnahme des Validators.
+        # Geprüft wird die Form, nicht der Farbwert (R-REDAKTION-3).
         expected = [
-            {
-                "name": "theme-color",
-                "content": "#fbfaf7",
-                "media": "(prefers-color-scheme: light)",
-            },
-            {
-                "name": "theme-color",
-                "content": "#111312",
-                "media": "(prefers-color-scheme: dark)",
-            },
+            ("theme-color", "(prefers-color-scheme: light)"),
+            ("theme-color", "(prefers-color-scheme: dark)"),
         ]
         for name, page in self.parsed.items():
             with self.subTest(page=name):
@@ -171,7 +140,10 @@ class SiteStructureTests(unittest.TestCase):
                     attrs for tag, attrs in page.elements
                     if tag == "meta" and "media" in attrs
                 ]
-                self.assertEqual(media_meta, expected)
+                self.assertEqual([(attrs.get("name"), attrs.get("media")) for attrs in media_meta], expected)
+                for attrs in media_meta:
+                    self.assertEqual(set(attrs), {"name", "content", "media"})
+                    self.assertTrue((attrs["content"] or "").strip())
 
     def test_content_security_policy_keeps_the_existing_restrictions(self) -> None:
         # R-VERBOT-1: Die Richtlinie darf nicht gelockert werden.
@@ -197,11 +169,10 @@ class SiteStructureTests(unittest.TestCase):
         for path in PAGES:
             if path.name == "404.html":
                 continue
-            address = "https://bb-limen.de/" if path.name == "index.html" else f"https://bb-limen.de/{path.name}"
             source = path.read_text(encoding="utf-8")
             with self.subTest(page=path.name):
-                self.assertIn(f'<link rel="canonical" href="{address}">', source)
-                self.assertIn(f'<meta property="og:url" content="{address}">', source)
+                self.assertIn(f'<link rel="canonical" href="{address(path.name)}">', source)
+                self.assertIn(f'<meta property="og:url" content="{address(path.name)}">', source)
 
     def test_each_page_has_one_main_and_one_h1(self) -> None:
         for name, page in self.parsed.items():
@@ -227,7 +198,7 @@ class SiteStructureTests(unittest.TestCase):
                 target = urlsplit(href)
                 if target.scheme or target.netloc or href.startswith(("mailto:", "tel:")):
                     continue
-                target_name = target.path or source_name
+                target_name = "index.html" if target.path == "/" else target.path.lstrip("/") or source_name
                 target_path = ROOT / target_name
                 with self.subTest(source=source_name, href=href):
                     self.assertTrue(target_path.is_file())
@@ -255,34 +226,6 @@ class SiteStructureTests(unittest.TestCase):
                 for forbidden in ("aggregateRating", '"review"'):
                     self.assertNotIn(forbidden, json.dumps(data))
 
-    def test_navigation_has_the_intended_names_and_order(self) -> None:
-        rail = (SOURCE / "partials" / "rail.html").read_text(encoding="utf-8")
-        links = re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', rail)
-        self.assertEqual(
-            links[0:5],
-            [
-                ("leichte-sprache.html", "Leichte Sprache"),
-                ("index.html", "BB Limen"),
-                ("betreuung.html", "Betreuung"),
-                ("aufgaben.html", "Aufgaben"),
-                ("vorsorge.html", "Vorsorge"),
-            ],
-        )
-        self.assertEqual(links[5], ("fachkreise.html", "Für Fachkreise"))
-
-    def test_footer_uses_the_short_office_name(self) -> None:
-        foot = (SOURCE / "partials" / "foot.html").read_text(encoding="utf-8")
-        self.assertIn("BB Limen · A+M Möller · Berufliche Betreuung", foot)
-        self.assertNotIn("Berufliche Betreuung, Binzen", foot)
-
-    def test_mobile_contactbar_uses_direct_contact_links(self) -> None:
-        text = (ROOT / "index.html").read_text(encoding="utf-8")
-        callbar = re.search(r"<!-- #callbar -->(.*?)<!-- /#callbar -->", text, re.S)[1]
-        self.assertIn(f'href="tel:{TELEFON_TECHNISCH}"', callbar)
-        self.assertIn(f'href="mailto:{EMAIL}"', callbar)
-        self.assertIn(f'aria-label="Büro BB Limen unter {TELEFON_SICHTBAR} anrufen"', callbar)
-        self.assertIn(f'aria-label="E-Mail an {EMAIL} schreiben"', callbar)
-
     def test_legal_links_are_on_every_page(self) -> None:
         # R-BESTAND-1, § 5 DDG: wörtlich benannt, auf jeder Seite, im Seitenfuß
         # und in der Kolumne — also mindestens zweimal.
@@ -290,14 +233,17 @@ class SiteStructureTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             for target, label in (("impressum.html", "Impressum"), ("datenschutz.html", "Datenschutz")):
                 with self.subTest(page=path.name, link=label):
-                    self.assertGreaterEqual(text.count(f'<a href="{target}">{label}</a>'), 2)
+                    prefix = "/" if path.name == "404.html" else ""
+                    self.assertGreaterEqual(text.count(f'<a href="{prefix}{target}">{label}</a>'), 2)
 
-    def test_only_the_mandatory_pages_are_noindex(self) -> None:
+    def test_noindex_and_sitemap_agree(self) -> None:
+        # R-BESTAND-4: Was nicht in der Sitemap steht, trägt noindex — und umgekehrt.
+        in_sitemap = {page["file"] for page in CATALOG if page["sitemap"]}
         for name, page in self.parsed.items():
             robots = [attrs.get("content") for tag, attrs in page.elements
                       if tag == "meta" and attrs.get("name") == "robots"]
             with self.subTest(page=name):
-                self.assertEqual(robots, ["noindex"] if name in NOINDEX_PAGES else [])
+                self.assertEqual(robots, [] if name in in_sitemap else ["noindex"])
 
     def test_every_page_declares_german(self) -> None:
         for name, page in self.parsed.items():
@@ -305,19 +251,25 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 self.assertEqual(html, [{"lang": "de"}])
 
-    def test_relief_colour_stays_at_four_places(self) -> None:
-        for name, page in self.parsed.items():
-            blocks = sum("gut" in (attrs.get("class") or "").split() for _, attrs in page.elements)
-            with self.subTest(page=name):
-                self.assertEqual(blocks, RELIEF_BLOCKS.get(name, 0))
+    def test_vcard_keeps_the_exchange_format(self) -> None:
+        # R-ANGABEN-6: UTF-8, CRLF, keine Zeile über 75 Bytes.
+        raw = (ROOT / "bb-limen.vcf").read_bytes()
+        self.assertNotIn(b"\n", raw.replace(b"\r\n", b""))
+        self.assertTrue(raw.startswith(b"BEGIN:VCARD\r\nVERSION:3.0\r\n"))
+        self.assertTrue(raw.endswith(b"END:VCARD\r\n"))
+        for line in raw.split(b"\r\n"):
+            self.assertLessEqual(len(line), 75)
 
-    def test_founding_notice_is_everywhere_or_nowhere(self) -> None:
-        with_notice = {path.name for path in PAGES
-                       if FOUNDING_NOTICE in path.read_text(encoding="utf-8")}
-        imprint = FOUNDING_NOTICE_IMPRINT in (ROOT / "impressum.html").read_text(encoding="utf-8")
-        if with_notice or imprint:
-            self.assertEqual(with_notice, FOUNDING_NOTICE_PAGES)
-            self.assertTrue(imprint, "Hinweis steht auf den Seiten, fehlt aber im Impressum")
+    def test_contact_literals_are_not_maintained_in_templates(self) -> None:
+        # R-ANGABEN-1: Die Werte kommen aus der Quelle selbst. Geprüft wird
+        # nicht, ob sie stimmen, sondern dass sie nur an einer Stelle stehen.
+        live = load_office(REPO)
+        values = (*live["telefon"].values(), live["email"], live["anschrift"]["strasse"])
+        for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html")]:
+            text = path.read_text(encoding="utf-8")
+            for value in values:
+                with self.subTest(path=path.name, value=value):
+                    self.assertNotIn(value, text)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,0 @@
-# CRLF der Visitenkarte beim Commit und Auschecken unverändert erhalten.
-# CR am Zeilenende ist Bestandteil dieses Formats, kein Leerraumfehler.
-*.vcf -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

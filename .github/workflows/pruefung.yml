@@ -19,14 +19,14 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Build, Regressionen und Satzlängen
+      - name: Build und Tests
         run: tools/pruefen.sh
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "21"
       # Feste Version: Der Prüfstand darf sich nicht ohne Commit ändern.
-      # Wann gewechselt wird, steht in docs/entscheidungen.md.
+      # Wann gewechselt wird, steht in docs/pflege.md unter HTML-Validierung.
       - name: HTML-Validator einrichten
         run: pip install --quiet html5validator==0.4.2
       - name: Fertige Seiten validieren

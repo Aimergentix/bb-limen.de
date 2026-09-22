@@ -5,8 +5,9 @@ from html import escape
 import json
 from pathlib import Path
 import re
+import unicodedata
 
-from site_config import read_source
+from site_config import load_json
 
 DAYS = ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag")
 TOKEN = re.compile(r"%%BUREAU:([a-z0-9_.-]+)%%")
@@ -14,28 +15,24 @@ JSON_TOKEN = re.compile(r'"%%BUREAU_JSON:([a-z0-9_.-]+)%%"')
 JSON_SCRIPT = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
 
 
+def single_line(value: str) -> bool:
+    """Keine Steuerzeichen und keine Zeilen- oder Absatztrenner wie U+2028."""
+    return not any(unicodedata.category(char) in ("Cc", "Zl", "Zp") for char in value)
+
+
 def require_keys(value: object, keys: set[str], field: str) -> None:
     if not isinstance(value, dict) or set(value) != keys:
         raise ValueError(f"bureauangaben.json: {field}: erwartet {', '.join(sorted(keys))}")
 
 
-def unique_object(pairs: list[tuple]) -> dict:
-    result = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError(f"bureauangaben.json: doppelter Schlüssel {key}")
-        result[key] = value
-    return result
-
-
 def load_office(root: Path) -> dict:
-    data = json.loads(read_source(root / "src/bureauangaben.json"), object_pairs_hook=unique_object)
+    data = load_json(root / "src/bureauangaben.json")
     require_keys(data, {"sprechzeiten", "telefon", "email", "anschrift"}, "Wurzel")
     require_keys(data["telefon"], {"e164", "sichtbar"}, "telefon")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, "anschrift")
     for field, value in {"email": data["email"], **data["telefon"], **data["anschrift"]}.items():
         if (not isinstance(value, str) or not value.strip() or value != value.strip()
-                or any(ord(char) < 32 or ord(char) == 127 for char in value)
+                or not single_line(value)
                 or "%%" in value):
             raise ValueError(f"bureauangaben.json: {field}: erwartet nicht leeren, einzeiligen Text")
     phone = data["telefon"]
@@ -148,7 +145,7 @@ def vcard(index: str) -> bytes:
 
     def field(record: dict, key: str) -> str:
         value = record.get(key)
-        if not isinstance(value, str) or not value or any(ord(char) < 32 for char in value):
+        if not isinstance(value, str) or not value or not single_line(value):
             raise ValueError(f"Startseite: ungültiges vCard-Feld {key}")
         return value
 

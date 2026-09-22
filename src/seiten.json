@@ -2,53 +2,44 @@
   "pages": [
     {
       "file": "index.html",
-      "language": "einfach",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "betreuung.html",
-      "language": "einfach",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "aufgaben.html",
-      "language": "einfach",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "vorsorge.html",
-      "language": "einfach",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "fachkreise.html",
-      "language": "fach",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "leichte-sprache.html",
-      "language": "leicht",
       "sitemap": true,
       "lastmod": "2026-09-21"
     },
     {
       "file": "impressum.html",
-      "language": "recht",
       "sitemap": false
     },
     {
       "file": "datenschutz.html",
-      "language": "recht",
       "sitemap": false
     },
     {
       "file": "404.html",
-      "language": "fehler",
       "sitemap": false
     }
   ],

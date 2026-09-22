@@ -1,5 +1,4 @@
 # UTF-8, LF, zwei Leerzeichen und Zeilenumbruch am Ende.
-# Visitenkarten verwenden die vom Dateiformat vorgesehenen CRLF-Umbrueche.
 root = true
 
 [*]
@@ -16,6 +15,3 @@ indent_size = 4
 [*.md]
 # Zwei Leerzeichen am Zeilenende sind in Markdown ein Zeilenumbruch.
 trim_trailing_whitespace = false
-
-[*.vcf]
-end_of_line = crlf

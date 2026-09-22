@@ -45,6 +45,21 @@ PAARE = [
     ("--st-3", "--surface"),
     ("--st-4", "--surface"),
     ("--st-5", "--surface"),
+    # Heller Grund auf Gold: Sprunglink und Weiter-Knopf der Leichten Sprache.
+    ("--paper", "--accent"),
+    # Anrufleiste am Telefon, auch im Zustand unter dem Zeiger.
+    ("--carrier", "--accent-on-carrier"),
+    ("--carrier", "--link-on-carrier"),
+    ("--carrier", "--on-carrier"),
+    # Hervorhebungen und Kontaktangaben auf abgesetzten Flächen.
+    ("--ink", "--surface"),
+    ("--body", "--gut-flaeche"),
+    # Register, Dokumente und Sprungmenü unter dem Zeiger.
+    ("--ink", "--hauch"),
+    ("--body", "--hauch"),
+    ("--muted", "--hauch"),
+    ("--accent-ink", "--hauch"),
+    ("--link-ink", "--hauch"),
 ]
 
 
