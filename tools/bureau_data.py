@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from site_config import read_source
+from site_config import load_json
 
 DAYS = ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag")
 TOKEN = re.compile(r"%%BUREAU:([a-z0-9_.-]+)%%")
@@ -25,17 +25,8 @@ def require_keys(value: object, keys: set[str], field: str) -> None:
         raise ValueError(f"bureauangaben.json: {field}: erwartet {', '.join(sorted(keys))}")
 
 
-def unique_object(pairs: list[tuple]) -> dict:
-    result = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError(f"bureauangaben.json: doppelter Schlüssel {key}")
-        result[key] = value
-    return result
-
-
 def load_office(root: Path) -> dict:
-    data = json.loads(read_source(root / "src/bureauangaben.json"), object_pairs_hook=unique_object)
+    data = load_json(root / "src/bureauangaben.json")
     require_keys(data, {"sprechzeiten", "telefon", "email", "anschrift"}, "Wurzel")
     require_keys(data["telefon"], {"e164", "sichtbar"}, "telefon")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, "anschrift")

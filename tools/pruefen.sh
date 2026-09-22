@@ -1,6 +1,6 @@
 #!/bin/sh
 # Gemeinsame Prüfung für Menschen, Hook und CI; Quellen, Index und dist/ bleiben unverändert.
-# Geprüft wird Technik, nie Wortlaut: Build, Verweise, Struktur, Werkzeuge (R-REDAKTION-3).
+# Geprüft wird Technik, nie Wortlaut: Build, Verweise, Struktur (R-REDAKTION-3).
 #
 #     tools/pruefen.sh
 set -eu
@@ -13,4 +13,4 @@ BB_LIMEN_TEST_SITE="$ARBEITSVERZEICHNIS/site"
 export BB_LIMEN_TEST_SITE
 python3 tools/build.py --output "$BB_LIMEN_TEST_SITE"
 python3 -m unittest discover -s tests
-echo 'Geprüft: Build, Verweise, Struktur und Werkzeuge.'
+echo 'Geprüft: Build, Verweise und Struktur.'

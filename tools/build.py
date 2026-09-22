@@ -182,13 +182,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="bestehende Ausgabe nur prüfen")
     parser.add_argument("--output", type=Path, default=ROOT / "dist", help="neues Ausgabe-Verzeichnis (Standard: dist/)")
-    parser.add_argument("--sitemap", action="store_true", help="Sitemap nur auf stdout ausgeben")
     args = parser.parse_args()
     try:
         files = render()
-        if args.sitemap:
-            sys.stdout.buffer.write(files["sitemap.xml"])
-        elif args.check:
+        if args.check:
             check_output(files, args.output)
             print(f"Geprüft: {len(files)} Dateien entsprechen den Quellen.")
         else:

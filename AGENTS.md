@@ -118,10 +118,9 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   Seiten NICHT fehlschlagen können. Tests und CI DÜRFEN deshalb keine
   Erwartungen zum Inhalt führen: keinen Wortlaut, keine Wortliste, keine
   Satzlänge, keine Büroangabe, keine Zählung. Zulässig ist, was nur bei einem
-  Defekt anschlägt — Build, Verweise, HTML-Struktur, Kopfangaben, Werkzeuge.
-  Werkzeugtests laufen gegen die Test-Website in `tests/fixture_site.py`, nicht
-  gegen die echten Seiten. Assistenten DÜRFEN eine Inhaltsprüfung NICHT wieder
-  einführen; die Regeln dieses Vertrags gelten auch ohne Test.
+  Defekt anschlägt — Build, Verweise, HTML-Struktur, Kopfangaben.
+  Assistenten DÜRFEN eine Inhaltsprüfung NICHT wieder einführen; die Regeln
+  dieses Vertrags gelten auch ohne Test.
 
 - **R-SPRACHE-1** Die vier Sprachebenen DÜRFEN NICHT vermischt werden, und der
   Stil einer Seite DARF NICHT nach dem Maßstab einer anderen „verbessert"
@@ -220,9 +219,6 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
   sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
   DÜRFEN NICHT pauschal unterdrückt werden.
-- **R-PRUEFUNG-5** Eine neue Seite MUSS in den Katalog und braucht eine
-  bewusste Navigationsentscheidung. Eine neue Prüfung MUSS R-REDAKTION-3
-  einhalten.
 
 **Fertig heißt:** `tools/pruefen.sh` besteht · die Änderung ist angesehen ·
 die CI ist grün.

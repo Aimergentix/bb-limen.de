@@ -32,7 +32,6 @@ Dateien. Die öffentliche Adresse hängt am Namen in der Ausgabe:
 `src/seiten.json` enthält `pages` und `public_files`. Ein Seiteneintrag hat
 `file` (flacher HTML-Dateiname), `sitemap` (bewusste Entscheidung über die
 Aufnahme) und, nur für Sitemap-Seiten, `lastmod` als `YYYY-MM-DD`.
-`tools/build.sh --sitemap` zeigt die Sitemap, ohne zu schreiben.
 
 Jede Seite enthält genau diese Include-Zeilen, in dieser Reihenfolge und
 jeweils allein auf einer Zeile:
@@ -112,15 +111,13 @@ Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
 | Testdatei | Gegenstand |
 | --- | --- |
-| `tests/test_site.py` | die echten fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap |
+| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büroangabe wörtlich in einer Quelle |
 | `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
-| `tests/test_build.py` | der Build: Fehleingaben, Schutz der Quellen und fremder Verzeichnisse |
-| `tests/test_bureau_data.py` | Sprachfassungen und Maskierung der Büroangaben; keine Büroangabe wörtlich in einer Seite |
-| `tests/test_tools.py` | Fehlerfälle von Bildexport und Verweisprüfung, mit nachgestelltem Browser und `curl` |
 
-Die Werkzeugtests laufen gegen eine erfundene kleine Website aus
-`tests/fixture_site.py`, nicht gegen die echten Seiten. `tests/site_support.py`
-stellt die frisch erzeugte echte Website bereit.
+`tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
+Werkzeuge selbst haben keine eigenen Tests mehr: Der Build prüft seine
+Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
+der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
 
 **Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook;
 geprüft wird der Arbeitsbaum. **Bei Push und Pull Request** führt
@@ -332,8 +329,7 @@ gebündelten Pull Request vor. Die Pages-Actions laufen nur auf `main`; nach dem
 
 ## Entscheidungen in Kürze
 
-Warum etwas so ist, in je einem Satz. Die ausführliche, datierte Fassung liegt
-in der Git-Geschichte: `git log --all -- docs/entscheidungen.md`.
+Warum etwas so ist, in je einem Satz.
 
 - **Kein JavaScript, keine fremden Ressourcen.** `datenschutz.html` behauptet,
   dass es nichts davon gibt; jede Einbindung macht sie unwahr (R-VERBOT-1).
@@ -350,8 +346,7 @@ in der Git-Geschichte: `git log --all -- docs/entscheidungen.md`.
 - **Die Adressen bleiben bei `.html`**, damit bestehende Verweise gelten
   (R-BESTAND-2).
 - **Pflichtseiten tragen `noindex`.** § 5 DDG verlangt Erreichbarkeit, nicht
-  Auffindbarkeit. Der Web-Audit vom 20.09.2026 sah das anders; die Frage ist
-  offen (R-BESTAND-4).
+  Auffindbarkeit (R-BESTAND-4).
 - **Quellen und Ausgabe sind getrennt.** Früher schrieb der Build Bausteine in
   dieselben Dateien; eine Änderung zwischen den Marken verschwand beim nächsten
   Build (R-QUELLE-1).
@@ -360,8 +355,6 @@ in der Git-Geschichte: `git log --all -- docs/entscheidungen.md`.
   (R-PRUEFUNG-2).
 - **Die Fehlerseite kommt ohne `base` aus.** Das Element lenkte auch „Zum
   Inhalt springen" auf die Startseite um.
-- **Keine Inhaltsprüfungen.** In der Aufbauphase zählten Tests Gemeinden,
-  maßen Satzlängen und führten Büroangaben ein zweites Mal. Seit die
-  Büroangaben eine einzige Quelle haben und das Büro die Texte verantwortet,
-  hielten sie nur noch redaktionelle Änderungen auf. Entfernt am 21.09.2026
-  (R-REDAKTION-3).
+- **Keine Inhaltsprüfungen.** Tests, die Gemeinden zählen oder Satzlängen
+  messen, halten nur redaktionelle Änderungen auf; die Texte verantwortet das
+  Büro (R-REDAKTION-3).

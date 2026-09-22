@@ -16,7 +16,8 @@ from urllib.parse import urlsplit, urljoin
 import xml.etree.ElementTree as ET
 
 
-from site_support import SITE as ROOT, SOURCE
+from site_support import REPO, SITE as ROOT, SOURCE
+from bureau_data import load_office
 
 PAGES = sorted(ROOT.glob("*.html"))
 CATALOG = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))["pages"]
@@ -259,6 +260,16 @@ class SiteStructureTests(unittest.TestCase):
         for line in raw.split(b"\r\n"):
             self.assertLessEqual(len(line), 75)
 
+    def test_contact_literals_are_not_maintained_in_templates(self) -> None:
+        # R-ANGABEN-1: Die Werte kommen aus der Quelle selbst. Geprüft wird
+        # nicht, ob sie stimmen, sondern dass sie nur an einer Stelle stehen.
+        live = load_office(REPO)
+        values = (*live["telefon"].values(), live["email"], live["anschrift"]["strasse"])
+        for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html")]:
+            text = path.read_text(encoding="utf-8")
+            for value in values:
+                with self.subTest(path=path.name, value=value):
+                    self.assertNotIn(value, text)
 
 
 if __name__ == "__main__":
