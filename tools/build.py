@@ -15,6 +15,7 @@ from urllib.parse import urlsplit, urljoin
 
 from site_config import ROOT, PARTIALS, base_url, load_catalog, read_source
 from bureau_data import load_office, render_office, vcard
+from people_data import load_people, page_name, person_vcard, render_people, render_person, site_pages, vcard_name
 
 INCLUDE = re.compile(r"<!-- @include ([a-z-]+) -->\n?")
 CURRENT = re.compile(r"%%CUR-([a-z0-9-]+)%%")
@@ -59,11 +60,11 @@ def error_page_links(source: str) -> str:
     return source
 
 
-def sitemap(catalog: dict, root: Path) -> bytes:
+def sitemap(pages: list[dict], root: Path) -> bytes:
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     base = base_url(root)
-    for page in catalog["pages"]:
+    for page in pages:
         if page["sitemap"]:
             url = base + ("" if page["file"] == "index.html" else page["file"])
             lines.extend(["  <url>", f"    <loc>{url}</loc>",
@@ -71,21 +72,47 @@ def sitemap(catalog: dict, root: Path) -> bytes:
     return ("\n".join([*lines, "</urlset>"]) + "\n").encode("utf-8")
 
 
+def assemble(path: Path, source: str, partials: dict[str, str]) -> str:
+    """Setzt die Bausteine zeilenweise und in fester Reihenfolge ein."""
+    output = []
+    seen = []
+    for number, line in enumerate(source.splitlines(keepends=True), 1):
+        match = INCLUDE.fullmatch(line)
+        if match:
+            name = match[1]
+            if len(seen) >= len(PARTIALS) or name != PARTIALS[len(seen)]:
+                raise ValueError(f"{path}:{number}: unbekanntes, doppeltes oder falsch angeordnetes Include {name}")
+            seen.append(name)
+            output.append(f"<!-- #{name} -->\n{partials[name]}<!-- /#{name} -->\n")
+        else:
+            if "@include" in line or "<!-- #" in line or "<!-- /#" in line:
+                raise ValueError(f"{path}:{number}: Include muss allein stehen; generierte Blöcke gehören nicht in Quellen")
+            output.append(line)
+    if tuple(seen) != PARTIALS:
+        raise ValueError(f"{path}: fehlende Includes, erwartet {', '.join(PARTIALS)}")
+    return "".join(output)
+
+
 def render(root: Path = ROOT) -> dict[str, bytes]:
     catalog = load_catalog(root)
     office = load_office(root)
-    pages = catalog["pages"]
+    people = load_people(root)
+    pages = site_pages(catalog, people)
     names = {page["file"] for page in pages}
+    cards = {vcard_name(person) for person in people}
+    generated = {"style.css", "sitemap.xml", "bb-limen.vcf"}
+    if len(names) != len(pages) or (names | generated) & (cards | set(catalog["public_files"])) or "bb-limen.vcf" in cards:
+        raise ValueError("Personenseiten oder Visitenkarten kollidieren mit vorhandenen Dateien")
     # R-QUELLE-1, R-QUELLE-3: Root-Kopien sehen wie Quellen aus, werden aber
     # nicht veröffentlicht. Eine Änderung dort darf nicht unbemerkt bleiben.
     misplaced = sorted(path.name for path in root.iterdir()
-                       if path.name in names | set(catalog["public_files"]) |
-                       {"style.css", "sitemap.xml", "bb-limen.vcf"})
+                       if path.name in names | cards | generated | set(catalog["public_files"]))
     if misplaced:
         raise ValueError(f"{root}: öffentliche Dateien am falschen Ort: {misplaced}; Quellen gehören nach src/ oder public/")
     for directory, expected in (
-        (root / "src/pages", names),
+        (root / "src/pages", {page["file"] for page in catalog["pages"]}),
         (root / "src/partials", {f"{name}.html" for name in PARTIALS}),
+        (root / "src/betreuende", {f"{person['kennung']}.html" for person in people}),
         (root / "public", set(catalog["public_files"])),
     ):
         if directory.is_symlink() or not directory.is_dir():
@@ -100,40 +127,35 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
         if "@include" in text or "<!-- #" in text or "<!-- /#" in text:
             raise ValueError(f"{path}: verschachtelte Includes oder alte Bausteinmarken")
         partials[name] = text
+    base = base_url(root)
+    template_path = root / "src/personenseite.html"
+    template = assemble(template_path, read_source(template_path).decode("utf-8"), partials)
+    sources = {page["file"]: (root / "src/pages" / page["file"], None) for page in catalog["pages"]}
+    sources.update({page_name(person): (template_path, person) for person in people})
     result = {}
     for page in pages:
-        path = root / "src/pages" / page["file"]
-        source = read_source(path).decode("utf-8")
-        output = []
-        seen = []
-        for number, line in enumerate(source.splitlines(keepends=True), 1):
-            match = INCLUDE.fullmatch(line)
-            if match:
-                name = match[1]
-                if len(seen) >= len(PARTIALS) or name != PARTIALS[len(seen)]:
-                    raise ValueError(f"{path}:{number}: unbekanntes, doppeltes oder falsch angeordnetes Include {name}")
-                seen.append(name)
-                output.append(f"<!-- #{name} -->\n{partials[name]}<!-- /#{name} -->\n")
-            else:
-                if "@include" in line or "<!-- #" in line or "<!-- /#" in line:
-                    raise ValueError(f"{path}:{number}: Include muss allein stehen; generierte Blöcke gehören nicht in Quellen")
-                output.append(line)
-        if tuple(seen) != PARTIALS:
-            raise ValueError(f"{path}: fehlende Includes, erwartet {', '.join(PARTIALS)}")
-        text = "".join(output)
+        path, person = sources[page["file"]]
+        if person is None:
+            text = assemble(path, read_source(path).decode("utf-8"), partials)
+        else:
+            text = render_person(template, person)
         for match in CURRENT.finditer(text):
             if match[1] + ".html" not in names:
                 raise ValueError(f"{path}: unbekanntes Navigationsziel {match[1]}")
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
         if "%%CUR-" in text:
             raise ValueError(f"{path}: ungültiger Navigationsplatzhalter")
+        text = render_people(text, people, str(path), base)
         text = render_office(text, office)
         if page["file"] == "404.html":
             text = error_page_links(text)
         result[page["file"]] = text.encode("utf-8")
     result["style.css"] = read_source(root / "src/style.css")
-    result["sitemap.xml"] = sitemap(catalog, root)
-    result["bb-limen.vcf"] = vcard(result["index.html"].decode("utf-8"))
+    result["sitemap.xml"] = sitemap(pages, root)
+    index = result["index.html"].decode("utf-8")
+    result["bb-limen.vcf"] = vcard(index)
+    for person in people:
+        result[vcard_name(person)] = person_vcard(person, index, office, base)
     for name in catalog["public_files"]:
         result[name] = read_source(root / "public" / name)
     return result

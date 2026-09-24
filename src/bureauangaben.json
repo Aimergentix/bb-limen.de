@@ -1,4 +1,10 @@
 {
+  "ug": {
+    "firma": "[Firma der UG (haftungsbeschränkt)]",
+    "registergericht": "[Registergericht]",
+    "registernummer": "[HRB-Nummer]",
+    "geschaeftsfuehrung": "[Geschäftsführung]"
+  },
   "telefon": {
     "e164": "+4917642904270",
     "sichtbar": "+49 176 4290 4270"

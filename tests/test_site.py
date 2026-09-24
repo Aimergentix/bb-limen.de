@@ -18,9 +18,11 @@ import xml.etree.ElementTree as ET
 
 from site_support import REPO, SITE as ROOT, SOURCE
 from bureau_data import load_office
+from people_data import load_people, site_pages
+from site_config import load_catalog
 
 PAGES = sorted(ROOT.glob("*.html"))
-CATALOG = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))["pages"]
+CATALOG = site_pages(load_catalog(REPO), load_people(REPO))
 BASE = "https://" + (SOURCE.parent / "public/CNAME").read_text(encoding="utf-8").strip() + "/"
 
 
@@ -251,14 +253,19 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 self.assertEqual(html, [{"lang": "de"}])
 
-    def test_vcard_keeps_the_exchange_format(self) -> None:
+    def test_vcards_keep_the_exchange_format(self) -> None:
         # R-ANGABEN-6: UTF-8, CRLF, keine Zeile über 75 Bytes.
-        raw = (ROOT / "bb-limen.vcf").read_bytes()
-        self.assertNotIn(b"\n", raw.replace(b"\r\n", b""))
-        self.assertTrue(raw.startswith(b"BEGIN:VCARD\r\nVERSION:3.0\r\n"))
-        self.assertTrue(raw.endswith(b"END:VCARD\r\n"))
-        for line in raw.split(b"\r\n"):
-            self.assertLessEqual(len(line), 75)
+        cards = sorted(ROOT.glob("*.vcf"))
+        self.assertIn(ROOT / "bb-limen.vcf", cards)
+        for path in cards:
+            raw = path.read_bytes()
+            with self.subTest(card=path.name):
+                raw.decode("utf-8")
+                self.assertNotIn(b"\n", raw.replace(b"\r\n", b""))
+                self.assertTrue(raw.startswith(b"BEGIN:VCARD\r\nVERSION:3.0\r\n"))
+                self.assertTrue(raw.endswith(b"END:VCARD\r\n"))
+                for line in raw.split(b"\r\n"):
+                    self.assertLessEqual(len(line), 75)
 
     def test_contact_literals_are_not_maintained_in_templates(self) -> None:
         # R-ANGABEN-1: Die Werte kommen aus der Quelle selbst. Geprüft wird
@@ -266,7 +273,12 @@ class SiteStructureTests(unittest.TestCase):
         live = load_office(REPO)
         values = (*live["telefon"].values(), live["email"], live["email_datenschutz"], live["anschrift"]["strasse"],
                   live["postanschrift"]["postfach"])
-        for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html")]:
+        for person in load_people(REPO):
+            values += (*(person["telefon"] or {}).values(), person["email"], person["haftpflicht"],
+                       (person["anschrift"] or {}).get("strasse"))
+        values = tuple(filter(None, values))
+        for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html"),
+                     *(SOURCE / "betreuende").glob("*.html"), SOURCE / "personenseite.html"]:
             text = path.read_text(encoding="utf-8")
             for value in values:
                 with self.subTest(path=path.name, value=value):

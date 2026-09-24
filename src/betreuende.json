@@ -1,0 +1,26 @@
+{
+  "personen": [
+    {
+      "kennung": "aranda-moeller",
+      "name": "Aranda Möller",
+      "beruf": "Berufsbetreuer, freiberuflich",
+      "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
+      "haftpflicht": "HISCOX, PL-PSC700400482/00",
+      "telefon": null,
+      "email": null,
+      "anschrift": null,
+      "lastmod": "2026-09-24"
+    },
+    {
+      "kennung": "mika-moeller",
+      "name": "Mika Möller",
+      "beruf": "Sozialpädagogin, Berufsbetreuerin, freiberuflich",
+      "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
+      "haftpflicht": "HISCOX, PL-PSC700400482/01",
+      "telefon": null,
+      "email": null,
+      "anschrift": null,
+      "lastmod": "2026-09-24"
+    }
+  ]
+}

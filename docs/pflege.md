@@ -12,7 +12,10 @@ src/partials/           gemeinsame HTML-Bausteine: Kopf, Sprunglink, Kolumne, Fu
 src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
-src/bureauangaben.json  Telefon, E-Mail, Anschriften, Sprechzeiten
+src/bureauangaben.json  UG, Zentrale, E-Mail, Anschriften, Sprechzeiten
+src/betreuende.json     die betreuenden Personen; je Eintrag eine Personenseite und eine vCard
+src/betreuende/         Vorstellungstext je Person als HTML-Ausschnitt
+src/personenseite.html  gemeinsame Vorlage aller Personenseiten
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
 tools/                  Build, Prüfung, Bildexport, Verweisprüfung, Commit-Hook
@@ -55,7 +58,10 @@ und Sprechzeiten (R-ANGABEN-1). `tools/bureau_data.py` prüft die Werte und
 erzeugt beim Build die Darstellungen; die Datei selbst wird nicht
 veröffentlicht.
 
-- `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
+- `ug` hat `firma`, `registergericht`, `registernummer` und
+  `geschaeftsfuehrung` der Bürogemeinschaft; bis zur Gründung stehen dort
+  Platzhalter (R-RECHT-5).
+- `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
 - `email` ist die Büroadresse, `email_datenschutz` die Adresse, die nur die
@@ -83,6 +89,39 @@ Schlüssel und nicht aufgelöste Platzhalter brechen ihn vor dem Schreiben ab.
 `dist/bb-limen.vcf` entsteht aus dem erzeugten Organization-Knoten der
 Startseite (R-ANGABEN-6); Name und Websiteadresse sind dort redaktionell
 festgelegt, die Kontaktwerte kommen aus den Büroangaben.
+
+## Betreuende Personen
+
+Die Bürogemeinschaft vermietet an selbständige Berufsbetreuer; Registrierung,
+Haftpflicht und Verantwortung liegen bei jeder Person einzeln. Deshalb hat
+jede Person eine eigene Seite und eine eigene Visitenkarte, und die Website
+wächst mit einem Datensatz statt mit einem Umbau.
+
+Ein Eintrag in `src/betreuende.json` hat genau diese Felder; `tools/people_data.py`
+prüft sie vor dem Schreiben:
+
+- `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
+  ß → ss). Daraus entstehen `betreuung-<kennung>.html`, `<kennung>.vcf` und der
+  Dateiname des Vorstellungstexts `src/betreuende/<kennung>.html`.
+- `name`, `beruf` — wie im Impressum.
+- `registrierung` — die kurze Standzeile, wörtlich im Impressum und auf der
+  Personenseite.
+- `haftpflicht` — Versicherer und Vertragsnummer für das Impressum.
+- `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; ohne
+  eigene Nummer nennen Seite und vCard nur die Zentrale.
+- `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
+- `anschrift` — `null` oder `strasse`, `plz`, `ort` für das Impressum; sonst
+  gilt die Büroanschrift.
+- `lastmod` — Stand der Personenseite für die Sitemap (R-ANGABEN-5).
+
+Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
+Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
+Personenangaben über Platzhalter: `%%BETREUENDE:liste%%` (Übersicht in
+`betreuende.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
+(Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+Startseite); die Vorlage `src/personenseite.html` verwendet
+`%%PERSON:<feld>%%`. Der Build erzeugt die Personenseiten nach den
+Katalogseiten und nimmt sie mit ihrem `lastmod` in die Sitemap auf.
 
 ## Verhalten des Builds
 
@@ -117,7 +156,7 @@ Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
 | Testdatei | Gegenstand |
 | --- | --- |
-| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büroangabe wörtlich in einer Quelle |
+| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büro- oder Personenangabe wörtlich in einer Quelle |
 | `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
 
 `tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
@@ -189,7 +228,8 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
   Typografie über `body class="ls"`.
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
-- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`** —
+- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`,
+  `betreuende.html`, `buerogemeinschaft.html` und die Personenseiten** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
@@ -226,7 +266,16 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 [README](../README.md#registrierung-eintragen).
 
 **Berufshaftpflicht.** Zwei getrennte Verträge, je einer pro Person
-(§ 23 Abs. 1 Nr. 3 BtOG). Im Impressum sind beide Zeilen angelegt.
+(§ 23 Abs. 1 Nr. 3 BtOG). Das Impressum erzeugt je Person eine Zeile aus
+`src/betreuende.json`.
+
+**Bürogemeinschaft — Wiedervorlage.** Die UG (haftungsbeschränkt) ist in
+Vorbereitung und noch nicht gegründet. Vor der Veröffentlichung klären und dann
+die Platzhalter in `src/bureauangaben.json`, `impressum.html`,
+`datenschutz.html` und `buerogemeinschaft.html` ersetzen: wer Diensteanbieter
+nach § 5 DDG ist, wie sich die Verantwortung nach Art. 26 DSGVO verteilt, die
+Firmierung und ob „BB Limen" zugleich Name der UG und Auftritt der Betreuer
+sein kann, und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
 
 **Umsatzsteuer.** Im Impressum steht die Befreiung nach § 4 Nr. 16 Satz 1
 Buchstabe k UStG mit der Ausnahme für Leistungen nach § 1877 Abs. 3 BGB.
@@ -351,6 +400,9 @@ Warum etwas so ist, in je einem Satz.
   (R-VERBOT-3).
 - **Die Adressen bleiben bei `.html`**, damit bestehende Verweise gelten
   (R-BESTAND-2).
+- **Personenseiten aus Daten.** Bei vier bis acht Personen, die kommen und
+  gehen, wäre jede handgeschriebene Seite eine weitere Stelle für dieselbe
+  Angabe (R-ORDNUNG-1).
 - **Pflichtseiten tragen `noindex`.** § 5 DDG verlangt Erreichbarkeit, nicht
   Auffindbarkeit (R-BESTAND-4).
 - **Quellen und Ausgabe sind getrennt.** Früher schrieb der Build Bausteine in

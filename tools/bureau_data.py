@@ -25,25 +25,33 @@ def require_keys(value: object, keys: set[str], field: str) -> None:
         raise ValueError(f"bureauangaben.json: {field}: erwartet {', '.join(sorted(keys))}")
 
 
+def phone_ok(phone: dict) -> bool:
+    return bool(re.fullmatch(r"\+[1-9]\d{1,14}", phone["e164"])
+                and re.fullmatch(r"\+[\d ]+", phone["sichtbar"])
+                and phone["sichtbar"].replace(" ", "") == phone["e164"])
+
+
+def email_ok(value: str) -> bool:
+    return bool(re.fullmatch(r"[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", value))
+
+
 def load_office(root: Path) -> dict:
     data = load_json(root / "src/bureauangaben.json")
-    require_keys(data, {"sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, "Wurzel")
+    require_keys(data, {"ug", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, "Wurzel")
+    require_keys(data["ug"], {"firma", "registergericht", "registernummer", "geschaeftsfuehrung"}, "ug")
     require_keys(data["telefon"], {"e164", "sichtbar"}, "telefon")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, "anschrift")
     require_keys(data["postanschrift"], {"postfach", "plz", "ort", "bundesland", "land"}, "postanschrift")
     for field, value in {"email": data["email"], "email_datenschutz": data["email_datenschutz"], **data["telefon"],
+                         **{"ug." + key: value for key, value in data["ug"].items()},
                          **data["anschrift"], **{"postanschrift." + key: value for key, value in data["postanschrift"].items()}}.items():
         if (not isinstance(value, str) or not value.strip() or value != value.strip()
                 or not single_line(value)
                 or "%%" in value):
             raise ValueError(f"bureauangaben.json: {field}: erwartet nicht leeren, einzeiligen Text")
-    phone = data["telefon"]
-    if (not re.fullmatch(r"\+[1-9]\d{1,14}", phone["e164"])
-            or not re.fullmatch(r"\+[\d ]+", phone["sichtbar"])
-            or phone["sichtbar"].replace(" ", "") != phone["e164"]):
+    if not phone_ok(data["telefon"]):
         raise ValueError("bureauangaben.json: technische und sichtbare Telefonnummer widersprechen sich")
-    if not all(re.fullmatch(r"[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", data[key])
-               for key in ("email", "email_datenschutz")):
+    if not all(email_ok(data[key]) for key in ("email", "email_datenschutz")):
         raise ValueError("bureauangaben.json: ungültige E-Mail-Adresse")
     for group in ("anschrift", "postanschrift"):
         if not re.fullmatch(r"\d{5}", data[group]["plz"]) or data[group]["land"] != "DE":
@@ -99,7 +107,7 @@ def office_values(data: dict) -> dict[str, str]:
         "sprechzeiten.leicht.hinweis": "Aber nur mit einem Termin.",
     }
     values.update({key: data[key] for key in ("email", "email_datenschutz")})
-    for group in ("telefon", "anschrift", "postanschrift"):
+    for group in ("ug", "telefon", "anschrift", "postanschrift"):
         values.update({f"{group}.{key}": value for key, value in data[group].items()})
     return values
 
@@ -132,8 +140,26 @@ def render_office(source: str, data: dict) -> str:
     return result
 
 
-def vcard(index: str) -> bytes:
-    """R-ANGABEN-6: Bürovisitenkarte aus dem erzeugten Organization-Knoten."""
+def vcard_text(value: str) -> str:
+    return value.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
+
+
+def vcard_bytes(lines: list[str]) -> bytes:
+    """UTF-8, CRLF und Zeilenfaltung nach 75 Bytes."""
+    folded = []
+    for line in ["BEGIN:VCARD", "VERSION:3.0", *lines, "END:VCARD"]:
+        part = ""
+        for char in line:
+            if len((part + char).encode("utf-8")) > 75:
+                folded.append(part)
+                part = " "
+            part += char
+        folded.append(part)
+    return ("\r\n".join(folded) + "\r\n").encode("utf-8")
+
+
+def office_node(index: str) -> dict:
+    """Der erzeugte Organization-Knoten der Startseite."""
     scripts = JSON_SCRIPT.findall(index)
     if len(scripts) != 1:
         raise ValueError("Startseite: genau ein JSON-LD-Block für die Bürovisitenkarte erwartet")
@@ -144,37 +170,30 @@ def vcard(index: str) -> bytes:
     offices = [node for node in graph if isinstance(node, dict) and node.get("@type") == "Organization"]
     if len(offices) != 1:
         raise ValueError("Startseite: genau eine Organization für die Bürovisitenkarte erwartet")
-    office = offices[0]
+    return offices[0]
+
+
+def node_field(record: dict, key: str) -> str:
+    value = record.get(key)
+    if not isinstance(value, str) or not value or not single_line(value):
+        raise ValueError(f"Startseite: ungültiges vCard-Feld {key}")
+    return value
+
+
+def vcard(index: str) -> bytes:
+    """R-ANGABEN-6: Bürovisitenkarte aus dem erzeugten Organization-Knoten."""
+    office = office_node(index)
     address = office.get("address")
     if not isinstance(address, dict) or address.get("@type") != "PostalAddress":
         raise ValueError("Startseite: PostalAddress fehlt")
-
-    def field(record: dict, key: str) -> str:
-        value = record.get(key)
-        if not isinstance(value, str) or not value or not single_line(value):
-            raise ValueError(f"Startseite: ungültiges vCard-Feld {key}")
-        return value
-
-    def text(value: str) -> str:
-        return value.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
-
-    name = text(field(office, "name"))
-    lines = ["BEGIN:VCARD", "VERSION:3.0", "N:;;;;", f"FN:{name}", f"ORG:{name}",
-             "TEL;TYPE=WORK,VOICE:" + text(field(office, "telephone")),
-             "EMAIL;TYPE=INTERNET,WORK:" + text(field(office, "email")),
-             # Postfach als Straßenzeile, weil viele Programme das eigene Postfachfeld nicht anzeigen.
-             "ADR;TYPE=WORK:;;" + ";".join(text(value) for value in (
-                 "Postfach " + field(address, "postOfficeBoxNumber"),
-                 *(field(address, key) for key in (
-                     "addressLocality", "addressRegion", "postalCode", "addressCountry")))),
-             "URL:" + field(office, "url"), "END:VCARD"]
-    folded = []
-    for line in lines:
-        part = ""
-        for char in line:
-            if len((part + char).encode("utf-8")) > 75:
-                folded.append(part)
-                part = " "
-            part += char
-        folded.append(part)
-    return ("\r\n".join(folded) + "\r\n").encode("utf-8")
+    name = vcard_text(node_field(office, "name"))
+    return vcard_bytes([
+        "N:;;;;", f"FN:{name}", f"ORG:{name}",
+        "TEL;TYPE=WORK,VOICE:" + vcard_text(node_field(office, "telephone")),
+        "EMAIL;TYPE=INTERNET,WORK:" + vcard_text(node_field(office, "email")),
+        # Postfach als Straßenzeile, weil viele Programme das eigene Postfachfeld nicht anzeigen.
+        "ADR;TYPE=WORK:;;" + ";".join(vcard_text(value) for value in (
+            "Postfach " + node_field(address, "postOfficeBoxNumber"),
+            *(node_field(address, key) for key in (
+                "addressLocality", "addressRegion", "postalCode", "addressCountry")))),
+        "URL:" + node_field(office, "url")])

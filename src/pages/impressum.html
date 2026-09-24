@@ -29,34 +29,25 @@
 
     <p>Unter der Geschäftsbezeichnung <strong>BB Limen · A+M Möller</strong> bereiten zwei freiberuflich tätige Personen ihre Tätigkeit mit gemeinsamer Büroanschrift vor. Jede Person wird ihren Beruf eigenständig ausüben, führt eigene Betreuungen und ist für ihre Berufsausübung selbst verantwortlich. Diensteanbieter nach § 5 DDG sind beide Personen einzeln.</p>
 
-    <div class="anbieter">
-      <div>
-        <h3>Aranda Möller</h3>
-        <p>
-          Berufsbetreuer, freiberuflich<br>
-          Registrierung nach § 23 BtOG beantragt, noch nicht erteilt<br>
-          %%BUREAU:anschrift.strasse%%<br>
-          %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%<br>
-          Deutschland
-        </p>
-      </div>
-      <div>
-        <h3>Mika Möller</h3>
-        <p>
-          Sozialpädagogin, Berufsbetreuerin, freiberuflich<br>
-          Registrierung nach § 23 BtOG beantragt, noch nicht erteilt<br>
-          %%BUREAU:anschrift.strasse%%<br>
-          %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%<br>
-          Deutschland
-        </p>
-      </div>
-    </div>
+%%BETREUENDE:anbieter%%
 
     <p><strong>Gemeinsamer Kontakt des Büros</strong><br>
       Telefon: <a href="tel:%%BUREAU:telefon.e164%%">%%BUREAU:telefon.sichtbar%%</a><br>
       E-Mail: <a href="mailto:%%BUREAU:email%%">%%BUREAU:email%%</a></p>
 
     <p>Die angegebene Adresse ist für beide die ladungsfähige Anschrift.</p>
+
+    <h2>Bürogemeinschaft</h2>
+
+    <p>[Rolle der UG als Betreiberin des Büros und der Website: Wortlaut nach anwaltlicher Prüfung]</p>
+
+    <p>
+      %%BUREAU:ug.firma%%<br>
+      %%BUREAU:anschrift.strasse%%<br>
+      %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%<br>
+      Registergericht: %%BUREAU:ug.registergericht%%, %%BUREAU:ug.registernummer%%<br>
+      Vertreten durch: %%BUREAU:ug.geschaeftsfuehrung%%
+    </p>
 
     <h2>Berufsbezeichnung und Registrierung</h2>
 
@@ -78,8 +69,7 @@
     <h2>Berufshaftpflichtversicherung</h2>
     <p>Nach § 23 Abs. 1 Nr. 3 BtOG besteht für jede Person ein eigener Versicherungsvertrag.</p>
     <p>
-      <strong>Aranda Möller:</strong> HISCOX, PL-PSC700400482/00<br>
-      <strong>Mika Möller:</strong> HISCOX, PL-PSC700400482/01<br>
+%%BETREUENDE:haftpflicht%%
       Räumlicher Geltungsbereich: Deutschland
     </p>
 
