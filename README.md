@@ -58,18 +58,16 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
-1. `impressum.html`: unter „Anbieter" der Absatz „… bereiten … ihre Tätigkeit
-   … vor. Jede Person wird ihren Beruf eigenständig ausüben …".
-2. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
-   Personenblock des Impressums und im Personenabschnitt auf `buero.html`.
-3. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
+1. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
+   Personenabschnitt auf `buero.html`.
+2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
    `aufgaben.html`, `vorsorge.html` und `fachkreise.html` (R-BESTAND-3).
-4. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
+3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
    … beantragt") und „Vorschlagslisten" („sobald die Registrierung erteilt
    ist").
-5. `aufgaben.html`: Register VI, „übernehmen wir nach Aufnahme der Tätigkeit".
-6. `leichte-sprache.html`: der Kasten „Wichtig: Unser Büro ist noch neu …".
-7. `index.html`: im JSON-LD die Zeile `description` („Büro in Gründung …").
+4. `aufgaben.html`: Register VI, „übernehmen wir nach Aufnahme der Tätigkeit".
+5. `leichte-sprache.html`: der Kasten „Wichtig: Unser Büro ist noch neu …".
+6. `index.html`: im JSON-LD die Zeile `description` („Büro in Gründung …").
 
 ### Eine betreuende Person aufnehmen
 
@@ -77,13 +75,13 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
    [docs/pflege.md](docs/pflege.md#betreuende-personen).
 2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
 3. `lastmod` von `buero.html` in `src/seiten.json` nachziehen,
-   `tools/pruefen.sh`, danach `buero.html` und das Impressum ansehen.
-   Abschnitt, Visitenkarte und Impressum-Block folgen von selbst.
+   `tools/pruefen.sh`, danach `buero.html` ansehen.
+   Abschnitt und Visitenkarte folgen von selbst.
 
 ### Eine betreuende Person entfernen
 
 Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` nachziehen,
-`tools/pruefen.sh`. Den Absatz „Registrierung" im Impressum von Hand streichen.
+`tools/pruefen.sh`.
 
 ### Wenn sich ein Gesetz ändert
 

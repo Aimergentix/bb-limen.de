@@ -58,8 +58,9 @@ erzeugt beim Build die Darstellungen; die Datei selbst wird nicht
 veröffentlicht.
 
 - `ug` hat `firma`, `registergericht`, `registernummer` und
-  `geschaeftsfuehrung` der Bürogemeinschaft; bis zur Gründung stehen dort
-  Platzhalter (R-RECHT-5).
+  `geschaeftsfuehrung` der UG; sie ist Anbieterin im Impressum. Solange
+  Registergericht und Registernummer fehlen, stehen dort Platzhalter
+  (R-RECHT-5).
 - `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
@@ -103,17 +104,16 @@ prüft sie vor dem Schreiben:
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
   ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
   `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
-- `name`, `beruf` — wie im Impressum.
-- `registrierung` — die kurze Standzeile, wörtlich im Impressum und im
-  Personenabschnitt.
+- `name`, `beruf` — wie im Personenabschnitt.
+- `registrierung` — die kurze Standzeile, wörtlich im Personenabschnitt.
 - `haftpflicht` — Versicherer und Vertragsnummer; wird derzeit auf keiner
   Seite ausgegeben.
 - `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; eine
   eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
   zusätzlich die Zentrale.
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
-- `anschrift` — `null` oder `strasse`, `plz`, `ort` für das Impressum; sonst
-  gilt die Büroanschrift.
+- `anschrift` — `null` oder `strasse`, `plz`, `ort`; wird derzeit auf keiner
+  Seite ausgegeben.
 - `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
   oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
   Karte schneidet es auf 4:3 zu, das Gesicht im oberen Drittel; 800 × 600
@@ -122,7 +122,7 @@ prüft sie vor dem Schreiben:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `%%BETREUENDE:anbieter%%` (Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+`buero.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite). Eine Änderung in `src/betreuende.json` ändert `buero.html`;
 deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
 
