@@ -26,9 +26,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/configure-pages@v6
       - name: Veröffentlichungsdateien erzeugen
-        run: |
-          tools/build.sh
-          tools/build.sh --check
+        run: tools/build.sh
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

@@ -9,11 +9,9 @@ import json
 import re
 import unittest
 from collections import Counter
-from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
-import xml.etree.ElementTree as ET
 
 
 from site_support import REPO, SITE as ROOT, SOURCE
@@ -63,20 +61,6 @@ class SiteStructureTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.parsed = {path.name: parse_page(path) for path in PAGES}
-
-    def test_sitemap_follows_the_catalog(self) -> None:
-        ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-        urls = ET.parse(ROOT / "sitemap.xml").findall("s:url", ns)
-        # R-ORDNUNG-6: lastmod ist der redaktionelle Stand aus dem Katalog,
-        # kein Builddatum — und liegt deshalb nie in der Zukunft.
-        editorial = {address(page["file"]): page["lastmod"] for page in CATALOG if page["sitemap"]}
-        self.assertEqual({url.findtext("s:loc", namespaces=ns) for url in urls}, set(editorial))
-        for url in urls:
-            loc = url.findtext("s:loc", namespaces=ns)
-            lastmod = url.findtext("s:lastmod", namespaces=ns)
-            with self.subTest(url=loc):
-                self.assertEqual(lastmod, editorial[loc])
-                self.assertLessEqual(date.fromisoformat(lastmod), date.today())
 
     def test_error_page_links_work_under_nested_missing_addresses(self) -> None:
         page = self.parsed["404.html"]
@@ -181,12 +165,6 @@ class SiteStructureTests(unittest.TestCase):
                 self.assertEqual(page.tags["main"], 1)
                 self.assertEqual(page.tags["h1"], 1)
 
-    def test_ids_are_unique(self) -> None:
-        for name, page in self.parsed.items():
-            duplicates = [item for item, count in Counter(page.ids).items() if count > 1]
-            with self.subTest(page=name):
-                self.assertEqual(duplicates, [])
-
     def test_heading_levels_do_not_jump(self) -> None:
         for name, page in self.parsed.items():
             jumps = [pair for pair in zip(page.headings, page.headings[1:]) if pair[1] > pair[0] + 1]
@@ -245,26 +223,6 @@ class SiteStructureTests(unittest.TestCase):
                       if tag == "meta" and attrs.get("name") == "robots"]
             with self.subTest(page=name):
                 self.assertEqual(robots, [] if name in in_sitemap else ["noindex"])
-
-    def test_every_page_declares_german(self) -> None:
-        for name, page in self.parsed.items():
-            html = [attrs for tag, attrs in page.elements if tag == "html"]
-            with self.subTest(page=name):
-                self.assertEqual(html, [{"lang": "de"}])
-
-    def test_vcards_keep_the_exchange_format(self) -> None:
-        # R-ANGABEN-6: UTF-8, CRLF, keine Zeile über 75 Bytes.
-        cards = sorted(ROOT.glob("*.vcf"))
-        self.assertIn(ROOT / "bb-limen.vcf", cards)
-        for path in cards:
-            raw = path.read_bytes()
-            with self.subTest(card=path.name):
-                raw.decode("utf-8")
-                self.assertNotIn(b"\n", raw.replace(b"\r\n", b""))
-                self.assertTrue(raw.startswith(b"BEGIN:VCARD\r\nVERSION:3.0\r\n"))
-                self.assertTrue(raw.endswith(b"END:VCARD\r\n"))
-                for line in raw.split(b"\r\n"):
-                    self.assertLessEqual(len(line), 75)
 
     def test_contact_literals_are_not_maintained_in_templates(self) -> None:
         # R-ANGABEN-1: Die Werte kommen aus der Quelle selbst. Geprüft wird

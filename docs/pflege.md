@@ -159,7 +159,7 @@ Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
 | Testdatei | Gegenstand |
 | --- | --- |
-| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büro- oder Personenangabe wörtlich in einer Quelle |
+| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, `noindex`; keine Büro- oder Personenangabe wörtlich in einer Quelle |
 | `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
 
 `tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
@@ -396,6 +396,8 @@ Warum etwas so ist, in je einem Satz.
   `PostalAddress` nennt sie, ohne einen Standort mit Publikumsverkehr zu
   behaupten. Aus demselben Grund wäre ein Eintrag bei einem Kartendienst ein
   Risiko (R-VERBOT-5, R-VERBOT-6).
+- **Kein Hell-/Dunkel-Schalter.** Ohne JavaScript ließe sich die Wahl nicht
+  über alle Seiten halten; die Darstellung folgt `prefers-color-scheme`.
 - **Das Ornament ist ein SVG.** Zeichen wie U+2766 fehlen in den
   Serifenschriften; der Browser zeigte auf jedem Gerät etwas anderes
   (R-VERBOT-3).

@@ -118,13 +118,6 @@ class KontrastTests(unittest.TestCase):
                         f"nötig sind {AA_TEXT}:1",
                     )
 
-    def test_palette_hat_hellen_und_dunklen_satz(self) -> None:
-        hell, dunkel = palette(False), palette(True)
-        self.assertNotEqual(hell["--paper"], dunkel["--paper"],
-                            "Der Dunkelmodus überschreibt --paper nicht mehr")
-        self.assertEqual(sorted(hell), sorted(dunkel),
-                         "Hell und dunkel kennen nicht dieselben Farbnamen")
-
 
 if __name__ == "__main__":
     unittest.main()

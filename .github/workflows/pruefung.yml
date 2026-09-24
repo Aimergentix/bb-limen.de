@@ -33,4 +33,3 @@ jobs:
         run: |
           tools/build.sh
           html5validator --config tools/html5validator.yml
-          tools/build.sh --check

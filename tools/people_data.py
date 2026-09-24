@@ -87,13 +87,6 @@ def html(value: str) -> str:
     return escape(value, quote=True)
 
 
-def address_lines(person: dict) -> str:
-    address = person["anschrift"]
-    if address is None:
-        return "%%BUREAU:anschrift.strasse%%<br>\n          %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%"
-    return f"{html(address['strasse'])}<br>\n          {html(address['plz'])} {html(address['ort'])}"
-
-
 # Dasselbe Blatt wie Signet und .zierblatt; hier als Trenner in der Karte.
 LEAF = ('<svg class="zierblatt" viewBox="0 0 24 26" aria-hidden="true" focusable="false" fill="none" '
         'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
@@ -152,29 +145,11 @@ def section(person: dict) -> str:
 
 
 def render_people(source: str, people: list[dict], name: str, base: str) -> str:
-    """Blöcke über alle Personen: Übersicht, Impressum, JSON-LD."""
+    """Blöcke über alle Personen: Übersicht und JSON-LD."""
     def sections() -> str:
         return '    <div class="team">\n' + "\n".join(section(person) for person in people) + "\n    </div>"
 
-    def providers() -> str:
-        blocks = []
-        for person in people:
-            blocks.append(f"""      <div>
-        <h3>{html(person["name"])}</h3>
-        <p>
-          {html(person["beruf"])}<br>
-          {html(person["registrierung"])}<br>
-          {address_lines(person)}<br>
-          Deutschland
-        </p>
-      </div>""")
-        return '    <div class="anbieter">\n' + "\n".join(blocks) + "\n    </div>"
-
-    def insurance() -> str:
-        return "\n".join(f"      <strong>{html(person['name'])}:</strong> {html(person['haftpflicht'])}<br>"
-                         for person in people)
-
-    blocks = {"personen": sections, "anbieter": providers, "haftpflicht": insurance}
+    blocks = {"personen": sections}
 
     def replace(match: re.Match) -> str:
         if match[1] not in blocks:
