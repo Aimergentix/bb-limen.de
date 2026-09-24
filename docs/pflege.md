@@ -53,9 +53,8 @@ den eingesetzten Baustein. In `rail.html` markiert der Build über
 ## Büroangaben
 
 `src/bureauangaben.json` ist die einzige Quelle für Telefon, E-Mail, Anschrift
-und Sprechzeiten (R-ANGABEN-1). `tools/bureau_data.py` prüft die Werte und
-erzeugt beim Build die Darstellungen; die Datei selbst wird nicht
-veröffentlicht.
+und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
+Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
 - `ug` hat `firma`, `registergericht`, `registernummer` und
   `geschaeftsfuehrung` der UG; sie ist Anbieterin im Impressum. Solange
@@ -73,10 +72,9 @@ veröffentlicht.
   im JSON-LD und in der Visitenkarte.
 - `sprechzeiten.regulaer` hat `tage` als Liste deutscher Wochentage und `von`
   sowie `bis` als HH:MM; `nach_vereinbarung` nennt die Termintage. Beide Listen
-  sind nicht leer, ohne Wiederholung und überschneiden sich nicht. Die
-  Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder je Wochentag
-  verschiedene Zeiten brauchen eine Erweiterung von Datenformat und
-  Sprachvorlagen.
+  sind nicht leer. Die Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder
+  je Wochentag verschiedene Zeiten brauchen eine Erweiterung von Datenformat
+  und Sprachvorlagen.
 
 Seiten verwenden Platzhalter wie `%%BUREAU:telefon.e164%%` oder
 `%%BUREAU:anschrift.strasse%%`. Die Sprechzeiten gibt es in drei Fassungen:
@@ -88,7 +86,8 @@ Schlüssel und nicht aufgelöste Platzhalter brechen ihn vor dem Schreiben ab.
 
 `dist/bb-limen.vcf` entsteht aus dem erzeugten Organization-Knoten der
 Startseite (R-ANGABEN-6); Name und Websiteadresse sind dort redaktionell
-festgelegt, die Kontaktwerte kommen aus den Büroangaben.
+festgelegt, die Kontaktwerte kommen aus den Büroangaben. Alle Visitenkarten
+sind UTF-8 mit CRLF-Zeilenenden und nach 75 Bytes gefaltet.
 
 ## Betreuende Personen
 
@@ -98,8 +97,7 @@ jede Person einen eigenen Abschnitt auf `buero.html` und eine eigene
 Visitenkarte, und die Website wächst mit einem Datensatz statt mit einem
 Umbau. Eigene Seiten je Person gibt es vorerst nicht.
 
-Ein Eintrag in `src/betreuende.json` hat genau diese Felder; `tools/people_data.py`
-prüft sie vor dem Schreiben:
+Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
   ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
@@ -128,17 +126,15 @@ deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
 
 ## Verhalten des Builds
 
-Der Build prüft Katalog, Büroangaben, Dateibestand, Bausteine,
-Include-Reihenfolge und Platzhalter, bevor er schreibt. Er erzeugt erst ein
-vollständiges Arbeitsverzeichnis und ersetzt dann `dist/`; bei fehlerhaften
-Eingaben bleiben Quellen und letzte Ausgabe erhalten. Dateien in `src/pages/`,
-`src/partials/` oder `public/`, die nicht eingetragen sind, führen zum Fehler,
-ebenso eine Datei im Wurzelverzeichnis, die wie eine veröffentlichte heißt —
-etwa `robots.txt`: Sie sähe wie eine Quelle aus, würde aber nie ausgeliefert.
-Innerhalb des Repositorys ist ausschließlich `dist/` als Ausgabe erlaubt.
-`tools/build.sh --check` meldet eine veränderte Ausgabe, ohne sie zu
-berichtigen. Bei einem Buildfehler die genannte Quelldatei und Zeile
-bearbeiten.
+`tools/build.py` ist der ganze Build. Bevor er schreibt, prüft er, was eine
+Seite technisch zerstören würde: Aufbau der JSON-Dateien, Dateibestand,
+Include-Reihenfolge, Platzhalter, Telefon- und E-Mail-Ziele. Ob eine Angabe
+inhaltlich stimmt, prüft er nicht (R-REDAKTION-3). Dateien in `src/pages/`,
+`src/partials/`, `src/betreuende/` oder `public/`, die nicht eingetragen sind,
+führen zum Fehler. Er erzeugt erst ein vollständiges Arbeitsverzeichnis und
+ersetzt dann `dist/`; bei fehlerhaften Eingaben bleibt die letzte Ausgabe
+erhalten. Ein anderes vorhandenes Verzeichnis ersetzt er nie. Bei einem
+Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
@@ -157,22 +153,23 @@ Sprechzeiten oder Telefonnummer kann deshalb nichts rot machen. Rot wird es,
 wenn etwas kaputt ist: ein Verweis ohne Ziel, ein falsch geschriebener
 Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
-| Testdatei | Gegenstand |
-| --- | --- |
-| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büro- oder Personenangabe wörtlich in einer Quelle |
-| `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
-
-`tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
-Werkzeuge selbst haben keine eigenen Tests mehr: Der Build prüft seine
+`tests/test_site.py` prüft die frisch erzeugte Website: Verweise,
+Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise und
+`noindex`; dass keine Büro- oder Personenangabe wörtlich in einer Quelle
+steht; und WCAG AA für jede Textpaarung, hell und dunkel. Die
+Werkzeuge selbst haben keine eigenen Tests: Der Build prüft seine
 Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
 der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
 
 **Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook;
-geprüft wird der Arbeitsbaum. **Bei Push und Pull Request** führt
-`.github/workflows/pruefung.yml` ihn aus und validiert danach das fertige HTML.
-**Einmal im Monat** ruft `.github/workflows/verweise.yml` mit
-`tools/verweise-pruefen.sh` die Verweise nach außen ab und legt bei toten
-Adressen ein Issue an; das Skript läuft genauso lokal.
+geprüft wird der Arbeitsbaum. **Bei jedem Pull Request und auf `main`** führt
+`.github/workflows/website.yml` ihn aus und validiert danach das fertige HTML;
+ein Zweig ohne Pull Request wird nicht geprüft. **Einmal im Monat** ruft
+`.github/workflows/verweise.yml` mit `tools/verweise-pruefen.sh` die Verweise
+nach außen ab; ein toter Verweis macht den Lauf rot, und GitHub meldet das per
+E-Mail. Das Skript läuft genauso lokal. In einem öffentlichen Repository
+schaltet GitHub geplante Läufe nach 60 Tagen ohne Aktivität ab; dann unter
+Actions → „Verweise nach außen" wieder einschalten.
 
 ### HTML-Validierung
 
@@ -354,9 +351,9 @@ Ansicht zu jeder Sichtprüfung (R-PRUEFUNG-2).
 
 Kanonische Adresse ist `https://bb-limen.de/`, das Repository
 <https://github.com/Aimergentix/bb-limen.de>.
-`.github/workflows/veroeffentlichung.yml` läuft bei jedem Push nach `main`: Er
-ruft die Prüfung auf, baut `dist/`, lädt genau diesen Ordner als
-Pages-Artefakt hoch und veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
+`.github/workflows/website.yml` läuft bei jedem Push nach `main`: Er prüft,
+baut `dist/`, lädt genau diesen Ordner als Pages-Artefakt hoch und
+veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
 die bisherige Fassung online.
 
 Bei GitHub ist dazu eingerichtet: Pages-Quelle „GitHub Actions", eigene Domain
@@ -396,6 +393,8 @@ Warum etwas so ist, in je einem Satz.
   `PostalAddress` nennt sie, ohne einen Standort mit Publikumsverkehr zu
   behaupten. Aus demselben Grund wäre ein Eintrag bei einem Kartendienst ein
   Risiko (R-VERBOT-5, R-VERBOT-6).
+- **Kein Hell-/Dunkel-Schalter.** Ohne JavaScript ließe sich die Wahl nicht
+  über alle Seiten halten; die Darstellung folgt `prefers-color-scheme`.
 - **Das Ornament ist ein SVG.** Zeichen wie U+2766 fehlen in den
   Serifenschriften; der Browser zeigte auf jedem Gerät etwas anderes
   (R-VERBOT-3).

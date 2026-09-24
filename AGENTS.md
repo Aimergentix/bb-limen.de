@@ -85,7 +85,6 @@ Begründungen: [docs/pflege.md](docs/pflege.md#entscheidungen-in-kürze).
   Aufgabenkreis, und der besteht aus einem oder mehreren *Aufgabenbereichen*
   (§ 1815 Abs. 1 BGB). Der Plural „Aufgabenkreise" ist die alte Fassung und
   DARF NICHT auftauchen.
-- **R-RECHT-3** Vergütung nach VBVG in der Fassung vom 01.01.2026.
 - **R-RECHT-4** Ändert sich ein Gesetz, MÜSSEN sich auch die Jahreszahlen im
   Text ändern. Ein Stand, der nicht mehr gilt, ist schlimmer als kein Stand.
 - **R-RECHT-5** Text in `[eckigen Klammern]` ist ein bewusster Platzhalter für
@@ -163,11 +162,8 @@ Einzelheiten: [docs/pflege.md](docs/pflege.md#schreiben).
   `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
   Kolumne MÜSSEN `--meta-on-carrier` verwenden. Ausnahmen sind die Wortmarke,
   der goldene aktuelle Standort und die goldene primäre Aktion „Anrufen".
-- **R-FARBE-4** Es DARF keinen Hell-/Dunkel-Schalter geben. Die Darstellung
-  folgt ausschließlich `prefers-color-scheme`; ohne JavaScript wäre die Wahl
-  nicht verlässlich über alle Seiten haltbar.
 - **R-FARBE-5** Jede Textpaarung MUSS WCAG AA erfüllen, hell und dunkel. Wer
-  eine neue Paarung einführt, trägt sie in `tests/test_kontrast.py` ein.
+  eine neue Paarung einführt, trägt sie in `tests/test_site.py` unter `PAIRS` ein.
 
 Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 
@@ -185,11 +181,9 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   `src/betreuende.json` das von `buero.html`, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
   Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
-- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame
-  Bürovisitenkarte aus dem JSON-LD der Startseite, `dist/<kennung>.vcf` die
-  erzeugte Visitenkarte je betreuender Person aus `src/betreuende.json`; alle
-  in UTF-8 mit CRLF-Zeilenenden. Eine manuell gepflegte vCard DARF NICHT
-  hinzukommen.
+- **R-ANGABEN-6** Visitenkarten (`.vcf`) erzeugt der Build aus dem JSON-LD
+  der Startseite und aus `src/betreuende.json`. Eine manuell gepflegte vCard
+  DARF NICHT hinzukommen.
 
 ## 7. Bestand, der bleibt
 
@@ -219,8 +213,9 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-PRUEFUNG-2** Wer Seiten, Bausteine oder das Stylesheet ändert, MUSS das
   Ergebnis ansehen: breit, schmal (390 px) und in Dunkeldarstellung. Das ist
   Handarbeit und bleibt es.
-- **R-PRUEFUNG-3** Nach jedem Push MUSS das Ergebnis der CI angesehen werden:
-  `gh run list --limit 3`. Eine rote CI heißt: nicht fertig.
+- **R-PRUEFUNG-3** Nach jedem Push in einen Pull Request und nach jedem Merge
+  MUSS das Ergebnis der CI angesehen werden: `gh run list --limit 3`. Eine rote
+  CI heißt: nicht fertig.
 - **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
   sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
   DÜRFEN NICHT pauschal unterdrückt werden.
