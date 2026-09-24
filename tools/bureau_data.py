@@ -27,10 +27,12 @@ def require_keys(value: object, keys: set[str], field: str) -> None:
 
 def load_office(root: Path) -> dict:
     data = load_json(root / "src/bureauangaben.json")
-    require_keys(data, {"sprechzeiten", "telefon", "email", "anschrift"}, "Wurzel")
+    require_keys(data, {"sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, "Wurzel")
     require_keys(data["telefon"], {"e164", "sichtbar"}, "telefon")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, "anschrift")
-    for field, value in {"email": data["email"], **data["telefon"], **data["anschrift"]}.items():
+    require_keys(data["postanschrift"], {"postfach", "plz", "ort", "bundesland", "land"}, "postanschrift")
+    for field, value in {"email": data["email"], "email_datenschutz": data["email_datenschutz"], **data["telefon"],
+                         **data["anschrift"], **{"postanschrift." + key: value for key, value in data["postanschrift"].items()}}.items():
         if (not isinstance(value, str) or not value.strip() or value != value.strip()
                 or not single_line(value)
                 or "%%" in value):
@@ -40,10 +42,14 @@ def load_office(root: Path) -> dict:
             or not re.fullmatch(r"\+[\d ]+", phone["sichtbar"])
             or phone["sichtbar"].replace(" ", "") != phone["e164"]):
         raise ValueError("bureauangaben.json: technische und sichtbare Telefonnummer widersprechen sich")
-    if not re.fullmatch(r"[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", data["email"]):
+    if not all(re.fullmatch(r"[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", data[key])
+               for key in ("email", "email_datenschutz")):
         raise ValueError("bureauangaben.json: ungültige E-Mail-Adresse")
-    if not re.fullmatch(r"\d{5}", data["anschrift"]["plz"]) or data["anschrift"]["land"] != "DE":
-        raise ValueError("bureauangaben.json: erwartet deutsche Anschrift mit fünfstelliger PLZ und Land DE")
+    for group in ("anschrift", "postanschrift"):
+        if not re.fullmatch(r"\d{5}", data[group]["plz"]) or data[group]["land"] != "DE":
+            raise ValueError(f"bureauangaben.json: {group}: erwartet deutsche Anschrift mit fünfstelliger PLZ und Land DE")
+    if not re.fullmatch(r"\d[\d ]*", data["postanschrift"]["postfach"]):
+        raise ValueError("bureauangaben.json: postfach: erwartet Ziffern")
     hours = data["sprechzeiten"]
     require_keys(hours, {"regulaer", "nach_vereinbarung"}, "sprechzeiten")
     regular = hours["regulaer"]
@@ -92,8 +98,8 @@ def office_values(data: dict) -> dict[str, str]:
         "sprechzeiten.leicht.termin": "A" + appointment_text[1:] + " geht es auch.",
         "sprechzeiten.leicht.hinweis": "Aber nur mit einem Termin.",
     }
-    values.update({"email": data["email"]})
-    for group in ("telefon", "anschrift"):
+    values.update({key: data[key] for key in ("email", "email_datenschutz")})
+    for group in ("telefon", "anschrift", "postanschrift"):
         values.update({f"{group}.{key}": value for key, value in data[group].items()})
     return values
 
@@ -156,8 +162,11 @@ def vcard(index: str) -> bytes:
     lines = ["BEGIN:VCARD", "VERSION:3.0", "N:;;;;", f"FN:{name}", f"ORG:{name}",
              "TEL;TYPE=WORK,VOICE:" + text(field(office, "telephone")),
              "EMAIL;TYPE=INTERNET,WORK:" + text(field(office, "email")),
-             "ADR;TYPE=WORK:;;" + ";".join(text(field(address, key)) for key in (
-                 "streetAddress", "addressLocality", "addressRegion", "postalCode", "addressCountry")),
+             # Postfach als Straßenzeile, weil viele Programme das eigene Postfachfeld nicht anzeigen.
+             "ADR;TYPE=WORK:;;" + ";".join(text(value) for value in (
+                 "Postfach " + field(address, "postOfficeBoxNumber"),
+                 *(field(address, key) for key in (
+                     "addressLocality", "addressRegion", "postalCode", "addressCountry")))),
              "URL:" + field(office, "url"), "END:VCARD"]
     folded = []
     for line in lines:

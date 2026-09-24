@@ -4,10 +4,18 @@
     "sichtbar": "+49 176 4290 4270"
   },
   "email": "info@bb-limen.de",
+  "email_datenschutz": "datenschutz@bb-limen.de",
   "anschrift": {
-    "strasse": "Am Dreispitz 6/6-1",
+    "strasse": "Am Dreispitz 6",
     "plz": "79589",
     "ort": "Binzen",
+    "bundesland": "Baden-Württemberg",
+    "land": "DE"
+  },
+  "postanschrift": {
+    "postfach": "11 16",
+    "plz": "79601",
+    "ort": "Rheinfelden (Baden)",
     "bundesland": "Baden-Württemberg",
     "land": "DE"
   },
