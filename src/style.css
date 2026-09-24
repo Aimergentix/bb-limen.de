@@ -814,35 +814,6 @@ dl.contact dd:last-child { margin-bottom: 0; }
   font-style: normal;
 }
 
-/* ================= Zwei Anbieter nebeneinander ================= */
-
-/* Im Impressum stehen zwei eigenständige Freiberufler. Sie nebeneinander
-   zu setzen macht sichtbar, dass es zwei getrennte Diensteanbieter sind
-   und keine Gesellschaft. */
-.anbieter {
-  margin: var(--s2) 0;
-  max-width: var(--measure);
-  border-top: 1px solid var(--line);
-}
-.anbieter > div {
-  padding: var(--s1) 0;
-  border-bottom: 1px solid var(--line);
-}
-.anbieter h3 {
-  margin: 0 0 var(--s0);
-  color: var(--accent-ink);
-}
-.anbieter p { font-size: 0.97rem; }
-.anbieter p:last-child { margin-bottom: 0; }
-
-@media (min-width: 46rem) {
-  .anbieter {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--s2);
-  }
-}
-
 /* ================= Betreuende auf der Seite Büro ================= */
 
 /* Jede Person eine eigene Karte: Sie arbeitet selbständig, und das soll man
