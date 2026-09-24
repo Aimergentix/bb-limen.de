@@ -53,9 +53,8 @@ den eingesetzten Baustein. In `rail.html` markiert der Build über
 ## Büroangaben
 
 `src/bureauangaben.json` ist die einzige Quelle für Telefon, E-Mail, Anschrift
-und Sprechzeiten (R-ANGABEN-1). `tools/bureau_data.py` prüft die Werte und
-erzeugt beim Build die Darstellungen; die Datei selbst wird nicht
-veröffentlicht.
+und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
+Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
 - `ug` hat `firma`, `registergericht`, `registernummer` und
   `geschaeftsfuehrung` der UG; sie ist Anbieterin im Impressum. Solange
@@ -98,8 +97,7 @@ jede Person einen eigenen Abschnitt auf `buero.html` und eine eigene
 Visitenkarte, und die Website wächst mit einem Datensatz statt mit einem
 Umbau. Eigene Seiten je Person gibt es vorerst nicht.
 
-Ein Eintrag in `src/betreuende.json` hat genau diese Felder; `tools/people_data.py`
-prüft sie vor dem Schreiben:
+Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
   ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
@@ -128,17 +126,15 @@ deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
 
 ## Verhalten des Builds
 
-Der Build prüft Katalog, Büroangaben, Dateibestand, Bausteine,
-Include-Reihenfolge und Platzhalter, bevor er schreibt. Er erzeugt erst ein
-vollständiges Arbeitsverzeichnis und ersetzt dann `dist/`; bei fehlerhaften
-Eingaben bleiben Quellen und letzte Ausgabe erhalten. Dateien in `src/pages/`,
-`src/partials/` oder `public/`, die nicht eingetragen sind, führen zum Fehler,
-ebenso eine Datei im Wurzelverzeichnis, die wie eine veröffentlichte heißt —
-etwa `robots.txt`: Sie sähe wie eine Quelle aus, würde aber nie ausgeliefert.
-Innerhalb des Repositorys ist ausschließlich `dist/` als Ausgabe erlaubt.
-`tools/build.sh --check` meldet eine veränderte Ausgabe, ohne sie zu
-berichtigen. Bei einem Buildfehler die genannte Quelldatei und Zeile
-bearbeiten.
+`tools/build.py` ist der ganze Build. Bevor er schreibt, prüft er, was eine
+Seite technisch zerstören würde: Aufbau der JSON-Dateien, Dateibestand,
+Include-Reihenfolge, Platzhalter, Telefon- und E-Mail-Ziele. Ob eine Angabe
+inhaltlich stimmt, prüft er nicht (R-REDAKTION-3). Dateien in `src/pages/`,
+`src/partials/`, `src/betreuende/` oder `public/`, die nicht eingetragen sind,
+führen zum Fehler. Er erzeugt erst ein vollständiges Arbeitsverzeichnis und
+ersetzt dann `dist/`; bei fehlerhaften Eingaben bleibt die letzte Ausgabe
+erhalten. Ein anderes vorhandenes Verzeichnis ersetzt er nie. Bei einem
+Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle

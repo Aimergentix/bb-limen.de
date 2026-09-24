@@ -20,9 +20,7 @@ from urllib.parse import urlsplit, urljoin
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
-from build import render, write_output
-from bureau_data import load_office
-from people_data import load_people
+from build import load_office, load_people, render, write_output
 
 SOURCE = REPO / "src"
 # tools/pruefen.sh baut vorher und nennt das Verzeichnis; sonst wird hier gebaut.
