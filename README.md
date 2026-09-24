@@ -61,7 +61,7 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 1. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
    Personenabschnitt auf `buero.html`.
 2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
-   `aufgaben.html`, `vorsorge.html` und `fachkreise.html` (R-BESTAND-3).
+   `aufgaben.html`, `vorsorge.html` und `fachkreise.html`.
 3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
    … beantragt") und „Vorschlagslisten" („sobald die Registrierung erteilt
    ist").

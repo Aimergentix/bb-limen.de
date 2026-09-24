@@ -207,13 +207,6 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   Verzeichnisform überführt werden ohne Entscheidung über bestehende Verweise.
   Eigene Seiten je Person gibt es vorerst nicht; die Personen stehen als
   Abschnitte in `buero.html`, Sprungmarke ist ihre Kennung.
-- **R-BESTAND-3** Der Gründungshinweis steht auf `index.html`,
-  `betreuung.html`, `aufgaben.html`, `vorsorge.html` und `fachkreise.html` und
-  im Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
-  verschwindet erst mit der Registrierungsnummer, und dann MUSS er überall
-  gleichzeitig verschwinden. Alle Stellen nennt die Checkliste im
-  [README](README.md#registrierung-eintragen). Jeder Personenabschnitt nennt
-  zusätzlich den Registrierungsstand ihrer Person aus `src/betreuende.json`.
 - **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
   nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.
 
