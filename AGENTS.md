@@ -24,7 +24,7 @@ in [docs/pflege.md](docs/pflege.md).
 | Begriff | Bedeutung |
 | --- | --- |
 | Seite | eine HTML-Datei unter `src/pages/`; der Bestand steht im Katalog |
-| Personenseite | die erzeugte Seite `betreuung-<kennung>.html` einer betreuenden Person aus `src/betreuende.json` |
+| Personenabschnitt | der erzeugte Abschnitt einer betreuenden Person aus `src/betreuende.json` in `buero.html` |
 | Katalog | `src/seiten.json` |
 | Pflichtseiten | `impressum.html` und `datenschutz.html` |
 | Baustein | Datei unter `src/partials/`, über eine Include-Zeile in jede Seite eingesetzt |
@@ -42,8 +42,6 @@ Kurze Seitennamen wie `index.html` meinen die Quelle unter `src/pages/`.
   neu, und jede Änderung dort geht verloren.
 - **R-QUELLE-2** Titel, `description`, `canonical` und die individuellen
   `og:`-Angaben MÜSSEN in der jeweiligen Seite stehen, nicht in einem Baustein.
-  Personenseiten erhalten sie aus ihrem Eintrag in `src/betreuende.json` über
-  die gemeinsame Vorlage `src/personenseite.html`.
 - **R-QUELLE-3** Jede neue Datei MUSS eine eindeutige Rolle haben: Seiten nach
   `src/pages/` und in den Katalog, öffentliche Kopierdateien nach `public/`
   und in dessen `public_files`, Vorstellungstexte nach `src/betreuende/` mit
@@ -98,7 +96,7 @@ Begründungen: [docs/pflege.md](docs/pflege.md#entscheidungen-in-kürze).
 - **R-RECHT-6** BB Limen veröffentlicht eine gemeinsame Zentrale. Sie DARF
   keiner Person zugeordnet werden. Jede betreuende Person DARF zusätzlich
   höchstens eine eigene Nummer haben; sie steht nur in `src/betreuende.json`
-  und erscheint nur auf der Personenseite und in der persönlichen
+  und erscheint nur im Personenabschnitt und in der persönlichen
   Visitenkarte. Ein leeres `href="tel:"` DARF NICHT hinzukommen.
 
 Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wiedervorlagen).
@@ -138,7 +136,7 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
   | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
   | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) |
-  | `buerogemeinschaft.html`, Personenseiten | Einfache Sprache (A2–B1) |
+  | `buero.html` | Einfache Sprache (A2–B1) |
   | `404.html` | kurz und einfach |
 
 - **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine
@@ -183,8 +181,8 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-ANGABEN-2** Die vollständige Liste der Gemeinden des Einzugsgebiets steht
   an genau einer Stelle: in `index.html` im JSON-LD unter `areaServed`.
 - **R-ANGABEN-5** Ändert sich der Inhalt einer Seite, MUSS ihr Stand
-  nachgezogen werden: `lastmod` im Katalog, bei Personenseiten `lastmod` in
-  `src/betreuende.json`, bei `impressum.html` und
+  nachgezogen werden: `lastmod` im Katalog, bei einer Änderung in
+  `src/betreuende.json` das von `buero.html`, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
   Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
 - **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame
@@ -207,16 +205,14 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   anderes Sachthema verwenden. `index.html` ist die technische Startdatei für
   `https://bb-limen.de/`. Eine Seite DARF NICHT umbenannt oder in eine
   Verzeichnisform überführt werden ohne Entscheidung über bestehende Verweise.
-  Personenseiten heißen `betreuung-<kennung>.html`; die Kennung ist der Name
-  in ASCII-Kleinbuchstaben (ä → ae, ß → ss). Scheidet eine Person aus, fällt
-  ihre Adresse auf `404.html`; ob sie stattdessen stehen bleibt, entscheidet
-  das Büro.
+  Eigene Seiten je Person gibt es vorerst nicht; die Personen stehen als
+  Abschnitte in `buero.html`, Sprungmarke ist ihre Kennung.
 - **R-BESTAND-3** Der Gründungshinweis steht auf `index.html`,
   `betreuung.html`, `aufgaben.html`, `vorsorge.html` und `fachkreise.html` und
   im Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
   verschwindet erst mit der Registrierungsnummer, und dann MUSS er überall
   gleichzeitig verschwinden. Alle Stellen nennt die Checkliste im
-  [README](README.md#registrierung-eintragen). Jede Personenseite nennt
+  [README](README.md#registrierung-eintragen). Jeder Personenabschnitt nennt
   zusätzlich den Registrierungsstand ihrer Person aus `src/betreuende.json`.
 - **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
   nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.

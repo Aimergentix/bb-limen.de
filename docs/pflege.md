@@ -13,9 +13,8 @@ src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
 src/bureauangaben.json  UG, Zentrale, E-Mail, Anschriften, Sprechzeiten
-src/betreuende.json     die betreuenden Personen; je Eintrag eine Personenseite und eine vCard
+src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
 src/betreuende/         Vorstellungstext je Person als HTML-Ausschnitt
-src/personenseite.html  gemeinsame Vorlage aller Personenseiten
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
 tools/                  Build, Prüfung, Bildexport, Verweisprüfung, Commit-Hook
@@ -94,34 +93,34 @@ festgelegt, die Kontaktwerte kommen aus den Büroangaben.
 
 Die Bürogemeinschaft vermietet an selbständige Berufsbetreuer; Registrierung,
 Haftpflicht und Verantwortung liegen bei jeder Person einzeln. Deshalb hat
-jede Person eine eigene Seite und eine eigene Visitenkarte, und die Website
-wächst mit einem Datensatz statt mit einem Umbau.
+jede Person einen eigenen Abschnitt auf `buero.html` und eine eigene
+Visitenkarte, und die Website wächst mit einem Datensatz statt mit einem
+Umbau. Eigene Seiten je Person gibt es vorerst nicht.
 
 Ein Eintrag in `src/betreuende.json` hat genau diese Felder; `tools/people_data.py`
 prüft sie vor dem Schreiben:
 
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
-  ß → ss). Daraus entstehen `betreuung-<kennung>.html`, `<kennung>.vcf` und der
-  Dateiname des Vorstellungstexts `src/betreuende/<kennung>.html`.
+  ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
+  `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
 - `name`, `beruf` — wie im Impressum.
-- `registrierung` — die kurze Standzeile, wörtlich im Impressum und auf der
-  Personenseite.
+- `registrierung` — die kurze Standzeile, wörtlich im Impressum und im
+  Personenabschnitt.
 - `haftpflicht` — Versicherer und Vertragsnummer für das Impressum.
-- `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; ohne
-  eigene Nummer nennen Seite und vCard nur die Zentrale.
+- `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; eine
+  eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
+  zusätzlich die Zentrale.
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
 - `anschrift` — `null` oder `strasse`, `plz`, `ort` für das Impressum; sonst
   gilt die Büroanschrift.
-- `lastmod` — Stand der Personenseite für die Sitemap (R-ANGABEN-5).
 
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
-Personenangaben über Platzhalter: `%%BETREUENDE:liste%%` (Übersicht in
-`buerogemeinschaft.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
+Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
+`buero.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
 (Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
-Startseite); die Vorlage `src/personenseite.html` verwendet
-`%%PERSON:<feld>%%`. Der Build erzeugt die Personenseiten nach den
-Katalogseiten und nimmt sie mit ihrem `lastmod` in die Sitemap auf.
+Startseite). Eine Änderung in `src/betreuende.json` ändert `buero.html`;
+deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
 
 ## Verhalten des Builds
 
@@ -228,8 +227,8 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
   Typografie über `body class="ls"`.
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
-- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`,
-  `buerogemeinschaft.html` und die Personenseiten** —
+- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` und
+  `buero.html`** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
@@ -272,7 +271,7 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 **Bürogemeinschaft — Wiedervorlage.** Die UG (haftungsbeschränkt) ist in
 Vorbereitung und noch nicht gegründet. Vor der Veröffentlichung klären und dann
 die Platzhalter in `src/bureauangaben.json`, `impressum.html`,
-`datenschutz.html` und `buerogemeinschaft.html` ersetzen: wer Diensteanbieter
+`datenschutz.html` und `buero.html` ersetzen: wer Diensteanbieter
 nach § 5 DDG ist, wie sich die Verantwortung nach Art. 26 DSGVO verteilt, die
 Firmierung und ob „BB Limen" zugleich Name der UG und Auftritt der Betreuer
 sein kann, und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
@@ -400,8 +399,8 @@ Warum etwas so ist, in je einem Satz.
   (R-VERBOT-3).
 - **Die Adressen bleiben bei `.html`**, damit bestehende Verweise gelten
   (R-BESTAND-2).
-- **Personenseiten aus Daten.** Bei vier bis acht Personen, die kommen und
-  gehen, wäre jede handgeschriebene Seite eine weitere Stelle für dieselbe
+- **Personenabschnitte aus Daten.** Bei vier bis acht Personen, die kommen und
+  gehen, wäre jeder handgeschriebene Abschnitt eine weitere Stelle für dieselbe
   Angabe (R-ORDNUNG-1).
 - **Pflichtseiten tragen `noindex`.** § 5 DDG verlangt Erreichbarkeit, nicht
   Auffindbarkeit (R-BESTAND-4).

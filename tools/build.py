@@ -15,7 +15,7 @@ from urllib.parse import urlsplit, urljoin
 
 from site_config import ROOT, PARTIALS, base_url, load_catalog, read_source
 from bureau_data import load_office, render_office, vcard
-from people_data import load_people, page_name, person_vcard, render_people, render_person, site_pages, vcard_name
+from people_data import load_people, person_vcard, render_people, vcard_name
 
 INCLUDE = re.compile(r"<!-- @include ([a-z-]+) -->\n?")
 CURRENT = re.compile(r"%%CUR-([a-z0-9-]+)%%")
@@ -97,12 +97,12 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     catalog = load_catalog(root)
     office = load_office(root)
     people = load_people(root)
-    pages = site_pages(catalog, people)
+    pages = catalog["pages"]
     names = {page["file"] for page in pages}
     cards = {vcard_name(person) for person in people}
     generated = {"style.css", "sitemap.xml", "bb-limen.vcf"}
-    if len(names) != len(pages) or (names | generated) & (cards | set(catalog["public_files"])) or "bb-limen.vcf" in cards:
-        raise ValueError("Personenseiten oder Visitenkarten kollidieren mit vorhandenen Dateien")
+    if (names | generated) & (cards | set(catalog["public_files"])) or "bb-limen.vcf" in cards:
+        raise ValueError("Visitenkarten der Personen kollidieren mit vorhandenen Dateien")
     # R-QUELLE-1, R-QUELLE-3: Root-Kopien sehen wie Quellen aus, werden aber
     # nicht veröffentlicht. Eine Änderung dort darf nicht unbemerkt bleiben.
     misplaced = sorted(path.name for path in root.iterdir()
@@ -110,7 +110,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     if misplaced:
         raise ValueError(f"{root}: öffentliche Dateien am falschen Ort: {misplaced}; Quellen gehören nach src/ oder public/")
     for directory, expected in (
-        (root / "src/pages", {page["file"] for page in catalog["pages"]}),
+        (root / "src/pages", names),
         (root / "src/partials", {f"{name}.html" for name in PARTIALS}),
         (root / "src/betreuende", {f"{person['kennung']}.html" for person in people}),
         (root / "public", set(catalog["public_files"])),
@@ -128,17 +128,10 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             raise ValueError(f"{path}: verschachtelte Includes oder alte Bausteinmarken")
         partials[name] = text
     base = base_url(root)
-    template_path = root / "src/personenseite.html"
-    template = assemble(template_path, read_source(template_path).decode("utf-8"), partials)
-    sources = {page["file"]: (root / "src/pages" / page["file"], None) for page in catalog["pages"]}
-    sources.update({page_name(person): (template_path, person) for person in people})
     result = {}
     for page in pages:
-        path, person = sources[page["file"]]
-        if person is None:
-            text = assemble(path, read_source(path).decode("utf-8"), partials)
-        else:
-            text = render_person(template, person)
+        path = root / "src/pages" / page["file"]
+        text = assemble(path, read_source(path).decode("utf-8"), partials)
         for match in CURRENT.finditer(text):
             if match[1] + ".html" not in names:
                 raise ValueError(f"{path}: unbekanntes Navigationsziel {match[1]}")

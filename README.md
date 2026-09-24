@@ -62,7 +62,7 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
    Absatz der Person mit Stand-Datum und Registrierungsnummer, und der Satz
    „Bis zur Erteilung …".
 2. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
-   Personenblock des Impressums und auf der Personenseite.
+   Personenblock des Impressums und im Personenabschnitt auf `buero.html`.
 3. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
    `aufgaben.html`, `vorsorge.html` und `fachkreise.html` (R-BESTAND-3).
 4. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
@@ -77,15 +77,15 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 1. In `src/betreuende.json` einen Eintrag anlegen; die Felder erklärt
    [docs/pflege.md](docs/pflege.md#betreuende-personen).
 2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
-3. `tools/pruefen.sh`, danach die neue Seite, die Übersicht und das Impressum
-   ansehen. Seite, Visitenkarte, Übersicht, Impressum und Sitemap folgen von
-   selbst; der Absatz „Registrierung" im Impressum wird von Hand ergänzt.
+3. `lastmod` von `buero.html` in `src/seiten.json` nachziehen,
+   `tools/pruefen.sh`, danach `buero.html` und das Impressum ansehen.
+   Abschnitt, Visitenkarte und Impressum-Block folgen von selbst; der Absatz
+   „Registrierung" im Impressum wird von Hand ergänzt.
 
 ### Eine betreuende Person entfernen
 
-Eintrag und Vorstellungstext löschen, `tools/pruefen.sh`. Die alte Adresse
-fällt auf `404.html`, sofern das Büro nichts anderes entscheidet
-(R-BESTAND-2). Den Absatz „Registrierung" im Impressum von Hand streichen.
+Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` nachziehen,
+`tools/pruefen.sh`. Den Absatz „Registrierung" im Impressum von Hand streichen.
 
 ### Wenn sich ein Gesetz ändert
 

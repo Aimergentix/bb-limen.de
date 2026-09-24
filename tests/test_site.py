@@ -18,11 +18,10 @@ import xml.etree.ElementTree as ET
 
 from site_support import REPO, SITE as ROOT, SOURCE
 from bureau_data import load_office
-from people_data import load_people, site_pages
-from site_config import load_catalog
+from people_data import load_people
 
 PAGES = sorted(ROOT.glob("*.html"))
-CATALOG = site_pages(load_catalog(REPO), load_people(REPO))
+CATALOG = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))["pages"]
 BASE = "https://" + (SOURCE.parent / "public/CNAME").read_text(encoding="utf-8").strip() + "/"
 
 
@@ -278,7 +277,7 @@ class SiteStructureTests(unittest.TestCase):
                        (person["anschrift"] or {}).get("strasse"))
         values = tuple(filter(None, values))
         for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html"),
-                     *(SOURCE / "betreuende").glob("*.html"), SOURCE / "personenseite.html"]:
+                     *(SOURCE / "betreuende").glob("*.html")]:
             text = path.read_text(encoding="utf-8")
             for value in values:
                 with self.subTest(path=path.name, value=value):
