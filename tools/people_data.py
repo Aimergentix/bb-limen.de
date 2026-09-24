@@ -84,28 +84,54 @@ def address_lines(person: dict) -> str:
     return f"{html(address['strasse'])}<br>\n          {html(address['plz'])} {html(address['ort'])}"
 
 
+# Dasselbe Blatt wie Signet und .zierblatt; hier als Trenner in der Karte.
+LEAF = ('<svg class="zierblatt" viewBox="0 0 24 26" aria-hidden="true" focusable="false" fill="none" '
+        'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
+        '<path d="M12 1.2c4.6 4.7 7.4 9 7.4 13.1 0 5-3.3 8.9-7.4 8.9s-7.4-3.9-7.4-8.9C4.6 10.2 7.4 5.9 12 1.2Z"/>'
+        '<path d="M12 3.6v21.2"/><path d="M12 9.4 7.3 12.6M12 9.4l4.7 3.2M12 14.6l-4.5 3.3M12 14.6l4.5 3.3"/></svg>')
+# Karteikarte für den Verweis auf die Visitenkarte.
+CARD = ('<svg class="symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" '
+        'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
+        '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/>'
+        '<path d="M5.2 16.2c.7-1.6 1.9-2.4 3.3-2.4s2.6.8 3.3 2.4M14.5 10h4M14.5 13.5h4"/></svg>')
+
+
+def initials(name: str) -> str:
+    words = name.split()
+    return (words[0][0] + (words[-1][0] if len(words) > 1 else "")).upper()
+
+
 def section(person: dict) -> str:
-    """Ein Abschnitt je Person; ohne eigene Nummer oder Adresse gilt der Kontakt des Büros."""
-    lines = [f'    <h3 id="{person["kennung"]}">{html(person["name"])}</h3>',
-             "",
-             f'    <p><strong>{html(person["beruf"])}</strong><br>Stand: {html(person["registrierung"])}.</p>',
-             "",
-             person["vorstellung"].rstrip("\n")]
-    direct = []
+    """Eine Karte je Person; ohne eigene Nummer oder Adresse gilt der Kontakt des Büros."""
+    label = person["kennung"]
+    lines = [f'      <article class="person" aria-labelledby="{label}">',
+             '        <header class="person-kopf">',
+             f'          <span class="monogramm" aria-hidden="true">{html(initials(person["name"]))}</span>',
+             "          <div>",
+             f'            <h3 id="{label}">{html(person["name"])}</h3>',
+             f'            <p class="rolle">{html(person["beruf"])}</p>',
+             "          </div>",
+             "        </header>",
+             f'        <p class="stand"><span>Stand</span> {html(person["registrierung"])}</p>',
+             f'        <div class="ornament" aria-hidden="true">{LEAF}</div>',
+             '        <div class="vorstellung">',
+             person["vorstellung"].rstrip("\n"),
+             "        </div>",
+             '        <footer class="person-fuss">']
     if person["telefon"] is not None:
-        direct.append(f'Telefon <a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a>')
+        lines.append(f'          <p>Telefon direkt: <a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a></p>')
     if person["email"] is not None:
-        direct.append(f'E-Mail <a href="mailto:{html(person["email"])}">{html(person["email"])}</a>')
-    if direct:
-        lines += ["", f"    <p>Direkt: {' · '.join(direct)}</p>"]
-    lines += ["", f'    <p><a href="{vcard_name(person)}" download>Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>']
+        lines.append(f'          <p>E-Mail direkt: <a href="mailto:{html(person["email"])}">{html(person["email"])}</a></p>')
+    lines += [f'          <p><a class="karte" href="{vcard_name(person)}" download>{CARD}Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>',
+              "        </footer>",
+              "      </article>"]
     return "\n".join(lines)
 
 
 def render_people(source: str, people: list[dict], name: str, base: str) -> str:
     """Blöcke über alle Personen: Übersicht, Impressum, JSON-LD."""
     def sections() -> str:
-        return "\n\n".join(section(person) for person in people)
+        return '    <div class="team">\n' + "\n".join(section(person) for person in people) + "\n    </div>"
 
     def providers() -> str:
         blocks = []
