@@ -44,8 +44,8 @@ Kurze Seitennamen wie `index.html` meinen die Quelle unter `src/pages/`.
   `og:`-Angaben MÜSSEN in der jeweiligen Seite stehen, nicht in einem Baustein.
 - **R-QUELLE-3** Jede neue Datei MUSS eine eindeutige Rolle haben: Seiten nach
   `src/pages/` und in den Katalog, öffentliche Kopierdateien nach `public/`
-  und in dessen `public_files`, Vorstellungstexte nach `src/betreuende/` mit
-  einem Eintrag in `src/betreuende.json`. Der Build lehnt nicht eingetragene
+  und in dessen `public_files`, Vorstellungstexte und Porträts nach
+  `src/betreuende/` mit einem Eintrag in `src/betreuende.json`. Der Build lehnt nicht eingetragene
   Dateien ab.
 
 Mechanik: [docs/pflege.md](docs/pflege.md#aufbau).

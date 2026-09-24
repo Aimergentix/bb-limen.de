@@ -859,13 +859,13 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 .person-kopf { align-self: start; }
 
-/* Subgrid: Kopf, Stand, Blatt, Vorstellung und Fuß liegen in jeder Karte
-   einer Zeile auf derselben Höhe, auch wenn eine Berufsbezeichnung
+/* Subgrid: Bild, Kopf, Stand, Blatt, Vorstellung und Fuß liegen in jeder
+   Karte einer Zeile auf derselben Höhe, auch wenn eine Berufsbezeichnung
    umbricht. Ohne Subgrid stehen die Teile einfach untereinander. */
 .person {
   display: grid;
   grid-template-rows: subgrid;
-  grid-row: span 5;
+  grid-row: span 6;
   row-gap: 0;
   align-content: start;
   background: var(--surface);
@@ -874,12 +874,6 @@ dl.contact dd:last-child { margin-bottom: 0; }
   padding: var(--s2);
 }
 
-.person-kopf {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--s1);
-  align-items: center;
-}
 .person h3 {
   margin: 0;
   font-size: clamp(1.18rem, 1.1rem + 0.4vw, 1.38rem);
@@ -893,24 +887,28 @@ dl.contact dd:last-child { margin-bottom: 0; }
   color: var(--muted);
 }
 
-/* Monogramm wie ein Siegel: Goldring, Papiergrund, ein zweiter Haarring
-   im Abstand. Schmuck, deshalb aria-hidden; der Name steht daneben. */
-.monogramm {
-  display: grid;
-  place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
-  border-radius: 50%;
+/* Das Porträt reicht bis an den Kartenrand, direkt unter der Goldlinie.
+   Ein Foto wird auf 4:3 zugeschnitten, Gesichter sitzen im oberen Drittel.
+   Solange keines vorliegt, steht dort ein gezeichneter Platzhalter: eine
+   Gestalt unter einem Türbogen über der Schwelle — das Motiv des Namens. */
+.portrait {
+  margin: calc(var(--s2) * -1) calc(var(--s2) * -1) var(--s2);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   background: var(--paper);
-  border: 1px solid var(--accent);
-  box-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
-  margin: 5px;
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--accent-ink);
+  border-bottom: 1px solid var(--line);
 }
+.portrait img,
+.portrait svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.portrait img { object-fit: cover; object-position: 50% 30%; }
+.platzhalter .grund { fill: var(--paper); }
+.platzhalter .bogen { fill: none; stroke: var(--line); stroke-width: 2; }
+.platzhalter .figur { fill: var(--muted); fill-opacity: 0.18; }
+.platzhalter .schwelle { stroke: var(--accent); stroke-width: 3; }
 
 .person .stand {
   margin: var(--s1) 0 0;

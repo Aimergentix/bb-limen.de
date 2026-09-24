@@ -15,7 +15,8 @@ from bureau_data import email_ok, node_field, office_node, phone_ok, single_line
 from site_config import load_json, read_source
 
 SOURCE = "betreuende.json"
-KEYS = {"kennung", "name", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift"}
+KEYS = {"kennung", "name", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "bild"}
+PHOTO = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\.(?:jpg|webp|png)")
 # Die Personen stehen als Abschnitte auf dieser Seite; die Kennung ist ihre Sprungmarke.
 PAGE = "buero.html"
 PEOPLE_TOKEN = re.compile(r"%%BETREUENDE:([a-z]+)%%")
@@ -24,6 +25,11 @@ PEOPLE_JSON = '"%%BETREUENDE_JSON:personen%%"'
 
 def person_url(person: dict, base: str) -> str:
     return f"{base}{PAGE}#{person['kennung']}"
+
+
+def source_files(person: dict) -> set[str]:
+    """Dateien der Person in src/betreuende/: Vorstellung und gegebenenfalls Foto."""
+    return {f"{person['kennung']}.html", *filter(None, [person["bild"]])}
 
 
 def vcard_name(person: dict) -> str:
@@ -63,6 +69,10 @@ def load_people(root: Path) -> list[dict]:
                     or not all(text_ok(value) for value in address.values())
                     or not re.fullmatch(r"\d{5}", address["plz"])):
                 raise ValueError(f"{SOURCE}: {label}: anschrift: erwartet null oder strasse, plz (fünfstellig), ort")
+        photo = person["bild"]
+        if photo is not None and not (isinstance(photo, str) and PHOTO.fullmatch(photo)
+                                      and photo.rsplit(".", 1)[0] == label):
+            raise ValueError(f"{SOURCE}: {label}: bild: erwartet null oder {label}.jpg, .webp oder .png")
     labels = [person["kennung"] for person in people]
     if len(labels) != len(set(labels)):
         raise ValueError(f"{SOURCE}: doppelte kennung")
@@ -96,21 +106,34 @@ CARD = ('<svg class="symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="f
         '<path d="M5.2 16.2c.7-1.6 1.9-2.4 3.3-2.4s2.6.8 3.3 2.4M14.5 10h4M14.5 13.5h4"/></svg>')
 
 
-def initials(name: str) -> str:
-    words = name.split()
-    return (words[0][0] + (words[-1][0] if len(words) > 1 else "")).upper()
+def portrait(person: dict) -> str:
+    """Foto der Person; solange keines vorliegt, ein gezeichneter Platzhalter.
+
+    Der Platzhalter zeigt eine Gestalt unter einem Türbogen über der
+    Schwelle — das Motiv des Namens. Seine Farben kommen über Klassen aus
+    PALETTE (R-FARBE-1) und folgen damit auch der Dunkeldarstellung.
+    """
+    if person["bild"] is not None:
+        return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
+                'width="800" height="600" loading="lazy" decoding="async">')
+    return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '
+            f'aria-label="Platzhalter, noch kein Porträt von {html(person["name"])}">'
+            '<rect class="grund" width="400" height="300"/>'
+            '<path class="bogen" d="M104 300V158a96 96 0 0 1 192 0v142"/>'
+            '<path class="bogen" d="M122 300V160a78 78 0 0 1 156 0v140"/>'
+            '<circle class="figur" cx="200" cy="146" r="40"/>'
+            '<path class="figur" d="M122 300c3-58 37-94 78-94s75 36 78 94Z"/>'
+            '<path class="schwelle" d="M70 299h260"/></svg>')
 
 
 def section(person: dict) -> str:
     """Eine Karte je Person; ohne eigene Nummer oder Adresse gilt der Kontakt des Büros."""
     label = person["kennung"]
     lines = [f'      <article class="person" aria-labelledby="{label}">',
+             f'        <figure class="portrait">{portrait(person)}</figure>',
              '        <header class="person-kopf">',
-             f'          <span class="monogramm" aria-hidden="true">{html(initials(person["name"]))}</span>',
-             "          <div>",
-             f'            <h3 id="{label}">{html(person["name"])}</h3>',
-             f'            <p class="rolle">{html(person["beruf"])}</p>',
-             "          </div>",
+             f'          <h3 id="{label}">{html(person["name"])}</h3>',
+             f'          <p class="rolle">{html(person["beruf"])}</p>',
              "        </header>",
              f'        <p class="stand"><span>Stand</span> {html(person["registrierung"])}</p>',
              f'        <div class="ornament" aria-hidden="true">{LEAF}</div>',

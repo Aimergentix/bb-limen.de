@@ -43,6 +43,7 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 | Signet oder Vorschaubild ändern | `src/grafik/`, danach `tools/bilder-erzeugen.sh` (braucht Chromium) |
 | eine Seite hinzufügen | [docs/pflege.md](docs/pflege.md#eine-seite-hinzufügen) |
 | Angaben einer betreuenden Person ändern | `src/betreuende.json`, Vorstellungstext in `src/betreuende/<kennung>.html` |
+| ein Porträt einsetzen | Foto als `src/betreuende/<kennung>.jpg` ablegen, in `src/betreuende.json` bei `bild` den Dateinamen eintragen |
 | eine betreuende Person aufnehmen oder entfernen | siehe unten |
 
 ### Nach jeder inhaltlichen Änderung

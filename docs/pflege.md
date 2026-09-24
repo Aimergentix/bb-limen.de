@@ -14,7 +14,7 @@ src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
 src/bureauangaben.json  UG, Zentrale, E-Mail, Anschriften, Sprechzeiten
 src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
-src/betreuende/         Vorstellungstext je Person als HTML-Ausschnitt
+src/betreuende/         Vorstellungstext und gegebenenfalls Porträt je Person
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
 tools/                  Build, Prüfung, Bildexport, Verweisprüfung, Commit-Hook
@@ -113,6 +113,10 @@ prüft sie vor dem Schreiben:
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
 - `anschrift` — `null` oder `strasse`, `plz`, `ort` für das Impressum; sonst
   gilt die Büroanschrift.
+- `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
+  oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
+  Karte schneidet es auf 4:3 zu, das Gesicht im oberen Drittel; 800 × 600
+  Pixel genügen. Ohne Foto zeigt die Karte einen gezeichneten Platzhalter.
 
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die

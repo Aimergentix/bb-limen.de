@@ -15,7 +15,7 @@ from urllib.parse import urlsplit, urljoin
 
 from site_config import ROOT, PARTIALS, base_url, load_catalog, read_source
 from bureau_data import load_office, render_office, vcard
-from people_data import load_people, person_vcard, render_people, vcard_name
+from people_data import load_people, person_vcard, render_people, source_files, vcard_name
 
 INCLUDE = re.compile(r"<!-- @include ([a-z-]+) -->\n?")
 CURRENT = re.compile(r"%%CUR-([a-z0-9-]+)%%")
@@ -99,10 +99,10 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     people = load_people(root)
     pages = catalog["pages"]
     names = {page["file"] for page in pages}
-    cards = {vcard_name(person) for person in people}
+    cards = {vcard_name(person) for person in people} | {person["bild"] for person in people if person["bild"]}
     generated = {"style.css", "sitemap.xml", "bb-limen.vcf"}
     if (names | generated) & (cards | set(catalog["public_files"])) or "bb-limen.vcf" in cards:
-        raise ValueError("Visitenkarten der Personen kollidieren mit vorhandenen Dateien")
+        raise ValueError("Visitenkarten oder Fotos der Personen kollidieren mit vorhandenen Dateien")
     # R-QUELLE-1, R-QUELLE-3: Root-Kopien sehen wie Quellen aus, werden aber
     # nicht veröffentlicht. Eine Änderung dort darf nicht unbemerkt bleiben.
     misplaced = sorted(path.name for path in root.iterdir()
@@ -112,7 +112,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     for directory, expected in (
         (root / "src/pages", names),
         (root / "src/partials", {f"{name}.html" for name in PARTIALS}),
-        (root / "src/betreuende", {f"{person['kennung']}.html" for person in people}),
+        (root / "src/betreuende", set().union(*map(source_files, people))),
         (root / "public", set(catalog["public_files"])),
     ):
         if directory.is_symlink() or not directory.is_dir():
@@ -149,6 +149,8 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     result["bb-limen.vcf"] = vcard(index)
     for person in people:
         result[vcard_name(person)] = person_vcard(person, index, office, base)
+        if person["bild"]:
+            result[person["bild"]] = read_source(root / "src/betreuende" / person["bild"])
     for name in catalog["public_files"]:
         result[name] = read_source(root / "public" / name)
     return result
