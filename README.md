@@ -59,9 +59,7 @@ Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
 1. `impressum.html`: unter „Anbieter" der Absatz „… bereiten … ihre Tätigkeit
-   … vor. Jede Person wird ihren Beruf eigenständig ausüben …", darunter der
-   Absatz der Person mit Stand-Datum und Registrierungsnummer, und der Satz
-   „Bis zur Erteilung …".
+   … vor. Jede Person wird ihren Beruf eigenständig ausüben …".
 2. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
    Personenblock des Impressums und im Personenabschnitt auf `buero.html`.
 3. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
@@ -80,8 +78,7 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
 3. `lastmod` von `buero.html` in `src/seiten.json` nachziehen,
    `tools/pruefen.sh`, danach `buero.html` und das Impressum ansehen.
-   Abschnitt, Visitenkarte und Impressum-Block folgen von selbst; der Absatz
-   „Registrierung" im Impressum wird von Hand ergänzt.
+   Abschnitt, Visitenkarte und Impressum-Block folgen von selbst.
 
 ### Eine betreuende Person entfernen
 

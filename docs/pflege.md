@@ -106,7 +106,8 @@ prüft sie vor dem Schreiben:
 - `name`, `beruf` — wie im Impressum.
 - `registrierung` — die kurze Standzeile, wörtlich im Impressum und im
   Personenabschnitt.
-- `haftpflicht` — Versicherer und Vertragsnummer für das Impressum.
+- `haftpflicht` — Versicherer und Vertragsnummer; wird derzeit auf keiner
+  Seite ausgegeben.
 - `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; eine
   eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
   zusätzlich die Zentrale.
@@ -121,8 +122,7 @@ prüft sie vor dem Schreiben:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
-(Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+`buero.html`), `%%BETREUENDE:anbieter%%` (Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite). Eine Änderung in `src/betreuende.json` ändert `buero.html`;
 deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
 
@@ -269,8 +269,9 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 [README](../README.md#registrierung-eintragen).
 
 **Berufshaftpflicht.** Zwei getrennte Verträge, je einer pro Person
-(§ 23 Abs. 1 Nr. 3 BtOG). Das Impressum erzeugt je Person eine Zeile aus
-`src/betreuende.json`.
+(§ 23 Abs. 1 Nr. 3 BtOG), eingetragen in `src/betreuende.json`. Das
+Impressum nennt sie nicht: Die Angaben gehen an die Stammbehörde, das hat
+das Büro am 24.09.2026 entschieden.
 
 **Bürogemeinschaft — Wiedervorlage.** Die UG (haftungsbeschränkt) ist in
 Vorbereitung und noch nicht gegründet. Vor der Veröffentlichung klären und dann
@@ -279,9 +280,6 @@ die Platzhalter in `src/bureauangaben.json`, `impressum.html`,
 nach § 5 DDG ist, wie sich die Verantwortung nach Art. 26 DSGVO verteilt, die
 Firmierung und ob „BB Limen" zugleich Name der UG und Auftritt der Betreuer
 sein kann, und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
-
-**Umsatzsteuer.** Im Impressum steht die Befreiung nach § 4 Nr. 16 Satz 1
-Buchstabe k UStG mit der Ausnahme für Leistungen nach § 1877 Abs. 3 BGB.
 
 **Vergütung.** Maßgeblich ist das zum 1. Januar 2026 geänderte VBVG: sechzehn
 reguläre Fallpauschalen von 98 bis 427 Euro in der Anlage zu § 8 Abs. 1 VBVG
