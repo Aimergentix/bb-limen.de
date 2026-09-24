@@ -12,7 +12,7 @@ src/partials/           gemeinsame HTML-Bausteine: Kopf, Sprunglink, Kolumne, Fu
 src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
-src/bureauangaben.json  Telefon, E-Mail, Anschrift, Sprechzeiten
+src/bureauangaben.json  Telefon, E-Mail, Anschriften, Sprechzeiten
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
 tools/                  Build, Prüfung, Bildexport, Verweisprüfung, Commit-Hook
@@ -58,7 +58,13 @@ veröffentlicht.
 - `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
-- `anschrift` hat `strasse`, `plz`, `ort`, `bundesland` und `land` (DE).
+- `email` ist die Büroadresse, `email_datenschutz` die Adresse, die nur die
+  Datenschutzerklärung nennt.
+- `anschrift` hat `strasse`, `plz`, `ort`, `bundesland` und `land` (DE). Sie
+  ist die Büroanschrift und steht nur im Impressum.
+- `postanschrift` hat `postfach` (nur Ziffern), `plz`, `ort`, `bundesland` und
+  `land` (DE). Sie steht überall, wo „Post“ steht, in der Datenschutzerklärung,
+  im JSON-LD und in der Visitenkarte.
 - `sprechzeiten.regulaer` hat `tage` als Liste deutscher Wochentage und `von`
   sowie `bis` als HH:MM; `nach_vereinbarung` nennt die Termintage. Beide Listen
   sind nicht leer, ohne Wiederholung und überschneiden sich nicht. Die

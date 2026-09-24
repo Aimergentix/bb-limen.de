@@ -264,7 +264,8 @@ class SiteStructureTests(unittest.TestCase):
         # R-ANGABEN-1: Die Werte kommen aus der Quelle selbst. Geprüft wird
         # nicht, ob sie stimmen, sondern dass sie nur an einer Stelle stehen.
         live = load_office(REPO)
-        values = (*live["telefon"].values(), live["email"], live["anschrift"]["strasse"])
+        values = (*live["telefon"].values(), live["email"], live["email_datenschutz"], live["anschrift"]["strasse"],
+                  live["postanschrift"]["postfach"])
         for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html")]:
             text = path.read_text(encoding="utf-8")
             for value in values:

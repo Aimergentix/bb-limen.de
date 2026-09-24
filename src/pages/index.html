@@ -22,11 +22,11 @@
     "email": "%%BUREAU_JSON:email%%",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "%%BUREAU_JSON:anschrift.strasse%%",
-      "postalCode": "%%BUREAU_JSON:anschrift.plz%%",
-      "addressLocality": "%%BUREAU_JSON:anschrift.ort%%",
-      "addressRegion": "%%BUREAU_JSON:anschrift.bundesland%%",
-      "addressCountry": "%%BUREAU_JSON:anschrift.land%%"
+      "postOfficeBoxNumber": "%%BUREAU_JSON:postanschrift.postfach%%",
+      "postalCode": "%%BUREAU_JSON:postanschrift.plz%%",
+      "addressLocality": "%%BUREAU_JSON:postanschrift.ort%%",
+      "addressRegion": "%%BUREAU_JSON:postanschrift.bundesland%%",
+      "addressCountry": "%%BUREAU_JSON:postanschrift.land%%"
     },
     "founder": [
       {
@@ -494,7 +494,7 @@
       <dt>E-Mail</dt>
       <dd><a href="mailto:%%BUREAU:email%%">%%BUREAU:email%%</a></dd>
       <dt>Post</dt>
-      <dd>BB Limen, A+M Möller, %%BUREAU:anschrift.strasse%%, %%BUREAU:anschrift.plz%% %%BUREAU:anschrift.ort%%</dd>
+      <dd>BB Limen, A+M Möller, Postfach %%BUREAU:postanschrift.postfach%%, %%BUREAU:postanschrift.plz%% %%BUREAU:postanschrift.ort%%</dd>
     </dl>
 
     <p><a href="bb-limen.vcf" download>Kontaktdaten speichern (Visitenkarte)</a></p>
