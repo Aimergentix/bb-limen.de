@@ -138,7 +138,7 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
   | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
   | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) |
-  | `betreuende.html`, `buerogemeinschaft.html`, Personenseiten | Einfache Sprache (A2–B1) |
+  | `buerogemeinschaft.html`, Personenseiten | Einfache Sprache (A2–B1) |
   | `404.html` | kurz und einfach |
 
 - **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine

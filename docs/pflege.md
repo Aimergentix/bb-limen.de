@@ -117,7 +117,7 @@ prüft sie vor dem Schreiben:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:liste%%` (Übersicht in
-`betreuende.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
+`buerogemeinschaft.html`), `%%BETREUENDE:anbieter%%` und `%%BETREUENDE:haftpflicht%%`
 (Impressum), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite); die Vorlage `src/personenseite.html` verwendet
 `%%PERSON:<feld>%%`. Der Build erzeugt die Personenseiten nach den
@@ -229,7 +229,7 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
 - **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`,
-  `betreuende.html`, `buerogemeinschaft.html` und die Personenseiten** —
+  `buerogemeinschaft.html` und die Personenseiten** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
