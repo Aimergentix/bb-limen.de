@@ -157,13 +157,11 @@ Sprechzeiten oder Telefonnummer kann deshalb nichts rot machen. Rot wird es,
 wenn etwas kaputt ist: ein Verweis ohne Ziel, ein falsch geschriebener
 Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
-| Testdatei | Gegenstand |
-| --- | --- |
-| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, `noindex`; keine Büro- oder Personenangabe wörtlich in einer Quelle |
-| `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
-
-`tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
-Werkzeuge selbst haben keine eigenen Tests mehr: Der Build prüft seine
+`tests/test_site.py` prüft die frisch erzeugte Website: Verweise,
+Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise und
+`noindex`; dass keine Büro- oder Personenangabe wörtlich in einer Quelle
+steht; und WCAG AA für jede Textpaarung, hell und dunkel. Die
+Werkzeuge selbst haben keine eigenen Tests: Der Build prüft seine
 Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
 der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
 

@@ -163,7 +163,7 @@ Einzelheiten: [docs/pflege.md](docs/pflege.md#schreiben).
   Kolumne MÜSSEN `--meta-on-carrier` verwenden. Ausnahmen sind die Wortmarke,
   der goldene aktuelle Standort und die goldene primäre Aktion „Anrufen".
 - **R-FARBE-5** Jede Textpaarung MUSS WCAG AA erfüllen, hell und dunkel. Wer
-  eine neue Paarung einführt, trägt sie in `tests/test_kontrast.py` ein.
+  eine neue Paarung einführt, trägt sie in `tests/test_site.py` unter `PAIRS` ein.
 
 Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 

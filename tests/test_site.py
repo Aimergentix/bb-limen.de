@@ -1,22 +1,38 @@
-"""Technische Eigenschaften der fertigen Seiten: Verweise, Struktur, Kopfangaben.
+"""Technische Eigenschaften der fertigen Seiten: Verweise, Struktur, Kopfangaben, Kontrast.
 
-Kein Test hier hängt an Wortlaut, Zahlen oder Büroangaben. Was eine Seite
-sagt, entscheidet das Büro; geprüft wird, ob sie funktioniert (R-REDAKTION-3).
+Geprüft wird die frisch erzeugte echte Website. Kein Test hier hängt an
+Wortlaut, Zahlen oder Büroangaben. Was eine Seite sagt, entscheidet das Büro;
+geprüft wird, ob sie funktioniert (R-REDAKTION-3).
 """
 from __future__ import annotations
 
+import atexit
 import json
+import os
 import re
+import sys
+import tempfile
 import unittest
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
 
-
-from site_support import REPO, SITE as ROOT, SOURCE
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "tools"))
+from build import render, write_output
 from bureau_data import load_office
 from people_data import load_people
+
+SOURCE = REPO / "src"
+# tools/pruefen.sh baut vorher und nennt das Verzeichnis; sonst wird hier gebaut.
+if os.environ.get("BB_LIMEN_TEST_SITE"):
+    ROOT = Path(os.environ["BB_LIMEN_TEST_SITE"])
+else:
+    TEMP = tempfile.TemporaryDirectory(prefix="bb-limen-tests-")
+    atexit.register(TEMP.cleanup)
+    ROOT = Path(TEMP.name) / "site"
+    write_output(render(), ROOT)
 
 PAGES = sorted(ROOT.glob("*.html"))
 CATALOG = json.loads((SOURCE / "seiten.json").read_text(encoding="utf-8"))["pages"]
@@ -241,6 +257,107 @@ class SiteStructureTests(unittest.TestCase):
                 with self.subTest(path=path.name, value=value):
                     self.assertNotIn(value, text)
 
+
+# R-FARBE-5: WCAG AA für jede Textpaarung aus dem Block PALETTE, hell und dunkel.
+# Die schwächste Paarung liegt bei 4,61:1; eine Verschlechterung fällt sofort auf.
+AA_TEXT = 4.5
+
+# Jede Paarung, die auf der Seite als Text auf Fläche vorkommt.
+PAIRS = [
+    ("--ink", "--paper"),
+    ("--body", "--paper"),
+    ("--muted", "--paper"),
+    ("--accent-ink", "--paper"),
+    ("--accent", "--paper"),
+    ("--gut-ink", "--paper"),
+    ("--body", "--surface"),
+    ("--muted", "--surface"),
+    ("--accent-ink", "--surface"),
+    ("--accent", "--surface"),
+    ("--gut-ink", "--gut-flaeche"),
+    ("--on-carrier", "--carrier"),
+    ("--meta-on-carrier", "--carrier"),
+    ("--link-ink", "--paper"),
+    ("--link-ink", "--surface"),
+    ("--link-on-carrier", "--carrier"),
+    ("--accent-on-carrier", "--carrier"),
+    ("--brand-leaf", "--carrier"),
+    ("--leicht-ink", "--paper"),
+    ("--st-1", "--surface"),
+    ("--st-2", "--surface"),
+    ("--st-3", "--surface"),
+    ("--st-4", "--surface"),
+    ("--st-5", "--surface"),
+    # Heller Grund auf Gold: Sprunglink und Weiter-Knopf der Leichten Sprache.
+    ("--paper", "--accent"),
+    # Anrufleiste am Telefon, auch im Zustand unter dem Zeiger.
+    ("--carrier", "--accent-on-carrier"),
+    ("--carrier", "--link-on-carrier"),
+    ("--carrier", "--on-carrier"),
+    # Hervorhebungen und Kontaktangaben auf abgesetzten Flächen.
+    ("--ink", "--surface"),
+    ("--body", "--gut-flaeche"),
+    # Register, Dokumente und Sprungmenü unter dem Zeiger.
+    ("--ink", "--hauch"),
+    ("--body", "--hauch"),
+    ("--muted", "--hauch"),
+    ("--accent-ink", "--hauch"),
+    ("--link-ink", "--hauch"),
+]
+
+
+def block(text: str, start: str) -> str:
+    """Inhalt des geschweiften Blocks nach `start`."""
+    i = text.index(start) + len(start)
+    depth, j = 1, i
+    while depth:
+        if text[j] == "{":
+            depth += 1
+        elif text[j] == "}":
+            depth -= 1
+        j += 1
+    return text[i : j - 1]
+
+
+def colors(text: str) -> dict[str, str]:
+    return dict(re.findall(r"(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;", text))
+
+
+def palette(dark: bool) -> dict[str, str]:
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    values = colors(block(css, ":root {"))
+    if dark:
+        values.update(colors(block(css[css.index("prefers-color-scheme: dark") :], ":root {")))
+    return values
+
+
+def luminance(hex_value: str) -> float:
+    h = hex_value.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    channels = [int(h[i : i + 2], 16) / 255 for i in (0, 2, 4)]
+    linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def contrast(front: str, back: str) -> float:
+    a, b = luminance(front), luminance(back)
+    return (max(a, b) + 0.05) / (min(a, b) + 0.05)
+
+
+class ContrastTests(unittest.TestCase):
+    def test_all_pairs_meet_wcag_aa(self) -> None:
+        for mode, dark in (("hell", False), ("dunkel", True)):
+            values = palette(dark)
+            for front, back in PAIRS:
+                with self.subTest(mode=mode, front=front, back=back):
+                    self.assertIn(front, values, f"{front} fehlt im Block PALETTE")
+                    self.assertIn(back, values, f"{back} fehlt im Block PALETTE")
+                    ratio = contrast(values[front], values[back])
+                    # Ungerundet: 4,496:1 ist nicht bestanden.
+                    self.assertGreaterEqual(
+                        ratio, AA_TEXT,
+                        f"{front} auf {back} ({mode}) trägt nur {ratio:.2f}:1, nötig sind {AA_TEXT}:1")
 
 if __name__ == "__main__":
     unittest.main()
