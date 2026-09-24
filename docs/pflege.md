@@ -72,10 +72,9 @@ Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
   im JSON-LD und in der Visitenkarte.
 - `sprechzeiten.regulaer` hat `tage` als Liste deutscher Wochentage und `von`
   sowie `bis` als HH:MM; `nach_vereinbarung` nennt die Termintage. Beide Listen
-  sind nicht leer, ohne Wiederholung und überschneiden sich nicht. Die
-  Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder je Wochentag
-  verschiedene Zeiten brauchen eine Erweiterung von Datenformat und
-  Sprachvorlagen.
+  sind nicht leer. Die Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder
+  je Wochentag verschiedene Zeiten brauchen eine Erweiterung von Datenformat
+  und Sprachvorlagen.
 
 Seiten verwenden Platzhalter wie `%%BUREAU:telefon.e164%%` oder
 `%%BUREAU:anschrift.strasse%%`. Die Sprechzeiten gibt es in drei Fassungen:
@@ -87,7 +86,8 @@ Schlüssel und nicht aufgelöste Platzhalter brechen ihn vor dem Schreiben ab.
 
 `dist/bb-limen.vcf` entsteht aus dem erzeugten Organization-Knoten der
 Startseite (R-ANGABEN-6); Name und Websiteadresse sind dort redaktionell
-festgelegt, die Kontaktwerte kommen aus den Büroangaben.
+festgelegt, die Kontaktwerte kommen aus den Büroangaben. Alle Visitenkarten
+sind UTF-8 mit CRLF-Zeilenenden und nach 75 Bytes gefaltet.
 
 ## Betreuende Personen
 

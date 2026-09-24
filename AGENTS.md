@@ -181,11 +181,9 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   `src/betreuende.json` das von `buero.html`, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
   Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
-- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame
-  Bürovisitenkarte aus dem JSON-LD der Startseite, `dist/<kennung>.vcf` die
-  erzeugte Visitenkarte je betreuender Person aus `src/betreuende.json`; alle
-  in UTF-8 mit CRLF-Zeilenenden. Eine manuell gepflegte vCard DARF NICHT
-  hinzukommen.
+- **R-ANGABEN-6** Visitenkarten (`.vcf`) erzeugt der Build aus dem JSON-LD
+  der Startseite und aus `src/betreuende.json`. Eine manuell gepflegte vCard
+  DARF NICHT hinzukommen.
 
 ## 7. Bestand, der bleibt
 
