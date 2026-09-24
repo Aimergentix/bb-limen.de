@@ -215,8 +215,9 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-PRUEFUNG-2** Wer Seiten, Bausteine oder das Stylesheet ändert, MUSS das
   Ergebnis ansehen: breit, schmal (390 px) und in Dunkeldarstellung. Das ist
   Handarbeit und bleibt es.
-- **R-PRUEFUNG-3** Nach jedem Push MUSS das Ergebnis der CI angesehen werden:
-  `gh run list --limit 3`. Eine rote CI heißt: nicht fertig.
+- **R-PRUEFUNG-3** Nach jedem Push in einen Pull Request und nach jedem Merge
+  MUSS das Ergebnis der CI angesehen werden: `gh run list --limit 3`. Eine rote
+  CI heißt: nicht fertig.
 - **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
   sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
   DÜRFEN NICHT pauschal unterdrückt werden.

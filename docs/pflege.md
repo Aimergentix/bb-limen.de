@@ -162,11 +162,14 @@ Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
 der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
 
 **Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook;
-geprüft wird der Arbeitsbaum. **Bei Push und Pull Request** führt
-`.github/workflows/pruefung.yml` ihn aus und validiert danach das fertige HTML.
-**Einmal im Monat** ruft `.github/workflows/verweise.yml` mit
-`tools/verweise-pruefen.sh` die Verweise nach außen ab und legt bei toten
-Adressen ein Issue an; das Skript läuft genauso lokal.
+geprüft wird der Arbeitsbaum. **Bei jedem Pull Request und auf `main`** führt
+`.github/workflows/website.yml` ihn aus und validiert danach das fertige HTML;
+ein Zweig ohne Pull Request wird nicht geprüft. **Einmal im Monat** ruft
+`.github/workflows/verweise.yml` mit `tools/verweise-pruefen.sh` die Verweise
+nach außen ab; ein toter Verweis macht den Lauf rot, und GitHub meldet das per
+E-Mail. Das Skript läuft genauso lokal. In einem öffentlichen Repository
+schaltet GitHub geplante Läufe nach 60 Tagen ohne Aktivität ab; dann unter
+Actions → „Verweise nach außen" wieder einschalten.
 
 ### HTML-Validierung
 
@@ -348,9 +351,9 @@ Ansicht zu jeder Sichtprüfung (R-PRUEFUNG-2).
 
 Kanonische Adresse ist `https://bb-limen.de/`, das Repository
 <https://github.com/Aimergentix/bb-limen.de>.
-`.github/workflows/veroeffentlichung.yml` läuft bei jedem Push nach `main`: Er
-ruft die Prüfung auf, baut `dist/`, lädt genau diesen Ordner als
-Pages-Artefakt hoch und veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
+`.github/workflows/website.yml` läuft bei jedem Push nach `main`: Er prüft,
+baut `dist/`, lädt genau diesen Ordner als Pages-Artefakt hoch und
+veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
 die bisherige Fassung online.
 
 Bei GitHub ist dazu eingerichtet: Pages-Quelle „GitHub Actions", eigene Domain
