@@ -12,7 +12,7 @@ src/partials/           gemeinsame HTML-Bausteine: Kopf, Sprunglink, Kolumne, Fu
 src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
-src/bureauangaben.json  UG, Zentrale, E-Mail, Anschriften, Sprechzeiten
+src/bureauangaben.json  Anbieter, Zentrale, E-Mail, Anschriften, Sprechzeiten
 src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
 src/betreuende/         Vorstellungstext und gegebenenfalls Porträt je Person
 public/                 bewusst öffentliche Dateien, unverändert kopiert
@@ -56,10 +56,8 @@ den eingesetzten Baustein. In `rail.html` markiert der Build über
 und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
 Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
-- `ug` hat `firma`, `registergericht`, `registernummer` und
-  `geschaeftsfuehrung` der UG; sie ist Anbieterin im Impressum. Solange
-  Registergericht und Registernummer fehlen, stehen dort Platzhalter
-  (R-RECHT-5).
+- `anbieter` hat den `name` des Diensteanbieters nach § 5 DDG, eines
+  Einzelunternehmens. Er steht im Impressum und in `buero.html`.
 - `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
@@ -270,13 +268,23 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 Impressum nennt sie nicht: Die Angaben gehen an die Stammbehörde, das hat
 das Büro am 24.09.2026 entschieden.
 
-**Bürogemeinschaft — Wiedervorlage.** Die UG (haftungsbeschränkt) ist in
-Vorbereitung und noch nicht gegründet. Vor der Veröffentlichung klären und dann
-die Platzhalter in `src/bureauangaben.json`, `impressum.html`,
-`datenschutz.html` und `buero.html` ersetzen: wer Diensteanbieter
-nach § 5 DDG ist, wie sich die Verantwortung nach Art. 26 DSGVO verteilt, die
-Firmierung und ob „BB Limen" zugleich Name der UG und Auftritt der Betreuer
-sein kann, und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
+**Anbieter.** Diensteanbieter nach § 5 DDG ist das Einzelunternehmen Aranda
+Möller, ohne Eintragung im Handelsregister und ohne Umsatzsteuer- oder
+Wirtschafts-Identifikationsnummer. Das Impressum nennt die Stammbehörde als
+Aufsichtsbehörde, weil die Registrierung nach § 24 BtOG als behördliche
+Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. Beides hat das Büro
+am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
+Abs. 1 GmbHG besteht sie vor der Eintragung nicht und darf deshalb nicht als
+Anbieterin stehen.
+
+**Bürogemeinschaft — Wiedervorlage.** Vor der Veröffentlichung klären: ob
+Mika Möller als zweite Person, deren Leistungen die Website darstellt, ebenfalls
+Diensteanbieterin ist; ob die DL-InfoV für berufliche Betreuer gilt und damit
+Angaben zur Berufshaftpflicht (§ 2 Abs. 1 Nr. 11 DL-InfoV: Versicherer,
+Anschrift, räumlicher Geltungsbereich) nötig werden, die Ausnahme in
+Art. 2 Abs. 2 lit. j der Richtlinie 2006/123/EG spricht womöglich dagegen; wie
+sich die Verantwortung nach Art. 26 DSGVO verteilt; und wie die
+Betreuungsbehörde die Bürogemeinschaft einordnet.
 
 **Vergütung.** Maßgeblich ist das zum 1. Januar 2026 geänderte VBVG: sechzehn
 reguläre Fallpauschalen von 98 bis 427 Euro in der Anlage zu § 8 Abs. 1 VBVG

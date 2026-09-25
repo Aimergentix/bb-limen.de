@@ -112,11 +112,11 @@ def load_office(root: Path) -> dict:
     """src/bureauangaben.json (R-ANGABEN-1)."""
     name = "bureauangaben.json"
     data = load_json(root / "src" / name)
-    require_keys(data, {"ug", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
-    require_keys(data["ug"], {"firma", "registergericht", "registernummer", "geschaeftsfuehrung"}, f"{name}: ug")
+    require_keys(data, {"anbieter", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
+    require_keys(data["anbieter"], {"name"}, f"{name}: anbieter")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, f"{name}: anschrift")
     require_keys(data["postanschrift"], {"postfach", "plz", "ort", "bundesland", "land"}, f"{name}: postanschrift")
-    for group in ("ug", "anschrift", "postanschrift"):
+    for group in ("anbieter", "anschrift", "postanschrift"):
         for key, value in data[group].items():
             if not text_ok(value):
                 raise ValueError(f"{name}: {group}.{key}: erwartet nicht leeren, einzeiligen Text")
@@ -199,7 +199,7 @@ def office_values(data: dict) -> dict[str, str]:
         "sprechzeiten.leicht.hinweis": "Aber nur mit einem Termin.",
     }
     values.update({key: data[key] for key in ("email", "email_datenschutz")})
-    for group in ("ug", "telefon", "anschrift", "postanschrift"):
+    for group in ("anbieter", "telefon", "anschrift", "postanschrift"):
         values.update({f"{group}.{key}": value for key, value in data[group].items()})
     return values
 
