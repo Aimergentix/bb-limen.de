@@ -12,7 +12,7 @@ src/partials/           gemeinsame HTML-Bausteine: Kopf, Sprunglink, Kolumne, Fu
 src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
-src/bureauangaben.json  Anbieter, Zentrale, E-Mail, Anschriften, Sprechzeiten
+src/bureauangaben.json  Betreiber, Zentrale, E-Mail, Anschriften, Sprechzeiten
 src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
 src/betreuende/         Vorstellungstext und gegebenenfalls Porträt je Person
 public/                 bewusst öffentliche Dateien, unverändert kopiert
@@ -56,8 +56,10 @@ den eingesetzten Baustein. In `rail.html` markiert der Build über
 und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
 Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
-- `anbieter` hat den `name` des Diensteanbieters nach § 5 DDG, eines
-  Einzelunternehmens. Er steht im Impressum und in `buero.html`.
+- `betreiber` hat den `name` der Person, die das Büro bereitstellt und für
+  den Inhalt der Website verantwortlich ist. Er steht in `buero.html`, im
+  Impressum und in der Datenschutzerklärung. Die Anbieter nach § 5 DDG kommen
+  aus `src/betreuende.json`.
 - `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
@@ -100,8 +102,9 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
   ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
   `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
-- `name`, `beruf` — wie im Personenabschnitt.
-- `registrierung` — die kurze Standzeile, wörtlich im Personenabschnitt.
+- `name`, `beruf` — wie im Personenabschnitt und im Impressum.
+- `registrierung` — die kurze Standzeile, wörtlich im Personenabschnitt und
+  im Impressum.
 - `haftpflicht` — Versicherer und Vertragsnummer; wird derzeit auf keiner
   Seite ausgegeben.
 - `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; eine
@@ -118,9 +121,13 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
-Startseite). Eine Änderung in `src/betreuende.json` ändert `buero.html`;
-deren `lastmod` im Katalog wird deshalb nachgezogen (R-ANGABEN-5).
+`buero.html`), `%%BETREUENDE:anbieter%%` (Name, Beruf und Registrierung je
+Person im Impressum), `%%BETREUENDE:namen%%` (die Namen als Aufzählung in der
+Datenschutzerklärung), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+Startseite). Eine Änderung in `src/betreuende.json` ändert deshalb
+`buero.html` und die Pflichtseiten; nachgezogen werden das `lastmod` von
+`buero.html` und das sichtbare Datum der betroffenen Pflichtseite
+(R-ANGABEN-5).
 
 ## Verhalten des Builds
 
@@ -268,23 +275,29 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 Impressum nennt sie nicht: Die Angaben gehen an die Stammbehörde, das hat
 das Büro am 24.09.2026 entschieden.
 
-**Anbieter.** Diensteanbieter nach § 5 DDG ist das Einzelunternehmen Aranda
-Möller, ohne Eintragung im Handelsregister und ohne Umsatzsteuer- oder
-Wirtschafts-Identifikationsnummer. Das Impressum nennt die Stammbehörde als
-Aufsichtsbehörde, weil die Registrierung nach § 24 BtOG als behördliche
-Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. Beides hat das Büro
-am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
+**Anbieter.** Diensteanbieter nach § 5 DDG sind alle Personen aus
+`src/betreuende.json`, jede freiberuflich und unabhängig von den anderen, ohne
+Eintragung im Handelsregister und ohne Umsatzsteuer- oder
+Wirtschafts-Identifikationsnummer; wer aufgenommen wird, steht damit auch als
+Anbieter im Impressum. Für den Inhalt verantwortlich ist der Betreiber aus
+`src/bureauangaben.json`. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
+MStV, denn die Vorschrift gilt nur für journalistisch-redaktionell gestaltete
+Angebote. Die Datenschutzerklärung nennt alle Personen als gemeinsam
+Verantwortliche nach Art. 26 DSGVO; der Betreiber übernimmt die
+Informationspflichten und die Anfragen. Das Impressum nennt die Stammbehörde
+als Aufsichtsbehörde, weil die Registrierung nach § 24 BtOG als behördliche
+Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. All das hat das
+Büro am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
 Abs. 1 GmbHG besteht sie vor der Eintragung nicht und darf deshalb nicht als
 Anbieterin stehen.
 
 **Bürogemeinschaft — Wiedervorlage.** Vor der Veröffentlichung klären: ob
-Mika Möller als zweite Person, deren Leistungen die Website darstellt, ebenfalls
-Diensteanbieterin ist; ob die DL-InfoV für berufliche Betreuer gilt und damit
-Angaben zur Berufshaftpflicht (§ 2 Abs. 1 Nr. 11 DL-InfoV: Versicherer,
-Anschrift, räumlicher Geltungsbereich) nötig werden, die Ausnahme in
-Art. 2 Abs. 2 lit. j der Richtlinie 2006/123/EG spricht womöglich dagegen; wie
-sich die Verantwortung nach Art. 26 DSGVO verteilt; und wie die
-Betreuungsbehörde die Bürogemeinschaft einordnet.
+die DL-InfoV für berufliche Betreuer gilt und damit Angaben zur
+Berufshaftpflicht (§ 2 Abs. 1 Nr. 11 DL-InfoV: Versicherer, Anschrift,
+räumlicher Geltungsbereich) nötig werden, die Ausnahme in Art. 2 Abs. 2 lit. j
+der Richtlinie 2006/123/EG spricht womöglich dagegen; ob der Satz zur
+unabhängigen Tätigkeit im Impressum den Anschein einer Gesellschaft
+ausschließt; und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
 
 **Vergütung.** Maßgeblich ist das zum 1. Januar 2026 geänderte VBVG: sechzehn
 reguläre Fallpauschalen von 98 bis 427 Euro in der Anlage zu § 8 Abs. 1 VBVG

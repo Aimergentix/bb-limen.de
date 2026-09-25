@@ -59,7 +59,8 @@ Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
 1. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
-   Personenabschnitt auf `buero.html`.
+   Personenabschnitt auf `buero.html` und im Impressum; dessen Stand
+   nachziehen.
 2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
    `aufgaben.html`, `vorsorge.html` und `fachkreise.html`.
 3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
@@ -74,14 +75,16 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 1. In `src/betreuende.json` einen Eintrag anlegen; die Felder erklärt
    [docs/pflege.md](docs/pflege.md#betreuende-personen).
 2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
-3. `lastmod` von `buero.html` in `src/seiten.json` nachziehen,
-   `tools/pruefen.sh`, danach `buero.html` ansehen.
-   Abschnitt und Visitenkarte folgen von selbst.
+3. `lastmod` von `buero.html` in `src/seiten.json` und den Stand von
+   Impressum und Datenschutzerklärung nachziehen, `tools/pruefen.sh`, danach
+   die drei Seiten ansehen. Abschnitt, Visitenkarte, Eintrag als Anbieter im
+   Impressum und als Verantwortliche in der Datenschutzerklärung folgen von
+   selbst.
 
 ### Eine betreuende Person entfernen
 
-Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` nachziehen,
-`tools/pruefen.sh`.
+Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` und den
+Stand von Impressum und Datenschutzerklärung nachziehen, `tools/pruefen.sh`.
 
 ### Wenn sich ein Gesetz ändert
 

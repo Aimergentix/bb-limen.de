@@ -177,10 +177,11 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-ANGABEN-2** Die vollständige Liste der Gemeinden des Einzugsgebiets steht
   an genau einer Stelle: in `index.html` im JSON-LD unter `areaServed`.
 - **R-ANGABEN-5** Ändert sich der Inhalt einer Seite, MUSS ihr Stand
-  nachgezogen werden: `lastmod` im Katalog, bei einer Änderung in
-  `src/betreuende.json` das von `buero.html`, bei `impressum.html` und
+  nachgezogen werden: `lastmod` im Katalog, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
-  Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
+  Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6). Eine Änderung in
+  `src/betreuende.json` ändert `buero.html` und je nach Feld die
+  Pflichtseiten.
 - **R-ANGABEN-6** Visitenkarten (`.vcf`) erzeugt der Build aus dem JSON-LD
   der Startseite und aus `src/betreuende.json`. Eine manuell gepflegte vCard
   DARF NICHT hinzukommen.

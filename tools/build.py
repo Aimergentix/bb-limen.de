@@ -112,11 +112,11 @@ def load_office(root: Path) -> dict:
     """src/bureauangaben.json (R-ANGABEN-1)."""
     name = "bureauangaben.json"
     data = load_json(root / "src" / name)
-    require_keys(data, {"anbieter", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
-    require_keys(data["anbieter"], {"name"}, f"{name}: anbieter")
+    require_keys(data, {"betreiber", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
+    require_keys(data["betreiber"], {"name"}, f"{name}: betreiber")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, f"{name}: anschrift")
     require_keys(data["postanschrift"], {"postfach", "plz", "ort", "bundesland", "land"}, f"{name}: postanschrift")
-    for group in ("anbieter", "anschrift", "postanschrift"):
+    for group in ("betreiber", "anschrift", "postanschrift"):
         for key, value in data[group].items():
             if not text_ok(value):
                 raise ValueError(f"{name}: {group}.{key}: erwartet nicht leeren, einzeiligen Text")
@@ -168,8 +168,8 @@ def load_people(root: Path) -> list[dict]:
 
 # ---------------------------------------------------------------- Büroangaben
 
-def join_days(days: list[str]) -> str:
-    return days[0] if len(days) == 1 else ", ".join(days[:-1]) + " und " + days[-1]
+def join_words(words: list[str]) -> str:
+    return words[0] if len(words) == 1 else ", ".join(words[:-1]) + " und " + words[-1]
 
 
 def hour_label(value: str) -> str:
@@ -187,19 +187,19 @@ def office_values(data: dict) -> dict[str, str]:
     indices = [DAYS.index(day) for day in days]
     consecutive = len(days) > 2 and all(b == a + 1 for a, b in zip(indices, indices[1:]))
     short_days = days[0][:2] + "–" + days[-1][:2] if consecutive else ", ".join(day[:2] for day in days)
-    appointment_text = join_days(["am " + day for day in appointments])
+    appointment_text = join_words(["am " + day for day in appointments])
     values = {
         "sprechzeiten.kurz.regulaer": f"{short_days} {start}–{end} Uhr",
         "sprechzeiten.kurz.termin": ", ".join(day[:2] for day in appointments) + " nach Vereinbarung",
-        "sprechzeiten.text.regulaer": f"{join_days(days)} von {start} bis {end} Uhr.",
-        "sprechzeiten.text.termin": f"{join_days(appointments)} nach Vereinbarung.",
-        "sprechzeiten.leicht.tage": f"Am {join_days(days)}.",
+        "sprechzeiten.text.regulaer": f"{join_words(days)} von {start} bis {end} Uhr.",
+        "sprechzeiten.text.termin": f"{join_words(appointments)} nach Vereinbarung.",
+        "sprechzeiten.leicht.tage": f"Am {join_words(days)}.",
         "sprechzeiten.leicht.zeit": f"Von {start} Uhr bis {end} Uhr.",
         "sprechzeiten.leicht.termin": "A" + appointment_text[1:] + " geht es auch.",
         "sprechzeiten.leicht.hinweis": "Aber nur mit einem Termin.",
     }
     values.update({key: data[key] for key in ("email", "email_datenschutz")})
-    for group in ("anbieter", "telefon", "anschrift", "postanschrift"):
+    for group in ("betreiber", "telefon", "anschrift", "postanschrift"):
         values.update({f"{group}.{key}": value for key, value in data[group].items()})
     return values
 
@@ -311,12 +311,25 @@ def section(person: dict) -> str:
     return "\n".join(lines)
 
 
+def provider(person: dict) -> str:
+    """Eine Person als Anbieter im Impressum; die Anschrift steht einmal darunter."""
+    return (f"    <p>\n      {html(person['name'])}<br>\n      {html(person['beruf'])}<br>\n"
+            f"      {html(person['registrierung'])}\n    </p>")
+
+
 def render_people(source: str, people: list[dict], name: str, base: str) -> str:
-    """%%BETREUENDE:personen%% (Abschnitte in buero.html) und das JSON-LD der Personen."""
+    """%%BETREUENDE:personen%% (Abschnitte in buero.html), :anbieter (Impressum),
+    :namen (Datenschutzerklärung) und das JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
-        if match[1] != "personen":
+        if match[1] == "personen":
+            return '    <div class="team">\n' + "\n".join(section(person) for person in people) + "\n    </div>"
+        if match[1] not in ("anbieter", "namen"):
             raise ValueError(f"{name}: unbekannter Personenplatzhalter {match[0]}")
-        return '    <div class="team">\n' + "\n".join(section(person) for person in people) + "\n    </div>"
+        if not people:
+            raise ValueError(f"{name}: {match[0]} braucht mindestens eine Person in betreuende.json")
+        if match[1] == "anbieter":
+            return "\n\n".join(provider(person) for person in people)
+        return html(join_words([person["name"] for person in people]))
 
     result = PEOPLE_TOKEN.sub(replace, source)
     if PEOPLE_JSON in result:
