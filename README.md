@@ -1,6 +1,6 @@
 # bb-limen.de — statische Website
 
-Die Website von BB Limen · A+M Möller, einem Büro für rechtliche Betreuung.
+Die Website von BB Limen, einem Büro für rechtliche Betreuung.
 Statische HTML-Seiten, ein Stylesheet, keine externen Ressourcen und kein
 JavaScript im Browser. Bearbeitet werden `src/` und `public/`;
 `tools/build.sh` erzeugt daraus die Ausgabe in `dist/`.
