@@ -974,17 +974,23 @@ dl.contact dd:last-child { margin-bottom: 0; }
 
 /* Der Notruf steht vor allem anderen und hebt sich von jedem Hinweis der
    Website ab: voller Goldrahmen statt Randstrich. Eine eigene Alarmfarbe
-   gibt es nicht; Rahmen und große Nummern genügen. */
-.notruf {
+   gibt es nicht; Rahmen und große Nummern genügen. Die übrigen Abschnitte
+   der Hilfeseite (.kasten) tragen denselben Rahmen, damit jede Anlaufstelle
+   als geschlossener Block gelesen wird. */
+.notruf, .kasten {
   background: var(--surface);
   border: 2px solid var(--accent);
   padding: var(--s1) var(--s2) var(--s2);
   margin: var(--s2) 0 var(--s3);
   max-width: var(--measure);
 }
-.notruf h2 { margin-top: var(--s0); }
+.notruf h2, .kasten h2 { margin-top: var(--s0); }
 .notruf ul { margin: 0 0 var(--s1); padding-left: 1.2em; }
 .notruf li { margin-bottom: 0.3rem; }
+
+/* Im Rahmen schließt der Rahmen die Liste ab, nicht die letzte Haarlinie. */
+.kasten .angebote { margin-bottom: 0; }
+.kasten .angebote li:last-child { border-bottom: 0; padding-bottom: 0; }
 
 /* Rufnummern groß und in der Bedienfarbe: Antippen wählt. Eine Nummer
    bricht nie um. */
