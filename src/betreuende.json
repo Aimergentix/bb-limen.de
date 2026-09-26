@@ -2,24 +2,38 @@
   "personen": [
     {
       "kennung": "aranda-moeller",
-      "name": "Aranda Möller",
+      "vorname": "Aranda",
+      "nachname": "Möller",
       "beruf": "Berufsbetreuer, freiberuflich",
       "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
       "haftpflicht": "HISCOX, PL-PSC700400482/00",
       "telefon": { "e164": "+4917642904270", "sichtbar": "+49 176 4290 4270" },
       "email": "aranda.moeller@bb-limen.de",
-      "anschrift": "BB Limen, Aranda Möller, Postfach 11 16, 79601 Rheinfelden (Baden)",
+      "anschrift": {
+        "postfach": "11 16",
+        "plz": "79601",
+        "ort": "Rheinfelden (Baden)",
+        "bundesland": "Baden-Württemberg",
+        "land": "DE"
+      },
       "bild": "aranda-moeller.webp"
     },
     {
       "kennung": "mika-moeller",
-      "name": "Mika Möller",
+      "vorname": "Mika",
+      "nachname": "Möller",
       "beruf": "Sozialpädagogin, Berufsbetreuerin",
       "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
       "haftpflicht": "HISCOX, PL-PSC700400482/01",
-      "telefon": { "e164": "+491778526785", "sichtbar": "+49 177 8526785" },
+      "telefon": { "e164": "+491778526785", "sichtbar": "+49 177 85 267 85" },
       "email": "mika.moeller@bb-limen.de",
-      "anschrift": "BB Limen, Mika Möller, Postfach 11 16, 79601 Rheinfelden (Baden)",
+      "anschrift": {
+        "postfach": "11 16",
+        "plz": "79601",
+        "ort": "Rheinfelden (Baden)",
+        "bundesland": "Baden-Württemberg",
+        "land": "DE"
+      },
       "bild": "mika-moeller.webp"
     }
   ]
