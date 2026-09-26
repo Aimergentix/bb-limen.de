@@ -31,8 +31,13 @@ PEOPLE_TOKEN = re.compile(r"%%BETREUENDE:([a-z]+)%%")
 PEOPLE_JSON = '"%%BETREUENDE_JSON:personen%%"'
 # Die Personen stehen als Abschnitte auf dieser Seite; die Kennung ist ihre Sprungmarke.
 PEOPLE_PAGE = "buero.html"
-PEOPLE_KEYS = {"kennung", "name", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "bild"}
+PEOPLE_KEYS = {"kennung", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "bild"}
 SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+POST_KEYS = {"postfach", "plz", "ort", "bundesland", "land"}
+# Die vCard erwartet den Ländernamen als Text, nicht den ISO-Code des JSON-LD.
+COUNTRIES = {"DE": "Deutschland"}
+# Abteilung der Bürovisitenkarte; persönliche Karten tragen nur die Organisation.
+OFFICE_UNIT = "Büro"
 DAYS = ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag")
 
 
@@ -115,7 +120,7 @@ def load_office(root: Path) -> dict:
     require_keys(data, {"betreiber", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
     require_keys(data["betreiber"], {"name"}, f"{name}: betreiber")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, f"{name}: anschrift")
-    require_keys(data["postanschrift"], {"postfach", "plz", "ort", "bundesland", "land"}, f"{name}: postanschrift")
+    require_keys(data["postanschrift"], POST_KEYS, f"{name}: postanschrift")
     for group in ("betreiber", "anschrift", "postanschrift"):
         for key, value in data[group].items():
             if not text_ok(value):
@@ -147,18 +152,21 @@ def load_people(root: Path) -> list[dict]:
         label = person["kennung"]
         if not isinstance(label, str) or not SLUG.fullmatch(label):
             raise ValueError(f"{name}: ungültige kennung {label!r}")
-        for key in ("name", "beruf", "registrierung", "haftpflicht"):
+        for key in ("vorname", "nachname", "beruf", "registrierung", "haftpflicht"):
             if not text_ok(person[key]):
                 raise ValueError(f"{name}: {label}: {key}: erwartet nicht leeren, einzeiligen Text")
         if person["telefon"] is not None and not phone_ok(person["telefon"]):
             raise ValueError(f"{name}: {label}: telefon: erwartet null oder e164 und sichtbar mit denselben Ziffern")
-        if person["anschrift"] is not None and not text_ok(person["anschrift"]):
-            raise ValueError(f"{name}: {label}: anschrift: erwartet null oder einzeiligen Text")
+        if person["anschrift"] is not None:
+            require_keys(person["anschrift"], POST_KEYS, f"{name}: {label}: anschrift")
+            if not all(text_ok(value) for value in person["anschrift"].values()):
+                raise ValueError(f"{name}: {label}: anschrift: erwartet nicht leeren, einzeiligen Text je Feld")
         if person["email"] is not None and not email_ok(person["email"]):
             raise ValueError(f"{name}: {label}: email: erwartet null oder eine gültige Adresse")
         photo = person["bild"]
         if photo is not None and not (isinstance(photo, str) and re.fullmatch(re.escape(label) + r"\.(?:jpg|webp|png)", photo)):
             raise ValueError(f"{name}: {label}: bild: erwartet null oder {label}.jpg, .webp oder .png")
+        person["name"] = f"{person['vorname']} {person['nachname']}"
         person["vorstellung"] = read_source(root / "src/betreuende" / f"{label}.html").decode("utf-8")
         if "%%" in person["vorstellung"] or "@include" in person["vorstellung"]:
             raise ValueError(f"src/betreuende/{label}.html: Platzhalter und Includes gehören in die Vorlage")
@@ -288,7 +296,7 @@ def portrait(person: dict) -> str:
             '<path class="schwelle" d="M70 299h260"/></svg>')
 
 
-def section(person: dict) -> str:
+def section(person: dict, organization: str) -> str:
     """Eine Karte je Person; ohne eigene Nummer, E-Mail oder Anschrift gilt der Kontakt des Büros."""
     label = person["kennung"]
     lines = [f'      <article class="person" aria-labelledby="{label}">',
@@ -308,7 +316,9 @@ def section(person: dict) -> str:
     if person["email"] is not None:
         lines.append(f'          <p>E-Mail direkt: <a href="mailto:{html(person["email"])}">{html(person["email"])}</a></p>')
     if person["anschrift"] is not None:
-        lines.append(f'          <p>Post: {html(person["anschrift"])}</p>')
+        post = person["anschrift"]
+        address = f'{organization}, {person["name"]}, Postfach {post["postfach"]}, {post["plz"]} {post["ort"]}'
+        lines.append(f'          <p>Post: {html(address)}</p>')
     lines += [f'          <p><a class="karte" href="{vcard_name(person)}" download>{CARD}Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>',
               "        </footer>",
               "      </article>"]
@@ -321,12 +331,12 @@ def provider(person: dict) -> str:
             f"      {html(person['registrierung'])}\n    </p>")
 
 
-def render_people(source: str, people: list[dict], name: str, base: str) -> str:
+def render_people(source: str, people: list[dict], name: str, base: str, organization: str) -> str:
     """%%BETREUENDE:personen%% (Abschnitte in buero.html), :anbieter (Impressum),
     :namen (Datenschutzerklärung) und das JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
         if match[1] == "personen":
-            return '    <div class="team">\n' + "\n".join(section(person) for person in people) + "\n    </div>"
+            return '    <div class="team">\n' + "\n".join(section(person, organization) for person in people) + "\n    </div>"
         if match[1] not in ("anbieter", "namen"):
             raise ValueError(f"{name}: unbekannter Personenplatzhalter {match[0]}")
         if not people:
@@ -382,6 +392,15 @@ def node_field(record: dict, key: str) -> str:
     return value
 
 
+def vcard_address(post: dict) -> str:
+    """Gegliederte Postanschrift; das Postfach steht in der Straßenzeile,
+    weil viele Programme das eigene Postfachfeld nicht anzeigen."""
+    if post["land"] not in COUNTRIES:
+        raise ValueError(f"vCard: unbekanntes Land {post['land']}")
+    return "ADR;TYPE=WORK,POSTAL:;;" + ";".join(vcard_text(value) for value in (
+        "Postfach " + post["postfach"], post["ort"], post["bundesland"], post["plz"], COUNTRIES[post["land"]]))
+
+
 def office_vcard(index: str) -> bytes:
     """Bürovisitenkarte aus dem erzeugten Organization-Knoten."""
     office = office_node(index)
@@ -389,22 +408,25 @@ def office_vcard(index: str) -> bytes:
     if not isinstance(address, dict) or address.get("@type") != "PostalAddress":
         raise ValueError("Startseite: PostalAddress fehlt")
     name = vcard_text(node_field(office, "name"))
+    unit = vcard_text(OFFICE_UNIT)
+    # Ein Büro hat keinen Vor- und Nachnamen; N bleibt leer, FN nennt Organisation und Abteilung.
     return vcard_bytes([
-        "N:;;;;", f"FN:{name}", f"ORG:{name}",
+        "N:;;;;", f"FN:{name} {unit}", f"ORG:{name};{unit}",
         "TEL;TYPE=WORK,VOICE:" + vcard_text(node_field(office, "telephone")),
         "EMAIL;TYPE=INTERNET,WORK:" + vcard_text(node_field(office, "email")),
-        # Postfach als Straßenzeile, weil viele Programme das eigene Postfachfeld nicht anzeigen.
-        "ADR;TYPE=WORK:;;" + ";".join(vcard_text(value) for value in (
-            "Postfach " + node_field(address, "postOfficeBoxNumber"),
-            *(node_field(address, key) for key in (
-                "addressLocality", "addressRegion", "postalCode", "addressCountry")))),
+        vcard_address({"postfach": node_field(address, "postOfficeBoxNumber"),
+                       "plz": node_field(address, "postalCode"),
+                       "ort": node_field(address, "addressLocality"),
+                       "bundesland": node_field(address, "addressRegion"),
+                       "land": node_field(address, "addressCountry")}),
         "URL:" + node_field(office, "url")])
 
 
 def person_vcard(person: dict, index: str, office: dict, base: str) -> bytes:
     """Persönliche Visitenkarte; ohne eigene Angabe gilt die des Büros."""
     organization = vcard_text(node_field(office_node(index), "name"))
-    lines = ["N:;;;;", "FN:" + vcard_text(person["name"]), f"ORG:{organization}",
+    lines = [f"N:{vcard_text(person['nachname'])};{vcard_text(person['vorname'])};;;",
+             "FN:" + vcard_text(person["name"]), f"ORG:{organization}",
              "TITLE:" + vcard_text(person["beruf"])]
     if person["telefon"] is not None:
         lines.append("TEL;TYPE=WORK,VOICE,PREF:" + vcard_text(person["telefon"]["e164"]))
@@ -412,13 +434,7 @@ def person_vcard(person: dict, index: str, office: dict, base: str) -> bytes:
     if person["telefon"] is None or person["telefon"]["e164"] != office["telefon"]["e164"]:
         lines.append("TEL;TYPE=WORK,VOICE:" + vcard_text(office["telefon"]["e164"]))
     lines.append("EMAIL;TYPE=INTERNET,WORK:" + vcard_text(person["email"] or office["email"]))
-    if person["anschrift"] is not None:
-        # Einzeiliger Text ohne Felder; er steht vollständig in der Straßenzeile.
-        lines.append("ADR;TYPE=WORK:;;" + vcard_text(person["anschrift"]) + ";;;;")
-    else:
-        post = office["postanschrift"]
-        lines.append("ADR;TYPE=WORK:;;" + ";".join(vcard_text(value) for value in (
-            "Postfach " + post["postfach"], post["ort"], post["bundesland"], post["plz"], post["land"])))
+    lines.append(vcard_address(person["anschrift"] or office["postanschrift"]))
     lines.append("URL:" + person_url(person, base))
     return vcard_bytes(lines)
 
@@ -514,6 +530,8 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             raise ValueError(f"{directory}: fehlt {sorted(expected - actual)}, unerwartet {sorted(actual - expected)}")
     partials = {name: read_source(root / "src/partials" / f"{name}.html").decode("utf-8") for name in PARTIALS}
     base = base_url(root)
+    # Der Name steht wörtlich im JSON-LD der Startseite; die Personenabschnitte brauchen ihn vorab.
+    organization = node_field(office_node(read_source(root / "src/pages/index.html").decode("utf-8")), "name")
     result = {}
     for page in pages:
         path = root / "src/pages" / page["file"]
@@ -522,7 +540,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             if match[1] + ".html" not in names:
                 raise ValueError(f"{path}: unbekanntes Navigationsziel {match[1]}")
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
-        text = render_people(text, people, str(path), base)
+        text = render_people(text, people, str(path), base, organization)
         text = render_office(text, office)
         if page["file"] == "404.html":
             text = error_page_links(text)

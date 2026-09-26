@@ -246,7 +246,7 @@ class SiteStructureTests(unittest.TestCase):
                   live["postanschrift"]["postfach"])
         for person in load_people(REPO):
             values += (*(person["telefon"] or {}).values(), person["email"], person["haftpflicht"],
-                       person["anschrift"])
+                       (person["anschrift"] or {}).get("postfach"))
         values = tuple(filter(None, values))
         for path in [*(SOURCE / "pages").glob("*.html"), *(SOURCE / "partials").glob("*.html"),
                      *(SOURCE / "betreuende").glob("*.html")]:

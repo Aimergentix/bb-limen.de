@@ -87,7 +87,12 @@ Schlüssel und nicht aufgelöste Platzhalter brechen ihn vor dem Schreiben ab.
 `dist/bb-limen.vcf` entsteht aus dem erzeugten Organization-Knoten der
 Startseite (R-ANGABEN-6); Name und Websiteadresse sind dort redaktionell
 festgelegt, die Kontaktwerte kommen aus den Büroangaben. Alle Visitenkarten
-sind UTF-8 mit CRLF-Zeilenenden und nach 75 Bytes gefaltet.
+sind UTF-8 mit CRLF-Zeilenenden und nach 75 Bytes gefaltet. Die Bürokarte
+hat keinen Vor- und Nachnamen; sie heißt „<Organisation> Büro“ und trägt
+„Büro“ als Abteilung. Persönliche Karten führen Vor- und Nachnamen getrennt
+und nur die Organisation. Die Anschrift ist gegliedert; das Postfach steht in
+der Straßenzeile, weil viele Programme das eigene Postfachfeld nicht zeigen,
+und das Land ausgeschrieben.
 
 ## Betreuende Personen
 
@@ -102,7 +107,9 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
   ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
   `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
-- `name`, `beruf` — wie im Personenabschnitt und im Impressum.
+- `vorname`, `nachname` — zusammen der Name im Personenabschnitt und im
+  Impressum; die vCard führt sie getrennt.
+- `beruf` — wie im Personenabschnitt und im Impressum.
 - `registrierung` — die kurze Standzeile, wörtlich im Personenabschnitt und
   im Impressum.
 - `haftpflicht` — Versicherer und Vertragsnummer; wird derzeit auf keiner
@@ -111,9 +118,10 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
   eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
   zusätzlich die Zentrale.
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
-- `anschrift` — `null` oder die Anschrift als einzeiliger Text; erscheint im
-  Personenabschnitt als „Post“ und ersetzt in der persönlichen Visitenkarte
-  die Postanschrift des Büros.
+- `anschrift` — `null` oder eine Postanschrift mit denselben Feldern wie
+  `postanschrift` in den Büroangaben; erscheint im Personenabschnitt als
+  „Post: <Organisation>, <Name>, Postfach …“ und ersetzt in der persönlichen
+  Visitenkarte die Postanschrift des Büros.
 - `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
   oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
   Karte schneidet es quadratisch zu, das Gesicht im oberen Drittel; 600 × 600
