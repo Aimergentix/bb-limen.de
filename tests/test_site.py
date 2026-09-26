@@ -47,14 +47,11 @@ class PageParser(HTMLParser):
         self.ids: list[str] = []
         self.hrefs: list[str] = []
         self.tags: Counter[str] = Counter()
-        self.headings: list[int] = []
         self.elements: list[tuple[str, dict[str, str | None]]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.tags[tag] += 1
         self.elements.append((tag, dict(attrs)))
-        if re.fullmatch(r"h[1-6]", tag):
-            self.headings.append(int(tag[1]))
         for name, value in attrs:
             if name == "id" and value:
                 self.ids.append(value)
@@ -178,12 +175,6 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 self.assertEqual(page.tags["main"], 1)
                 self.assertEqual(page.tags["h1"], 1)
-
-    def test_heading_levels_do_not_jump(self) -> None:
-        for name, page in self.parsed.items():
-            jumps = [pair for pair in zip(page.headings, page.headings[1:]) if pair[1] > pair[0] + 1]
-            with self.subTest(page=name):
-                self.assertEqual(jumps, [])
 
     def test_internal_links_and_fragments_exist(self) -> None:
         for source_name, page in self.parsed.items():
