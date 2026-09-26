@@ -116,7 +116,7 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
   die Postanschrift des Büros.
 - `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
   oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
-  Karte schneidet es auf 3:4 (Hochformat) zu, das Gesicht im oberen Drittel; 600 × 800
+  Karte schneidet es quadratisch zu, das Gesicht im oberen Drittel; 600 × 600
   Pixel genügen. Ohne Foto zeigt die Karte einen gezeichneten Platzhalter.
 
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem

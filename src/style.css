@@ -859,12 +859,12 @@ dl.contact dd:last-child { margin-bottom: 0; }
 }
 
 /* Das Porträt reicht bis an den Kartenrand, direkt unter der Goldlinie.
-   Ein Foto wird auf 3:4 (Hochformat) zugeschnitten, Gesichter sitzen im oberen Drittel.
+   Ein Foto wird quadratisch zugeschnitten, Gesichter sitzen im oberen Drittel.
    Solange keines vorliegt, steht dort ein gezeichneter Platzhalter: eine
    Gestalt unter einem Türbogen über der Schwelle — das Motiv des Namens. */
 .portrait {
   margin: calc(var(--s2) * -1) calc(var(--s2) * -1) var(--s2);
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: var(--paper);
   border-bottom: 1px solid var(--line);

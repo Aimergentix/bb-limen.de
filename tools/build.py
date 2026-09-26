@@ -277,7 +277,7 @@ def portrait(person: dict) -> str:
     """
     if person["bild"] is not None:
         return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
-                'width="600" height="800" loading="lazy" decoding="async">')
+                'width="600" height="600" loading="lazy" decoding="async">')
     return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '
             f'aria-label="Platzhalter, noch kein Porträt von {html(person["name"])}">'
             '<rect class="grund" width="400" height="300"/>'
