@@ -277,7 +277,7 @@ def portrait(person: dict) -> str:
     """
     if person["bild"] is not None:
         return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
-                'width="600" height="800" loading="lazy" decoding="async">')
+                'width="600" height="600" loading="lazy" decoding="async">')
     return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '
             f'aria-label="Platzhalter, noch kein Porträt von {html(person["name"])}">'
             '<rect class="grund" width="400" height="300"/>'
@@ -289,7 +289,7 @@ def portrait(person: dict) -> str:
 
 
 def section(person: dict) -> str:
-    """Eine Karte je Person; ohne eigene Nummer oder Adresse gilt der Kontakt des Büros."""
+    """Eine Karte je Person; ohne eigene Nummer, E-Mail oder Anschrift gilt der Kontakt des Büros."""
     label = person["kennung"]
     lines = [f'      <article class="person" aria-labelledby="{label}">',
              f'        <figure class="portrait">{portrait(person)}</figure>',
@@ -307,6 +307,8 @@ def section(person: dict) -> str:
         lines.append(f'          <p>Telefon direkt: <a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a></p>')
     if person["email"] is not None:
         lines.append(f'          <p>E-Mail direkt: <a href="mailto:{html(person["email"])}">{html(person["email"])}</a></p>')
+    if person["anschrift"] is not None:
+        lines.append(f'          <p>Post: {html(person["anschrift"])}</p>')
     lines += [f'          <p><a class="karte" href="{vcard_name(person)}" download>{CARD}Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>',
               "        </footer>",
               "      </article>"]
@@ -406,11 +408,17 @@ def person_vcard(person: dict, index: str, office: dict, base: str) -> bytes:
              "TITLE:" + vcard_text(person["beruf"])]
     if person["telefon"] is not None:
         lines.append("TEL;TYPE=WORK,VOICE,PREF:" + vcard_text(person["telefon"]["e164"]))
-    lines.append("TEL;TYPE=WORK,VOICE:" + vcard_text(office["telefon"]["e164"]))
+    # Ist die eigene Nummer zugleich die Zentrale (R-RECHT-6), steht sie nur einmal.
+    if person["telefon"] is None or person["telefon"]["e164"] != office["telefon"]["e164"]:
+        lines.append("TEL;TYPE=WORK,VOICE:" + vcard_text(office["telefon"]["e164"]))
     lines.append("EMAIL;TYPE=INTERNET,WORK:" + vcard_text(person["email"] or office["email"]))
-    post = office["postanschrift"]
-    lines.append("ADR;TYPE=WORK:;;" + ";".join(vcard_text(value) for value in (
-        "Postfach " + post["postfach"], post["ort"], post["bundesland"], post["plz"], post["land"])))
+    if person["anschrift"] is not None:
+        # Einzeiliger Text ohne Felder; er steht vollständig in der Straßenzeile.
+        lines.append("ADR;TYPE=WORK:;;" + vcard_text(person["anschrift"]) + ";;;;")
+    else:
+        post = office["postanschrift"]
+        lines.append("ADR;TYPE=WORK:;;" + ";".join(vcard_text(value) for value in (
+            "Postfach " + post["postfach"], post["ort"], post["bundesland"], post["plz"], post["land"])))
     lines.append("URL:" + person_url(person, base))
     return vcard_bytes(lines)
 
