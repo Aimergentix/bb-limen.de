@@ -194,13 +194,14 @@ class SiteStructureTests(unittest.TestCase):
         # R-ANGABEN-1, R-RECHT-6: Was %%BUREAU:…%% oder %%PERSON:…%% einsetzt,
         # ergibt eine vollständige Adresse oder Nummer. Ein Platzhalter mit
         # falschem Feld oder ein leeres tel: fällt auf; welche Nummer, nicht.
+        # Notrufe und Kurzwahlen wie 112 oder 116117 haben keine Vorwahl.
         for name, page in self.parsed.items():
             for href in page.hrefs:
                 with self.subTest(page=name, href=href):
                     if href.startswith("mailto:"):
                         self.assertTrue(email_ok(href.removeprefix("mailto:").split("?")[0]))
                     elif href.startswith("tel:"):
-                        self.assertRegex(href, r"^tel:\+[1-9]\d{1,14}$")
+                        self.assertRegex(href, r"^tel:(?:\+[1-9]\d{1,14}|\d{3,6})$")
 
     def test_json_ld_is_valid_and_claims_no_business_location(self) -> None:
         # R-VERBOT-6: Die Anschrift ist eine angemietete, nicht ständig besetzte
@@ -285,6 +286,8 @@ PAIRS = [
     ("--accent-on-carrier", "--carrier"),
     ("--brand-leaf", "--carrier"),
     ("--leicht-ink", "--paper"),
+    # Überschrift im Notrufkasten der Leichten Sprache.
+    ("--leicht-ink", "--surface"),
     ("--st-1", "--surface"),
     ("--st-2", "--surface"),
     ("--st-3", "--surface"),
