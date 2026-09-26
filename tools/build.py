@@ -152,6 +152,8 @@ def load_people(root: Path) -> list[dict]:
                 raise ValueError(f"{name}: {label}: {key}: erwartet nicht leeren, einzeiligen Text")
         if person["telefon"] is not None and not phone_ok(person["telefon"]):
             raise ValueError(f"{name}: {label}: telefon: erwartet null oder e164 und sichtbar mit denselben Ziffern")
+        if person["anschrift"] is not None and not text_ok(person["anschrift"]):
+            raise ValueError(f"{name}: {label}: anschrift: erwartet null oder einzeiligen Text")
         if person["email"] is not None and not email_ok(person["email"]):
             raise ValueError(f"{name}: {label}: email: erwartet null oder eine gültige Adresse")
         photo = person["bild"]
@@ -275,7 +277,7 @@ def portrait(person: dict) -> str:
     """
     if person["bild"] is not None:
         return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
-                'width="800" height="600" loading="lazy" decoding="async">')
+                'width="600" height="800" loading="lazy" decoding="async">')
     return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '
             f'aria-label="Platzhalter, noch kein Porträt von {html(person["name"])}">'
             '<rect class="grund" width="400" height="300"/>'

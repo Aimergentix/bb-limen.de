@@ -111,11 +111,11 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
   eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
   zusätzlich die Zentrale.
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
-- `anschrift` — `null` oder `strasse`, `plz`, `ort`; wird derzeit auf keiner
-  Seite ausgegeben.
+- `anschrift` — `null` oder die Anschrift als einzeiliger Text; wird derzeit
+  auf keiner Seite ausgegeben.
 - `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
   oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
-  Karte schneidet es auf 4:3 zu, das Gesicht im oberen Drittel; 800 × 600
+  Karte schneidet es auf 3:4 (Hochformat) zu, das Gesicht im oberen Drittel; 600 × 800
   Pixel genügen. Ohne Foto zeigt die Karte einen gezeichneten Platzhalter.
 
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem

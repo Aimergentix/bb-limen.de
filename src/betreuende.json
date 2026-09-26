@@ -6,10 +6,10 @@
       "beruf": "Berufsbetreuer, freiberuflich",
       "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
       "haftpflicht": "HISCOX, PL-PSC700400482/00",
-      "telefon": null,
-      "email": null,
-      "anschrift": null,
-      "bild": null
+      "telefon": { "e164": "+4917642904270", "sichtbar": "+49 176 4290 4270" },
+      "email": "aranda.moeller@bb-limen.de",
+      "anschrift": "BB Limen, Aranda Möller, Postfach 11 16, 79601 Rheinfelden (Baden)",
+      "bild": "aranda-moeller.webp"
     },
     {
       "kennung": "mika-moeller",
@@ -17,10 +17,10 @@
       "beruf": "Sozialpädagogin, Berufsbetreuerin, freiberuflich",
       "registrierung": "Registrierung nach § 23 BtOG beantragt, noch nicht erteilt",
       "haftpflicht": "HISCOX, PL-PSC700400482/01",
-      "telefon": null,
-      "email": null,
-      "anschrift": null,
-      "bild": null
+      "telefon": { "e164": "+491778526785", "sichtbar": "+49 177 8526785" },
+      "email": "mika.moeller@bb-limen.de",
+      "anschrift": "BB Limen, Mika Möller, Postfach 11 16, 79601 Rheinfelden (Baden)",
+      "bild": "mika-moeller.webp"
     }
   ]
 }

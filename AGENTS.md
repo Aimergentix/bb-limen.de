@@ -92,9 +92,9 @@ Begründungen: [docs/pflege.md](docs/pflege.md#entscheidungen-in-kürze).
   ausgefüllt werden, die Klammern DÜRFEN NICHT entfernt werden, damit es
   fertig aussieht, und er DARF NICHT veröffentlicht werden. Finden:
   `grep -rn '\[[A-ZÄÖÜ]' src/`
-- **R-RECHT-6** BB Limen veröffentlicht eine gemeinsame Zentrale. Sie DARF
-  keiner Person zugeordnet werden. Jede betreuende Person DARF zusätzlich
-  höchstens eine eigene Nummer haben; sie steht nur in `src/betreuende.json`
+- **R-RECHT-6** BB Limen veröffentlicht eine gemeinsame Zentrale. Sie KANN
+  zugleich die Geschäftsnummer einer betreuenden Person sein. Jede betreuende
+  Person DARF höchstens eine eigene Nummer haben; sie steht nur in `src/betreuende.json`
   und erscheint nur im Personenabschnitt und in der persönlichen
   Visitenkarte. Ein leeres `href="tel:"` DARF NICHT hinzukommen.
 
