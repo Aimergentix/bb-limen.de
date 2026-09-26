@@ -29,6 +29,7 @@ OFFICE_JSON = re.compile(r'"%%BUREAU_JSON:([a-z0-9_.-]+)%%"')
 JSON_SCRIPT = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
 PEOPLE_TOKEN = re.compile(r"%%BETREUENDE:([a-z]+)%%")
 PEOPLE_JSON = '"%%BETREUENDE_JSON:personen%%"'
+PERSON_TOKEN = re.compile(r"%%PERSON:([a-z0-9-]+)\.([a-z0-9_.]+)%%")
 # Die Personen stehen als Abschnitte auf dieser Seite; die Kennung ist ihre Sprungmarke.
 PEOPLE_PAGE = "buero.html"
 PEOPLE_KEYS = {"kennung", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "sprechzeiten", "bild"}
@@ -337,27 +338,39 @@ def section(person: dict, organization: str) -> str:
     return "\n".join(lines)
 
 
-def provider(person: dict) -> str:
-    """Eine Person als Anbieter im Impressum; die Anschrift steht einmal darunter."""
-    return (f"    <p>\n      {html(person['name'])}<br>\n      {html(person['beruf'])}<br>\n"
-            f"      {html(person['registrierung'])}\n    </p>")
+def person_values(person: dict) -> dict[str, str]:
+    """Alle %%PERSON:<kennung>.…%%-Werte einer Person; Felder mit null fehlen."""
+    values = {key: person[key] for key in ("name", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "email")
+              if person[key] is not None}
+    for group in ("telefon", "anschrift"):
+        if person[group] is not None:
+            values.update({f"{group}.{key}": value for key, value in person[group].items()})
+    return values
 
 
 def render_people(source: str, people: list[dict], name: str, base: str, organization: str) -> str:
-    """%%BETREUENDE:personen%% (Abschnitte in buero.html), :anbieter (Impressum),
-    :namen (Datenschutzerklärung) und das JSON-LD der Personen."""
+    """%%BETREUENDE:personen%% (Abschnitte in buero.html), :namen (Datenschutzerklärung),
+    %%PERSON:<kennung>.<feld>%% (einzelne Angaben, etwa im Impressum) und das JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
         if match[1] == "personen":
             return '    <div class="team">\n' + "\n".join(section(person, organization) for person in people) + "\n    </div>"
-        if match[1] not in ("anbieter", "namen"):
+        if match[1] != "namen":
             raise ValueError(f"{name}: unbekannter Personenplatzhalter {match[0]}")
         if not people:
             raise ValueError(f"{name}: {match[0]} braucht mindestens eine Person in betreuende.json")
-        if match[1] == "anbieter":
-            return "\n\n".join(provider(person) for person in people)
         return html(join_words([person["name"] for person in people]))
 
-    result = PEOPLE_TOKEN.sub(replace, source)
+    fields = {person["kennung"]: person_values(person) for person in people}
+
+    def replace_field(match: re.Match) -> str:
+        value = fields.get(match[1], {}).get(match[2])
+        if value is None:
+            raise ValueError(f"{name}: unbekannte Person, unbekanntes oder leeres Feld {match[0]}")
+        return html(value)
+
+    result = PERSON_TOKEN.sub(replace_field, PEOPLE_TOKEN.sub(replace, source))
+    if "%%PERSON" in result:
+        raise ValueError(f"{name}: ungültiger Personenplatzhalter")
     if PEOPLE_JSON in result:
         nodes = [{"@type": "Person", "name": person["name"], "jobTitle": person["beruf"],
                   "url": person_url(person, base)} for person in people]

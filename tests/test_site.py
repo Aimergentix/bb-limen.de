@@ -20,7 +20,7 @@ from urllib.parse import urlsplit, urljoin
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
-from build import load_office, load_people, render, write_output
+from build import email_ok, load_office, load_people, render, write_output
 
 SOURCE = REPO / "src"
 # tools/pruefen.sh baut vorher und nennt das Verzeichnis; sonst wird hier gebaut.
@@ -98,7 +98,8 @@ class SiteStructureTests(unittest.TestCase):
                     continue
                 self.assertTrue((ROOT / url.path.lstrip("/")).is_file(), f"{path.name}: {value}")
             self.assertNotIn("@include", text)
-            self.assertNotIn("%%CUR-", text)
+            # Auch ein vertippter Platzhalter wie %%PERSN:…%%, den der Build nicht kennt.
+            self.assertNotIn("%%", text)
 
     def test_scripts_are_only_the_index_json_ld_data_block(self) -> None:
         # R-VERBOT-1, R-PRUEFUNG-4: Die eng begrenzte Validator-Ausnahme darf
@@ -188,6 +189,18 @@ class SiteStructureTests(unittest.TestCase):
                     self.assertTrue(target_path.is_file())
                     if target.fragment:
                         self.assertIn(target.fragment, self.parsed[target_name].ids)
+
+    def test_mail_and_phone_targets_are_complete(self) -> None:
+        # R-ANGABEN-1, R-RECHT-6: Was %%BUREAU:…%% oder %%PERSON:…%% einsetzt,
+        # ergibt eine vollständige Adresse oder Nummer. Ein Platzhalter mit
+        # falschem Feld oder ein leeres tel: fällt auf; welche Nummer, nicht.
+        for name, page in self.parsed.items():
+            for href in page.hrefs:
+                with self.subTest(page=name, href=href):
+                    if href.startswith("mailto:"):
+                        self.assertTrue(email_ok(href.removeprefix("mailto:").split("?")[0]))
+                    elif href.startswith("tel:"):
+                        self.assertRegex(href, r"^tel:\+[1-9]\d{1,14}$")
 
     def test_json_ld_is_valid_and_claims_no_business_location(self) -> None:
         # R-VERBOT-6: Die Anschrift ist eine angemietete, nicht ständig besetzte
