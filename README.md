@@ -75,19 +75,15 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 1. In `src/betreuende.json` einen Eintrag anlegen; die Felder erklärt
    [docs/pflege.md](docs/pflege.md#betreuende-personen).
 2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
-3. In `impressum.html` einen Abschnitt wie „Im Büro tätige Berufsbetreuerin"
-   ergänzen; Name, E-Mail und Registrierung über
-   `%%PERSON:<kennung>.<feld>%%`, ohne Durchwahl (R-RECHT-6).
-4. `lastmod` von `buero.html` in `src/seiten.json` und den Stand von
-   Impressum und Datenschutzerklärung nachziehen, `tools/pruefen.sh`, danach
-   die drei Seiten ansehen. Abschnitt, Visitenkarte und Eintrag als
-   Verantwortliche in der Datenschutzerklärung folgen von selbst.
+3. `lastmod` von `buero.html` in `src/seiten.json` nachziehen,
+   `tools/pruefen.sh`, danach `buero.html` ansehen. Abschnitt und
+   Visitenkarte folgen von selbst; Impressum und Datenschutzerklärung
+   verweisen auf `buero.html` und bleiben unverändert.
 
 ### Eine betreuende Person entfernen
 
-Eintrag, Vorstellungstext und ihren Abschnitt in `impressum.html` löschen,
-`lastmod` von `buero.html` und den Stand von Impressum und
-Datenschutzerklärung nachziehen, `tools/pruefen.sh`.
+Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` nachziehen,
+`tools/pruefen.sh`.
 
 ### Wenn sich ein Gesetz ändert
 

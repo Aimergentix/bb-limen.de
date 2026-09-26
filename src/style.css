@@ -970,6 +970,43 @@ dl.contact dd:last-child { margin-bottom: 0; }
   margin-top: var(--s2);
 }
 
+/* ================= Hilfe in einer Krise ================= */
+
+/* Der Notruf steht vor allem anderen und hebt sich von jedem Hinweis der
+   Website ab: voller Goldrahmen statt Randstrich. Eine eigene Alarmfarbe
+   gibt es nicht; Rahmen und große Nummern genügen. */
+.notruf {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  padding: var(--s1) var(--s2) var(--s2);
+  margin: var(--s2) 0 var(--s3);
+  max-width: var(--measure);
+}
+.notruf h2 { margin-top: var(--s0); }
+.notruf ul { margin: 0 0 var(--s1); padding-left: 1.2em; }
+.notruf li { margin-bottom: 0.3rem; }
+
+/* Rufnummern groß und in der Bedienfarbe: Antippen wählt. Eine Nummer
+   bricht nie um. */
+a.nummer {
+  font-family: var(--sans);
+  font-size: 1.3em;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration-thickness: 2px;
+}
+
+.angebote {
+  list-style: none;
+  margin: var(--s1) 0 var(--s2);
+  padding: 0;
+  max-width: var(--measure);
+  border-top: 1px solid var(--line);
+}
+.angebote li { padding: var(--s1) 0; border-bottom: 1px solid var(--line); }
+.angebote h3 { margin: 0 0 0.3rem; }
+.angebote p { margin: 0.2rem 0 0; }
+
 /* ================= Leichte Sprache ================= */
 
 /* Eigene Typografie nach den Regeln für Leichte Sprache: Groteskschrift
@@ -1095,6 +1132,28 @@ dl.contact dd:last-child { margin-bottom: 0; }
   margin-top: 0.2rem;
 }
 .ls-links p { margin: var(--s0) 0 0; }
+
+/* Hilfe in einer Krise: der einzige Kasten mit vollem Terrakotta-Rahmen,
+   damit er sich von Merksatz und Listen abhebt. Die Nummern stehen groß
+   für sich, darunter ein Satz je Zeile. */
+.ls-notruf {
+  background: var(--surface);
+  border: 3px solid var(--leicht-ink);
+  padding: var(--s1) var(--s2) var(--s2);
+  margin: var(--s2) 0 var(--s3);
+  max-width: 34rem;
+}
+.ls .ls-notruf h2 { margin-top: var(--s0); border-left: 0; padding-left: 0; }
+.ls-nummern { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+.ls-nummern li { border-top: 1px solid var(--line); padding: var(--s1) 0; }
+.ls-nummern li:last-child { border-bottom: 1px solid var(--line); }
+.ls-nummern a {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration-thickness: 2px;
+}
 
 .ls-weiter a {
   display: inline-block;

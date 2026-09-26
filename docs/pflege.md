@@ -59,7 +59,8 @@ Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 - `betreiber` hat den `name` der Person, die das Büro bereitstellt und für
   den Inhalt der Website verantwortlich ist. Er steht in `buero.html`, im
   Impressum und in der Datenschutzerklärung; im Impressum ist er der
-  Diensteanbieter nach § 5 DDG.
+  Diensteanbieter nach § 5 DDG, in der Datenschutzerklärung der
+  Verantwortliche.
 - `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
@@ -133,10 +134,9 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `%%BETREUENDE:namen%%` (die Namen als Aufzählung in der
-Datenschutzerklärung), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+`buero.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite) und `%%PERSON:<kennung>.<feld>%%` für eine einzelne Angabe, etwa
-`%%PERSON:mika-moeller.email%%` im Impressum. Die Felder heißen wie in der
+`%%PERSON:aranda-moeller.registrierung%%` im Impressum. Die Felder heißen wie in der
 Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. Eine
 unbekannte Kennung oder ein Feld mit `null` bricht den Build ab. Eine
 Änderung in `src/betreuende.json` ändert deshalb `buero.html` und die
@@ -248,8 +248,8 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
   Typografie über `body class="ls"`.
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
-- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` und
-  `buero.html`** —
+- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`,
+  `hilfe.html` und `buero.html`** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
@@ -270,6 +270,14 @@ Prüfung sieht nur, ob eine Adresse erreichbar ist — nicht, ob der genannte
 Stand noch stimmt. Deshalb **zweimal im Jahr von Hand prüfen** und bei einer
 Änderung Adresse und Standangabe gemeinsam nachziehen.
 
+**Rufnummern der Hilfe.** `hilfe.html` nennt Rufnummern von Notruf,
+Bereitschaftsdienst, Beratungsstellen und Gesprächsangeboten; der Kasten
+`.ls-notruf` auf `index.html` und `leichte-sprache.html` verweist dorthin. Am 26.09.2026 gegen die Seiten der
+Träger geprüft; zwei Nummern der IBB-Stellen sind Anrufbeantworter und so
+gekennzeichnet. Die monatliche Prüfung sieht keine Rufnummern. Deshalb mit den
+Verweisen zweimal im Jahr von Hand prüfen, auch Name, Zeiten und ob sich unter
+der Nummer ein Mensch meldet.
+
 **Externe Profile.** Laut Betreiberangabe vom 20.09.2026 bestehen keine
 öffentlichen Profile für BB Limen, Aranda Möller oder Mika Möller; deshalb gibt
 es keine Profil-Links und kein `sameAs`.
@@ -287,7 +295,7 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 
 **Berufshaftpflicht.** Zwei getrennte Verträge, je einer pro Person
 (§ 23 Abs. 1 Nr. 3 BtOG), eingetragen in `src/betreuende.json`. Das
-Impressum nennt für beide Versicherer, Anschrift und räumlichen
+Impressum nennt für den Betreiber Versicherer, Anschrift und räumlichen
 Geltungsbereich, aber keine Vertragsnummer; das hat das Büro am 26.09.2026
 entschieden. Deshalb steht der Versicherer dort als Seitentext und nicht über
 das Feld `haftpflicht`, das die Vertragsnummer enthält.
@@ -298,15 +306,12 @@ Geschäftsbezeichnung und keine Gesellschaft. Er ist freiberuflich tätig, ohne
 Eintragung im Handelsregister und ohne Umsatzsteuer- oder
 Wirtschafts-Identifikationsnummer; kommt eine solche Nummer hinzu, gehört sie
 ins Impressum (§ 5 Abs. 1 Nr. 6 DDG). Die übrigen Personen aus
-`src/betreuende.json` nennt das Impressum in einem eigenen Abschnitt als im
-Büro tätig, selbständig und nicht Inhaber, ohne ihre Durchwahl (R-RECHT-6);
-eine neue Person kommt dort nicht von selbst hinzu. Das hat das Büro am
-26.09.2026 entschieden. Für den Inhalt verantwortlich ist ebenfalls der
+`src/betreuende.json` nennt das Impressum nicht einzeln: Ein allgemeiner
+Abschnitt sagt, dass die im Büro tätigen Berufsbetreuer selbständig und nicht
+Inhaber sind, und verweist für die Anschriften auf `buero.html`. Für den Inhalt verantwortlich ist ebenfalls der
 Betreiber. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
 MStV, denn die Vorschrift gilt nur für journalistisch-redaktionell gestaltete
-Angebote. Die Datenschutzerklärung nennt alle Personen als gemeinsam
-Verantwortliche nach Art. 26 DSGVO; der Betreiber übernimmt die
-Informationspflichten und die Anfragen. Das Impressum nennt die Stammbehörde
+Angebote. Das Impressum nennt die Stammbehörde
 als zuständige Behörde, weil die Registrierung nach § 24 BtOG als behördliche
 Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. Diese Punkte hat
 das Büro am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
@@ -341,12 +346,12 @@ am 21.09.2026). Sobald die Neuregelung in Kraft tritt, die Aussagen zu § 1832
 BGB in `fachkreise.html` und zu § 1820 Abs. 2 BGB samt Formularhinweis in
 `vorsorge.html` neu nachschlagen (R-RECHT-4).
 
-**Gemeinsame Verantwortung.** Die veröffentlichte Aufgabenverteilung nach
-Art. 26 DSGVO entspricht der tatsächlichen Vereinbarung: Aranda Möller
-übernimmt für die gemeinsame Website die Informationspflichten, die Bearbeitung
-von Betroffenenanfragen und die Koordination von Hosting beziehungsweise
-technischem Betrieb. Änderungen immer zugleich in der Vereinbarung und in
-`datenschutz.html` nachziehen.
+**Datenschutzrechtliche Verantwortung.** Verantwortlich für die Website ist
+allein der Betreiber aus `src/bureauangaben.json`; eine gemeinsame
+Verantwortung nach Art. 26 DSGVO besteht nicht. Für Nachrichten und Anrufe an
+ihre eigenen Kontaktangaben ist jede Person selbst verantwortlich; die
+Datenschutzerklärung sagt das allgemein und verweist für die Angaben auf
+`buero.html`. Das hat das Büro am 26.09.2026 entschieden.
 
 **Einzugsgebiet.** Landkreise Lörrach (35 Gemeinden) und Waldshut
 (32 Gemeinden), zusammen 67. Die vollständige Liste steht an genau einer Stelle:

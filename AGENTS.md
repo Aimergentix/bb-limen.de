@@ -134,7 +134,7 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   | `leichte-sprache.html` | Leichte Sprache (etwa A1), ein Satz je Zeile |
   | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
   | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
-  | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) |
+  | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`, `hilfe.html` | Einfache Sprache (A2–B1) |
   | `buero.html` | Einfache Sprache (A2–B1) |
   | `404.html` | kurz und einfach |
 
