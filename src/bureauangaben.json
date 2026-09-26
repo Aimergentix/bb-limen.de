@@ -24,10 +24,10 @@
   },
   "sprechzeiten": {
     "regulaer": {
-      "tage": ["Dienstag", "Donnerstag"],
+      "tage": ["Montag", "Dienstag", "Mittwoch", "Donnerstag"],
       "von": "10:00",
       "bis": "12:00"
     },
-    "nach_vereinbarung": ["Sonntag", "Montag", "Mittwoch"]
+    "nach_vereinbarung": ["Sonntag"]
   }
 }

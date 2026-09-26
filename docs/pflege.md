@@ -118,6 +118,9 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
   eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
   zusätzlich die Zentrale.
 - `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
+- `sprechzeiten` — `null` oder eigene Sprechzeiten mit `tage`, `von` und
+  `bis` wie `sprechzeiten.regulaer` in den Büroangaben; erscheinen im
+  Personenabschnitt unter der Telefonnummer.
 - `anschrift` — `null` oder eine Postanschrift mit denselben Feldern wie
   `postanschrift` in den Büroangaben; erscheint im Personenabschnitt als
   „Post: <Organisation>, <Name>, Postfach …“ und ersetzt in der persönlichen
