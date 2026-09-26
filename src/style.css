@@ -160,7 +160,7 @@
   --s3:  2.618rem;
   --s4:  4.236rem;
 
-  --rail: 21rem;          /* Kolumne : Satzspiegel ~ 1 : phi */
+  --rail: 16.8rem;        /* Breite der Kolumne */
   --measure: 40rem;
 
   --serif: "Noto Serif", Georgia, "Liberation Serif", "Times New Roman", serif;

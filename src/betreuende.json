@@ -16,6 +16,7 @@
         "bundesland": "Baden-Württemberg",
         "land": "DE"
       },
+      "sprechzeiten": { "tage": ["Dienstag", "Donnerstag"], "von": "10:00", "bis": "12:00" },
       "bild": "aranda-moeller.webp"
     },
     {
@@ -34,6 +35,7 @@
         "bundesland": "Baden-Württemberg",
         "land": "DE"
       },
+      "sprechzeiten": { "tage": ["Donnerstag"], "von": "08:00", "bis": "11:00" },
       "bild": "mika-moeller.webp"
     }
   ]

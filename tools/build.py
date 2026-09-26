@@ -31,7 +31,7 @@ PEOPLE_TOKEN = re.compile(r"%%BETREUENDE:([a-z]+)%%")
 PEOPLE_JSON = '"%%BETREUENDE_JSON:personen%%"'
 # Die Personen stehen als Abschnitte auf dieser Seite; die Kennung ist ihre Sprungmarke.
 PEOPLE_PAGE = "buero.html"
-PEOPLE_KEYS = {"kennung", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "bild"}
+PEOPLE_KEYS = {"kennung", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "sprechzeiten", "bild"}
 SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 POST_KEYS = {"postfach", "plz", "ort", "bundesland", "land"}
 # Die vCard erwartet den Ländernamen als Text, nicht den ISO-Code des JSON-LD.
@@ -135,10 +135,16 @@ def load_office(root: Path) -> dict:
     for days in (hours["regulaer"]["tage"], hours["nach_vereinbarung"]):
         if not isinstance(days, list) or not days or any(day not in DAYS for day in days):
             raise ValueError(f"{name}: Tage müssen deutsche Wochentage sein")
-    for key in ("von", "bis"):
-        if not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", str(hours["regulaer"][key])):
-            raise ValueError(f"{name}: {key}: erwartet HH:MM")
+    if not hours_ok(hours["regulaer"]):
+        raise ValueError(f"{name}: regulaer: von und bis erwartet HH:MM")
     return data
+
+
+def hours_ok(hours: dict) -> bool:
+    """Tage als deutsche Wochentage, von und bis als HH:MM."""
+    return (isinstance(hours, dict) and isinstance(hours.get("tage"), list) and bool(hours["tage"])
+            and all(day in DAYS for day in hours["tage"])
+            and all(re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", str(hours.get(key))) for key in ("von", "bis")))
 
 
 def load_people(root: Path) -> list[dict]:
@@ -163,6 +169,8 @@ def load_people(root: Path) -> list[dict]:
                 raise ValueError(f"{name}: {label}: anschrift: erwartet nicht leeren, einzeiligen Text je Feld")
         if person["email"] is not None and not email_ok(person["email"]):
             raise ValueError(f"{name}: {label}: email: erwartet null oder eine gültige Adresse")
+        if person["sprechzeiten"] is not None and not hours_ok(person["sprechzeiten"]):
+            raise ValueError(f"{name}: {label}: sprechzeiten: erwartet null oder tage, von und bis wie in den Büroangaben")
         photo = person["bild"]
         if photo is not None and not (isinstance(photo, str) and re.fullmatch(re.escape(label) + r"\.(?:jpg|webp|png)", photo)):
             raise ValueError(f"{name}: {label}: bild: erwartet null oder {label}.jpg, .webp oder .png")
@@ -313,6 +321,10 @@ def section(person: dict, organization: str) -> str:
              '        <footer class="person-fuss">']
     if person["telefon"] is not None:
         lines.append(f'          <p>Telefon direkt: <a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a></p>')
+    if person["sprechzeiten"] is not None:
+        hours = person["sprechzeiten"]
+        start, end = (hour_label(hours[key]) for key in ("von", "bis"))
+        lines.append(f'          <p>Sprechzeiten: {html(join_words(hours["tage"]))} von {start} bis {end} Uhr</p>')
     if person["email"] is not None:
         lines.append(f'          <p>E-Mail direkt: <a href="mailto:{html(person["email"])}">{html(person["email"])}</a></p>')
     if person["anschrift"] is not None:
