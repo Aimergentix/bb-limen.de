@@ -58,8 +58,8 @@ Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
 - `betreiber` hat den `name` der Person, die das Büro bereitstellt und für
   den Inhalt der Website verantwortlich ist. Er steht in `buero.html`, im
-  Impressum und in der Datenschutzerklärung. Die Anbieter nach § 5 DDG kommen
-  aus `src/betreuende.json`.
+  Impressum und in der Datenschutzerklärung; im Impressum ist er der
+  Diensteanbieter nach § 5 DDG.
 - `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
@@ -133,11 +133,14 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `%%BETREUENDE:anbieter%%` (Name, Beruf und Registrierung je
-Person im Impressum), `%%BETREUENDE:namen%%` (die Namen als Aufzählung in der
+`buero.html`), `%%BETREUENDE:namen%%` (die Namen als Aufzählung in der
 Datenschutzerklärung), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
-Startseite). Eine Änderung in `src/betreuende.json` ändert deshalb
-`buero.html` und die Pflichtseiten; nachgezogen werden das `lastmod` von
+Startseite) und `%%PERSON:<kennung>.<feld>%%` für eine einzelne Angabe, etwa
+`%%PERSON:mika-moeller.email%%` im Impressum. Die Felder heißen wie in der
+Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. Eine
+unbekannte Kennung oder ein Feld mit `null` bricht den Build ab. Eine
+Änderung in `src/betreuende.json` ändert deshalb `buero.html` und die
+Pflichtseiten; nachgezogen werden das `lastmod` von
 `buero.html` und das sichtbare Datum der betroffenen Pflichtseite
 (R-ANGABEN-5).
 
@@ -284,22 +287,29 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 
 **Berufshaftpflicht.** Zwei getrennte Verträge, je einer pro Person
 (§ 23 Abs. 1 Nr. 3 BtOG), eingetragen in `src/betreuende.json`. Das
-Impressum nennt sie nicht: Die Angaben gehen an die Stammbehörde, das hat
-das Büro am 24.09.2026 entschieden.
+Impressum nennt für beide Versicherer, Anschrift und räumlichen
+Geltungsbereich, aber keine Vertragsnummer; das hat das Büro am 26.09.2026
+entschieden. Deshalb steht der Versicherer dort als Seitentext und nicht über
+das Feld `haftpflicht`, das die Vertragsnummer enthält.
 
-**Anbieter.** Diensteanbieter nach § 5 DDG sind alle Personen aus
-`src/betreuende.json`, jede freiberuflich und unabhängig von den anderen, ohne
+**Anbieter.** Diensteanbieter nach § 5 DDG ist allein der Betreiber aus
+`src/bureauangaben.json` als Inhaber von BB Limen; BB Limen ist seine
+Geschäftsbezeichnung und keine Gesellschaft. Er ist freiberuflich tätig, ohne
 Eintragung im Handelsregister und ohne Umsatzsteuer- oder
-Wirtschafts-Identifikationsnummer; wer aufgenommen wird, steht damit auch als
-Anbieter im Impressum. Für den Inhalt verantwortlich ist der Betreiber aus
-`src/bureauangaben.json`. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
+Wirtschafts-Identifikationsnummer; kommt eine solche Nummer hinzu, gehört sie
+ins Impressum (§ 5 Abs. 1 Nr. 6 DDG). Die übrigen Personen aus
+`src/betreuende.json` nennt das Impressum in einem eigenen Abschnitt als im
+Büro tätig, selbständig und nicht Inhaber, ohne ihre Durchwahl (R-RECHT-6);
+eine neue Person kommt dort nicht von selbst hinzu. Das hat das Büro am
+26.09.2026 entschieden. Für den Inhalt verantwortlich ist ebenfalls der
+Betreiber. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
 MStV, denn die Vorschrift gilt nur für journalistisch-redaktionell gestaltete
 Angebote. Die Datenschutzerklärung nennt alle Personen als gemeinsam
 Verantwortliche nach Art. 26 DSGVO; der Betreiber übernimmt die
 Informationspflichten und die Anfragen. Das Impressum nennt die Stammbehörde
-als Aufsichtsbehörde, weil die Registrierung nach § 24 BtOG als behördliche
-Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. All das hat das
-Büro am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
+als zuständige Behörde, weil die Registrierung nach § 24 BtOG als behördliche
+Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. Diese Punkte hat
+das Büro am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
 Abs. 1 GmbHG besteht sie vor der Eintragung nicht und darf deshalb nicht als
 Anbieterin stehen.
 
