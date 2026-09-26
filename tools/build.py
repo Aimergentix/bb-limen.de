@@ -349,16 +349,12 @@ def person_values(person: dict) -> dict[str, str]:
 
 
 def render_people(source: str, people: list[dict], name: str, base: str, organization: str) -> str:
-    """%%BETREUENDE:personen%% (Abschnitte in buero.html), :namen (Datenschutzerklärung),
-    %%PERSON:<kennung>.<feld>%% (einzelne Angaben, etwa im Impressum) und das JSON-LD der Personen."""
+    """%%BETREUENDE:personen%% (Abschnitte in buero.html), %%PERSON:<kennung>.<feld>%%
+    (einzelne Angaben, etwa in den Pflichtseiten) und das JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
-        if match[1] == "personen":
-            return '    <div class="team">\n' + "\n".join(section(person, organization) for person in people) + "\n    </div>"
-        if match[1] != "namen":
+        if match[1] != "personen":
             raise ValueError(f"{name}: unbekannter Personenplatzhalter {match[0]}")
-        if not people:
-            raise ValueError(f"{name}: {match[0]} braucht mindestens eine Person in betreuende.json")
-        return html(join_words([person["name"] for person in people]))
+        return '    <div class="team">\n' + "\n".join(section(person, organization) for person in people) + "\n    </div>"
 
     fields = {person["kennung"]: person_values(person) for person in people}
 
