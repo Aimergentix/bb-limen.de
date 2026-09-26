@@ -1,0 +1,68 @@
+# Prüft jeden Pull Request und veröffentlicht main, aber nur nach bestandener Prüfung.
+# Veröffentlicht wird ausschließlich dist/.
+# Voraussetzung bei GitHub: Settings → Pages → Source: GitHub Actions.
+# Der Job „pruefung" ist die Pflichtprüfung im Schutz für main; der Name bleibt.
+name: Website
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruefung:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Dieselbe Python-Version, die das README als Mindeststand nennt.
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build und Tests
+        run: tools/pruefen.sh
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+      # Feste Version: Der Prüfstand darf sich nicht ohne Commit ändern.
+      # Wann gewechselt wird, steht in docs/pflege.md unter HTML-Validierung.
+      - name: HTML-Validator einrichten
+        run: pip install --quiet html5validator==0.4.2
+      - name: Fertige Seiten validieren
+        run: |
+          tools/build.sh
+          html5validator --config tools/html5validator.yml
+
+  paket:
+    needs: pruefung
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v6
+      - name: Veröffentlichungsdateien erzeugen
+        run: tools/build.sh
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  veroeffentlichung:
+    needs: paket
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Geprüfte Website veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v5

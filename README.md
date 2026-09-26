@@ -1,6 +1,6 @@
 # bb-limen.de — statische Website
 
-Die Website von BB Limen · A+M Möller, einem Büro für rechtliche Betreuung.
+Die Website von BB Limen, einem Büro für rechtliche Betreuung.
 Statische HTML-Seiten, ein Stylesheet, keine externen Ressourcen und kein
 JavaScript im Browser. Bearbeitet werden `src/` und `public/`;
 `tools/build.sh` erzeugt daraus die Ausgabe in `dist/`.
@@ -42,6 +42,9 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 | eine Gemeinde ergänzen oder streichen | JSON-LD in `src/pages/index.html`, Liste `areaServed` |
 | Signet oder Vorschaubild ändern | `src/grafik/`, danach `tools/bilder-erzeugen.sh` (braucht Chromium) |
 | eine Seite hinzufügen | [docs/pflege.md](docs/pflege.md#eine-seite-hinzufügen) |
+| Angaben einer betreuenden Person ändern | `src/betreuende.json`, Vorstellungstext in `src/betreuende/<kennung>.html` |
+| ein Porträt einsetzen | Foto als `src/betreuende/<kennung>.jpg` ablegen, in `src/betreuende.json` bei `bild` den Dateinamen eintragen |
+| eine betreuende Person aufnehmen oder entfernen | siehe unten |
 
 ### Nach jeder inhaltlichen Änderung
 
@@ -55,19 +58,33 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
-1. `impressum.html`: unter „Anbieter" der Absatz „… bereiten … ihre Tätigkeit
-   … vor. Jede Person wird ihren Beruf eigenständig ausüben …", im
-   Personenblock die Zeile „Registrierung … beantragt", darunter der Absatz
-   der Person mit Stand-Datum und Registrierungsnummer, und der Satz „Bis zur
-   Erteilung …".
+1. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
+   Personenabschnitt auf `buero.html` und im Impressum; dessen Stand
+   nachziehen.
 2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
-   `aufgaben.html`, `vorsorge.html` und `fachkreise.html` (R-BESTAND-3).
+   `aufgaben.html`, `vorsorge.html` und `fachkreise.html`.
 3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
    … beantragt") und „Vorschlagslisten" („sobald die Registrierung erteilt
    ist").
 4. `aufgaben.html`: Register VI, „übernehmen wir nach Aufnahme der Tätigkeit".
 5. `leichte-sprache.html`: der Kasten „Wichtig: Unser Büro ist noch neu …".
 6. `index.html`: im JSON-LD die Zeile `description` („Büro in Gründung …").
+
+### Eine betreuende Person aufnehmen
+
+1. In `src/betreuende.json` einen Eintrag anlegen; die Felder erklärt
+   [docs/pflege.md](docs/pflege.md#betreuende-personen).
+2. Den Vorstellungstext als `src/betreuende/<kennung>.html` anlegen.
+3. `lastmod` von `buero.html` in `src/seiten.json` und den Stand von
+   Impressum und Datenschutzerklärung nachziehen, `tools/pruefen.sh`, danach
+   die drei Seiten ansehen. Abschnitt, Visitenkarte, Eintrag als Anbieter im
+   Impressum und als Verantwortliche in der Datenschutzerklärung folgen von
+   selbst.
+
+### Eine betreuende Person entfernen
+
+Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` und den
+Stand von Impressum und Datenschutzerklärung nachziehen, `tools/pruefen.sh`.
 
 ### Wenn sich ein Gesetz ändert
 

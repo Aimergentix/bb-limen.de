@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!-- @include head -->
+<title>Büro, BB Limen · Berufliche Betreuung</title>
+<meta name="description" content="BB Limen ist eine Bürogemeinschaft für selbständige Berufsbetreuerinnen und Berufsbetreuer in den Landkreisen Lörrach und Waldshut. Wer im Büro arbeitet, mit eigener Vorstellung.">
+<link rel="canonical" href="https://bb-limen.de/buero.html">
+<meta property="og:title" content="Büro, BB Limen · Berufliche Betreuung">
+<meta property="og:description" content="BB Limen ist eine Bürogemeinschaft für selbständige Berufsbetreuerinnen und Berufsbetreuer in den Landkreisen Lörrach und Waldshut. Wer im Büro arbeitet, mit eigener Vorstellung.">
+<meta property="og:url" content="https://bb-limen.de/buero.html">
+</head>
+<body>
+
+<!-- @include skip -->
+
+<div class="shell">
+
+<!-- @include rail -->
+
+  <main class="sheet" id="inhalt">
+
+    <p class="kicker">Das Büro</p>
+
+    <h1>Büro</h1>
+
+    <p class="lead">Wir sind eine Bürogemeinschaft. Darin arbeiten selbständige Berufsbetreuerinnen und Berufsbetreuer.</p>
+
+    <h2>Was die Bürogemeinschaft ist</h2>
+
+    <p>Unsere Bürogemeinschaft besteht aus mehreren rechtlichen Betreuern, die gemeinsam Büroflächen nutzen. Jeder bleibt unabhängig. Büro- und Fixkosten werden geteilt.</p> 
+      
+    <p> Jede Person arbeitet selbständig und führt ihre Betreuungen in eigener Verantwortung. Und die Vertretung im Urlaub oder im Krankheitsfall ist leichter sicherzustellen.</p>
+
+    <p>%%BUREAU:betreiber.name%% stellt das Büro bereit inklusive aller üblichen Büroservices.</p>
+
+    <h2>Was sie nicht ist</h2>
+
+    <p>Die Bürogemeinschaft selbst führt keine Betreuungen. Ein Betreuungsgericht bestellt immer eine einzelne Person. Diese Person ist selbst registriert und selbst versichert. Sie ist für ihre Betreuungen allein verantwortlich.</p>
+
+<!-- include Karten der Berufsbetreuer betreuende/*.html -->
+
+%%BETREUENDE:personen%%
+
+    <h2>Büro&shy;kontakt</h2>
+
+    <dl class="contact">
+      <dt>Zentrale</dt>
+      <dd><a href="tel:%%BUREAU:telefon.e164%%">%%BUREAU:telefon.sichtbar%%</a>, Büro</dd>
+      <dt>E-Mail</dt>
+      <dd><a href="mailto:%%BUREAU:email%%">%%BUREAU:email%%</a></dd>
+      <dt>Post</dt>
+      <dd>BB Limen, Postfach %%BUREAU:postanschrift.postfach%%, %%BUREAU:postanschrift.plz%% %%BUREAU:postanschrift.ort%%</dd>
+    </dl>
+
+<!-- @include foot -->
+
+  </main>
+
+</div>
+
+<!-- @include callbar -->
+
+</body>
+</html>

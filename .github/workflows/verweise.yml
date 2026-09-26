@@ -1,6 +1,7 @@
 # Prüft die Verweise nach außen, monatlich und auf Zuruf. Die Logik steht in
-# tools/verweise-pruefen.sh und läuft genauso lokal; bei einem toten Verweis
-# entsteht hier ein Issue. Was dann zu tun ist: docs/pflege.md.
+# tools/verweise-pruefen.sh und läuft genauso lokal. Ein toter Verweis macht
+# den Lauf rot; GitHub meldet das per E-Mail. Was dann zu tun ist:
+# docs/pflege.md, „Verweise nach außen".
 name: Verweise nach außen
 
 on:
@@ -10,49 +11,13 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   verweise:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-
       - name: Website erzeugen
         run: tools/build.sh
-
-      - name: Abrufen
-        id: pruefen
-        run: |
-          status=0
-          tools/verweise-pruefen.sh > tot.txt || status=$?
-          case "$status" in
-            0)
-              echo "tot=nein" >> "$GITHUB_OUTPUT"
-              echo "Alle Verweise erreichbar." >> "$GITHUB_STEP_SUMMARY" ;;
-            1)
-              echo "tot=ja" >> "$GITHUB_OUTPUT"
-              { echo "## Nicht erreichbare Verweise"; echo; cat tot.txt; } >> "$GITHUB_STEP_SUMMARY" ;;
-            *)
-              exit "$status" ;;
-          esac
-
-      - name: Issue anlegen
-        if: steps.pruefen.outputs.tot == 'ja'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          {
-            echo "Die monatliche Prüfung hat Verweise gefunden, die nicht mehr erreichbar sind."
-            echo
-            cat tot.txt
-            echo
-            echo "Bitte die betroffene Stelle auf der herausgebenden Seite suchen und"
-            echo "Adresse **und** Standangabe in \`vorsorge.html\` bzw."
-            echo "\`leichte-sprache.html\` nachziehen. Ein veralteter Stand ist"
-            echo "schlimmer als kein Stand — siehe docs/pflege.md."
-          } > meldung.md
-
-          gh issue create \
-            --title "Tote Verweise nach außen ($(date +%d.%m.%Y))" \
-            --body-file meldung.md
+      - name: Verweise abrufen
+        run: tools/verweise-pruefen.sh

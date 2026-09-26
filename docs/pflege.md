@@ -12,7 +12,9 @@ src/partials/           gemeinsame HTML-Bausteine: Kopf, Sprunglink, Kolumne, Fu
 src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
-src/bureauangaben.json  Telefon, E-Mail, Anschriften, Sprechzeiten
+src/bureauangaben.json  Betreiber, Zentrale, E-Mail, Anschriften, Sprechzeiten
+src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
+src/betreuende/         Vorstellungstext und gegebenenfalls Porträt je Person
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
 tools/                  Build, Prüfung, Bildexport, Verweisprüfung, Commit-Hook
@@ -51,11 +53,14 @@ den eingesetzten Baustein. In `rail.html` markiert der Build über
 ## Büroangaben
 
 `src/bureauangaben.json` ist die einzige Quelle für Telefon, E-Mail, Anschrift
-und Sprechzeiten (R-ANGABEN-1). `tools/bureau_data.py` prüft die Werte und
-erzeugt beim Build die Darstellungen; die Datei selbst wird nicht
-veröffentlicht.
+und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
+Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
-- `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
+- `betreiber` hat den `name` der Person, die das Büro bereitstellt und für
+  den Inhalt der Website verantwortlich ist. Er steht in `buero.html`, im
+  Impressum und in der Datenschutzerklärung. Die Anbieter nach § 5 DDG kommen
+  aus `src/betreuende.json`.
+- `telefon` ist die Zentrale. `telefon.e164` ist die technische Nummer mit internationaler Vorwahl,
   `telefon.sichtbar` ihre lesbare Schreibweise; beide müssen dieselben Ziffern
   enthalten.
 - `email` ist die Büroadresse, `email_datenschutz` die Adresse, die nur die
@@ -67,10 +72,9 @@ veröffentlicht.
   im JSON-LD und in der Visitenkarte.
 - `sprechzeiten.regulaer` hat `tage` als Liste deutscher Wochentage und `von`
   sowie `bis` als HH:MM; `nach_vereinbarung` nennt die Termintage. Beide Listen
-  sind nicht leer, ohne Wiederholung und überschneiden sich nicht. Die
-  Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder je Wochentag
-  verschiedene Zeiten brauchen eine Erweiterung von Datenformat und
-  Sprachvorlagen.
+  sind nicht leer. Die Reihenfolge der Tage bestimmt die Ausgabe. Geteilte oder
+  je Wochentag verschiedene Zeiten brauchen eine Erweiterung von Datenformat
+  und Sprachvorlagen.
 
 Seiten verwenden Platzhalter wie `%%BUREAU:telefon.e164%%` oder
 `%%BUREAU:anschrift.strasse%%`. Die Sprechzeiten gibt es in drei Fassungen:
@@ -82,21 +86,60 @@ Schlüssel und nicht aufgelöste Platzhalter brechen ihn vor dem Schreiben ab.
 
 `dist/bb-limen.vcf` entsteht aus dem erzeugten Organization-Knoten der
 Startseite (R-ANGABEN-6); Name und Websiteadresse sind dort redaktionell
-festgelegt, die Kontaktwerte kommen aus den Büroangaben.
+festgelegt, die Kontaktwerte kommen aus den Büroangaben. Alle Visitenkarten
+sind UTF-8 mit CRLF-Zeilenenden und nach 75 Bytes gefaltet.
+
+## Betreuende Personen
+
+Die Bürogemeinschaft vermietet an selbständige Berufsbetreuer; Registrierung,
+Haftpflicht und Verantwortung liegen bei jeder Person einzeln. Deshalb hat
+jede Person einen eigenen Abschnitt auf `buero.html` und eine eigene
+Visitenkarte, und die Website wächst mit einem Datensatz statt mit einem
+Umbau. Eigene Seiten je Person gibt es vorerst nicht.
+
+Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
+
+- `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
+  ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
+  `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
+- `name`, `beruf` — wie im Personenabschnitt und im Impressum.
+- `registrierung` — die kurze Standzeile, wörtlich im Personenabschnitt und
+  im Impressum.
+- `haftpflicht` — Versicherer und Vertragsnummer; wird derzeit auf keiner
+  Seite ausgegeben.
+- `telefon` — `null` oder `e164` und `sichtbar` wie bei den Büroangaben; eine
+  eigene Nummer erscheint im Personenabschnitt als „Direkt", die vCard nennt
+  zusätzlich die Zentrale.
+- `email` — `null` oder eine eigene Adresse; sonst gilt die des Büros.
+- `anschrift` — `null` oder die Anschrift als einzeiliger Text; wird derzeit
+  auf keiner Seite ausgegeben.
+- `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
+  oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
+  Karte schneidet es auf 3:4 (Hochformat) zu, das Gesicht im oberen Drittel; 600 × 800
+  Pixel genügen. Ohne Foto zeigt die Karte einen gezeichneten Platzhalter.
+
+Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
+Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
+Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
+`buero.html`), `%%BETREUENDE:anbieter%%` (Name, Beruf und Registrierung je
+Person im Impressum), `%%BETREUENDE:namen%%` (die Namen als Aufzählung in der
+Datenschutzerklärung), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+Startseite). Eine Änderung in `src/betreuende.json` ändert deshalb
+`buero.html` und die Pflichtseiten; nachgezogen werden das `lastmod` von
+`buero.html` und das sichtbare Datum der betroffenen Pflichtseite
+(R-ANGABEN-5).
 
 ## Verhalten des Builds
 
-Der Build prüft Katalog, Büroangaben, Dateibestand, Bausteine,
-Include-Reihenfolge und Platzhalter, bevor er schreibt. Er erzeugt erst ein
-vollständiges Arbeitsverzeichnis und ersetzt dann `dist/`; bei fehlerhaften
-Eingaben bleiben Quellen und letzte Ausgabe erhalten. Dateien in `src/pages/`,
-`src/partials/` oder `public/`, die nicht eingetragen sind, führen zum Fehler,
-ebenso eine Datei im Wurzelverzeichnis, die wie eine veröffentlichte heißt —
-etwa `robots.txt`: Sie sähe wie eine Quelle aus, würde aber nie ausgeliefert.
-Innerhalb des Repositorys ist ausschließlich `dist/` als Ausgabe erlaubt.
-`tools/build.sh --check` meldet eine veränderte Ausgabe, ohne sie zu
-berichtigen. Bei einem Buildfehler die genannte Quelldatei und Zeile
-bearbeiten.
+`tools/build.py` ist der ganze Build. Bevor er schreibt, prüft er, was eine
+Seite technisch zerstören würde: Aufbau der JSON-Dateien, Dateibestand,
+Include-Reihenfolge, Platzhalter, Telefon- und E-Mail-Ziele. Ob eine Angabe
+inhaltlich stimmt, prüft er nicht (R-REDAKTION-3). Dateien in `src/pages/`,
+`src/partials/`, `src/betreuende/` oder `public/`, die nicht eingetragen sind,
+führen zum Fehler. Er erzeugt erst ein vollständiges Arbeitsverzeichnis und
+ersetzt dann `dist/`; bei fehlerhaften Eingaben bleibt die letzte Ausgabe
+erhalten. Ein anderes vorhandenes Verzeichnis ersetzt er nie. Bei einem
+Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
@@ -115,22 +158,23 @@ Sprechzeiten oder Telefonnummer kann deshalb nichts rot machen. Rot wird es,
 wenn etwas kaputt ist: ein Verweis ohne Ziel, ein falsch geschriebener
 Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
-| Testdatei | Gegenstand |
-| --- | --- |
-| `tests/test_site.py` | die fertigen Seiten: Verweise, Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise, Sitemap, vCard-Format; keine Büroangabe wörtlich in einer Quelle |
-| `tests/test_kontrast.py` | WCAG AA für jede Textpaarung, hell und dunkel — betrifft nur Farbänderungen |
-
-`tests/site_support.py` stellt dafür die frisch erzeugte Website bereit. Die
-Werkzeuge selbst haben keine eigenen Tests mehr: Der Build prüft seine
+`tests/test_site.py` prüft die frisch erzeugte Website: Verweise,
+Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise und
+`noindex`; dass keine Büro- oder Personenangabe wörtlich in einer Quelle
+steht; und WCAG AA für jede Textpaarung, hell und dunkel. Die
+Werkzeuge selbst haben keine eigenen Tests: Der Build prüft seine
 Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
 der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
 
 **Vor jedem Commit** läuft nach `tools/einrichten.sh` derselbe Befehl als Hook;
-geprüft wird der Arbeitsbaum. **Bei Push und Pull Request** führt
-`.github/workflows/pruefung.yml` ihn aus und validiert danach das fertige HTML.
-**Einmal im Monat** ruft `.github/workflows/verweise.yml` mit
-`tools/verweise-pruefen.sh` die Verweise nach außen ab und legt bei toten
-Adressen ein Issue an; das Skript läuft genauso lokal.
+geprüft wird der Arbeitsbaum. **Bei jedem Pull Request und auf `main`** führt
+`.github/workflows/website.yml` ihn aus und validiert danach das fertige HTML;
+ein Zweig ohne Pull Request wird nicht geprüft. **Einmal im Monat** ruft
+`.github/workflows/verweise.yml` mit `tools/verweise-pruefen.sh` die Verweise
+nach außen ab; ein toter Verweis macht den Lauf rot, und GitHub meldet das per
+E-Mail. Das Skript läuft genauso lokal. In einem öffentlichen Repository
+schaltet GitHub geplante Läufe nach 60 Tagen ohne Aktivität ab; dann unter
+Actions → „Verweise nach außen" wieder einschalten.
 
 ### HTML-Validierung
 
@@ -189,7 +233,8 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
   Typografie über `body class="ls"`.
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
-- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`** —
+- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` und
+  `buero.html`** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
@@ -226,10 +271,33 @@ Betreuung führen. Welche Stellen bei der Erteilung zu ändern sind, steht im
 [README](../README.md#registrierung-eintragen).
 
 **Berufshaftpflicht.** Zwei getrennte Verträge, je einer pro Person
-(§ 23 Abs. 1 Nr. 3 BtOG). Im Impressum sind beide Zeilen angelegt.
+(§ 23 Abs. 1 Nr. 3 BtOG), eingetragen in `src/betreuende.json`. Das
+Impressum nennt sie nicht: Die Angaben gehen an die Stammbehörde, das hat
+das Büro am 24.09.2026 entschieden.
 
-**Umsatzsteuer.** Im Impressum steht die Befreiung nach § 4 Nr. 16 Satz 1
-Buchstabe k UStG mit der Ausnahme für Leistungen nach § 1877 Abs. 3 BGB.
+**Anbieter.** Diensteanbieter nach § 5 DDG sind alle Personen aus
+`src/betreuende.json`, jede freiberuflich und unabhängig von den anderen, ohne
+Eintragung im Handelsregister und ohne Umsatzsteuer- oder
+Wirtschafts-Identifikationsnummer; wer aufgenommen wird, steht damit auch als
+Anbieter im Impressum. Für den Inhalt verantwortlich ist der Betreiber aus
+`src/bureauangaben.json`. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
+MStV, denn die Vorschrift gilt nur für journalistisch-redaktionell gestaltete
+Angebote. Die Datenschutzerklärung nennt alle Personen als gemeinsam
+Verantwortliche nach Art. 26 DSGVO; der Betreiber übernimmt die
+Informationspflichten und die Anfragen. Das Impressum nennt die Stammbehörde
+als Aufsichtsbehörde, weil die Registrierung nach § 24 BtOG als behördliche
+Zulassung im Sinne von § 5 Abs. 1 Nr. 3 DDG behandelt wird. All das hat das
+Büro am 25.09.2026 so entschieden. Eine UG (haftungsbeschränkt) ist nicht gegründet; nach § 11
+Abs. 1 GmbHG besteht sie vor der Eintragung nicht und darf deshalb nicht als
+Anbieterin stehen.
+
+**Bürogemeinschaft — Wiedervorlage.** Vor der Veröffentlichung klären: ob
+die DL-InfoV für berufliche Betreuer gilt und damit Angaben zur
+Berufshaftpflicht (§ 2 Abs. 1 Nr. 11 DL-InfoV: Versicherer, Anschrift,
+räumlicher Geltungsbereich) nötig werden, die Ausnahme in Art. 2 Abs. 2 lit. j
+der Richtlinie 2006/123/EG spricht womöglich dagegen; ob der Satz zur
+unabhängigen Tätigkeit im Impressum den Anschein einer Gesellschaft
+ausschließt; und wie die Betreuungsbehörde die Bürogemeinschaft einordnet.
 
 **Vergütung.** Maßgeblich ist das zum 1. Januar 2026 geänderte VBVG: sechzehn
 reguläre Fallpauschalen von 98 bis 427 Euro in der Anlage zu § 8 Abs. 1 VBVG
@@ -304,9 +372,9 @@ Ansicht zu jeder Sichtprüfung (R-PRUEFUNG-2).
 
 Kanonische Adresse ist `https://bb-limen.de/`, das Repository
 <https://github.com/Aimergentix/bb-limen.de>.
-`.github/workflows/veroeffentlichung.yml` läuft bei jedem Push nach `main`: Er
-ruft die Prüfung auf, baut `dist/`, lädt genau diesen Ordner als
-Pages-Artefakt hoch und veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
+`.github/workflows/website.yml` läuft bei jedem Push nach `main`: Er prüft,
+baut `dist/`, lädt genau diesen Ordner als Pages-Artefakt hoch und
+veröffentlicht ihn. Schlägt die Prüfung fehl, bleibt
 die bisherige Fassung online.
 
 Bei GitHub ist dazu eingerichtet: Pages-Quelle „GitHub Actions", eigene Domain
@@ -346,11 +414,16 @@ Warum etwas so ist, in je einem Satz.
   `PostalAddress` nennt sie, ohne einen Standort mit Publikumsverkehr zu
   behaupten. Aus demselben Grund wäre ein Eintrag bei einem Kartendienst ein
   Risiko (R-VERBOT-5, R-VERBOT-6).
+- **Kein Hell-/Dunkel-Schalter.** Ohne JavaScript ließe sich die Wahl nicht
+  über alle Seiten halten; die Darstellung folgt `prefers-color-scheme`.
 - **Das Ornament ist ein SVG.** Zeichen wie U+2766 fehlen in den
   Serifenschriften; der Browser zeigte auf jedem Gerät etwas anderes
   (R-VERBOT-3).
 - **Die Adressen bleiben bei `.html`**, damit bestehende Verweise gelten
   (R-BESTAND-2).
+- **Personenabschnitte aus Daten.** Bei vier bis acht Personen, die kommen und
+  gehen, wäre jeder handgeschriebene Abschnitt eine weitere Stelle für dieselbe
+  Angabe (R-ORDNUNG-1).
 - **Pflichtseiten tragen `noindex`.** § 5 DDG verlangt Erreichbarkeit, nicht
   Auffindbarkeit (R-BESTAND-4).
 - **Quellen und Ausgabe sind getrennt.** Früher schrieb der Build Bausteine in

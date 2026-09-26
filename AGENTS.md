@@ -24,6 +24,7 @@ in [docs/pflege.md](docs/pflege.md).
 | Begriff | Bedeutung |
 | --- | --- |
 | Seite | eine HTML-Datei unter `src/pages/`; der Bestand steht im Katalog |
+| Personenabschnitt | der erzeugte Abschnitt einer betreuenden Person aus `src/betreuende.json` in `buero.html` |
 | Katalog | `src/seiten.json` |
 | Pflichtseiten | `impressum.html` und `datenschutz.html` |
 | Baustein | Datei unter `src/partials/`, über eine Include-Zeile in jede Seite eingesetzt |
@@ -43,7 +44,9 @@ Kurze Seitennamen wie `index.html` meinen die Quelle unter `src/pages/`.
   `og:`-Angaben MÜSSEN in der jeweiligen Seite stehen, nicht in einem Baustein.
 - **R-QUELLE-3** Jede neue Datei MUSS eine eindeutige Rolle haben: Seiten nach
   `src/pages/` und in den Katalog, öffentliche Kopierdateien nach `public/`
-  und in dessen `public_files`. Der Build lehnt nicht eingetragene Dateien ab.
+  und in dessen `public_files`, Vorstellungstexte und Porträts nach
+  `src/betreuende/` mit einem Eintrag in `src/betreuende.json`. Der Build lehnt nicht eingetragene
+  Dateien ab.
 
 Mechanik: [docs/pflege.md](docs/pflege.md#aufbau).
 
@@ -82,18 +85,18 @@ Begründungen: [docs/pflege.md](docs/pflege.md#entscheidungen-in-kürze).
   Aufgabenkreis, und der besteht aus einem oder mehreren *Aufgabenbereichen*
   (§ 1815 Abs. 1 BGB). Der Plural „Aufgabenkreise" ist die alte Fassung und
   DARF NICHT auftauchen.
-- **R-RECHT-3** Vergütung nach VBVG in der Fassung vom 01.01.2026.
 - **R-RECHT-4** Ändert sich ein Gesetz, MÜSSEN sich auch die Jahreszahlen im
   Text ändern. Ein Stand, der nicht mehr gilt, ist schlimmer als kein Stand.
 - **R-RECHT-5** Text in `[eckigen Klammern]` ist ein bewusster Platzhalter für
   eine Angabe, die noch niemand entschieden hat. Er DARF NICHT erfunden
   ausgefüllt werden, die Klammern DÜRFEN NICHT entfernt werden, damit es
   fertig aussieht, und er DARF NICHT veröffentlicht werden. Finden:
-  `grep -rn '\[[A-ZÄÖÜ]' -- src/pages/*.html src/partials/`
-- **R-RECHT-6** BB Limen veröffentlicht genau eine gemeinsame
-  Büro-Telefonnummer. Sie DARF keiner Person zugeordnet werden. Eine zweite
-  persönliche Telefonnummer und ein leeres `href="tel:"` DÜRFEN NICHT
-  hinzukommen.
+  `grep -rn '\[[A-ZÄÖÜ]' src/`
+- **R-RECHT-6** BB Limen veröffentlicht eine gemeinsame Zentrale. Sie KANN
+  zugleich die Geschäftsnummer einer betreuenden Person sein. Jede betreuende
+  Person DARF höchstens eine eigene Nummer haben; sie steht nur in `src/betreuende.json`
+  und erscheint nur im Personenabschnitt und in der persönlichen
+  Visitenkarte. Ein leeres `href="tel:"` DARF NICHT hinzukommen.
 
 Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wiedervorlagen).
 
@@ -132,6 +135,7 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
   | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
   | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html` | Einfache Sprache (A2–B1) |
+  | `buero.html` | Einfache Sprache (A2–B1) |
   | `404.html` | kurz und einfach |
 
 - **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine
@@ -158,29 +162,29 @@ Einzelheiten: [docs/pflege.md](docs/pflege.md#schreiben).
   `--link-on-carrier` auf Graphit. Nicht anklickbare Nebenangaben in der
   Kolumne MÜSSEN `--meta-on-carrier` verwenden. Ausnahmen sind die Wortmarke,
   der goldene aktuelle Standort und die goldene primäre Aktion „Anrufen".
-- **R-FARBE-4** Es DARF keinen Hell-/Dunkel-Schalter geben. Die Darstellung
-  folgt ausschließlich `prefers-color-scheme`; ohne JavaScript wäre die Wahl
-  nicht verlässlich über alle Seiten haltbar.
 - **R-FARBE-5** Jede Textpaarung MUSS WCAG AA erfüllen, hell und dunkel. Wer
-  eine neue Paarung einführt, trägt sie in `tests/test_kontrast.py` ein.
+  eine neue Paarung einführt, trägt sie in `tests/test_site.py` unter `PAIRS` ein.
 
 Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 
 ## 6. Gemeinsame Angaben
 
 - **R-ANGABEN-1** Telefonnummer, E-Mail, Anschrift und Sprechzeiten MÜSSEN
-  ausschließlich in `src/bureauangaben.json` gepflegt werden. Seiten und
-  Bausteine MÜSSEN diese Werte über Büroplatzhalter beziehen; wörtlich DÜRFEN
-  sie dort NICHT stehen.
+  ausschließlich in `src/bureauangaben.json` gepflegt werden, die Angaben der
+  betreuenden Personen ausschließlich in `src/betreuende.json`. Seiten und
+  Bausteine MÜSSEN diese Werte über Platzhalter beziehen; wörtlich DÜRFEN sie
+  dort NICHT stehen.
 - **R-ANGABEN-2** Die vollständige Liste der Gemeinden des Einzugsgebiets steht
   an genau einer Stelle: in `index.html` im JSON-LD unter `areaServed`.
 - **R-ANGABEN-5** Ändert sich der Inhalt einer Seite, MUSS ihr Stand
   nachgezogen werden: `lastmod` im Katalog, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
-  Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6).
-- **R-ANGABEN-6** `dist/bb-limen.vcf` ist eine erzeugte gemeinsame
-  Bürovisitenkarte aus dem JSON-LD der Startseite, in UTF-8 mit
-  CRLF-Zeilenenden. Eine zweite, manuell gepflegte vCard DARF NICHT hinzukommen.
+  Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6). Eine Änderung in
+  `src/betreuende.json` ändert `buero.html` und je nach Feld die
+  Pflichtseiten.
+- **R-ANGABEN-6** Visitenkarten (`.vcf`) erzeugt der Build aus dem JSON-LD
+  der Startseite und aus `src/betreuende.json`. Eine manuell gepflegte vCard
+  DARF NICHT hinzukommen.
 
 ## 7. Bestand, der bleibt
 
@@ -196,12 +200,8 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   anderes Sachthema verwenden. `index.html` ist die technische Startdatei für
   `https://bb-limen.de/`. Eine Seite DARF NICHT umbenannt oder in eine
   Verzeichnisform überführt werden ohne Entscheidung über bestehende Verweise.
-- **R-BESTAND-3** Der Gründungshinweis steht auf `index.html`,
-  `betreuung.html`, `aufgaben.html`, `vorsorge.html` und `fachkreise.html` und
-  im Impressum, solange die Registrierung nach § 23 BtOG nicht erteilt ist. Er
-  verschwindet erst mit der Registrierungsnummer, und dann MUSS er überall
-  gleichzeitig verschwinden. Alle Stellen nennt die Checkliste im
-  [README](README.md#registrierung-eintragen).
+  Eigene Seiten je Person gibt es vorerst nicht; die Personen stehen als
+  Abschnitte in `buero.html`, Sprungmarke ist ihre Kennung.
 - **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
   nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.
 
@@ -214,8 +214,9 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
 - **R-PRUEFUNG-2** Wer Seiten, Bausteine oder das Stylesheet ändert, MUSS das
   Ergebnis ansehen: breit, schmal (390 px) und in Dunkeldarstellung. Das ist
   Handarbeit und bleibt es.
-- **R-PRUEFUNG-3** Nach jedem Push MUSS das Ergebnis der CI angesehen werden:
-  `gh run list --limit 3`. Eine rote CI heißt: nicht fertig.
+- **R-PRUEFUNG-3** Nach jedem Push in einen Pull Request und nach jedem Merge
+  MUSS das Ergebnis der CI angesehen werden: `gh run list --limit 3`. Eine rote
+  CI heißt: nicht fertig.
 - **R-PRUEFUNG-4** Ausnahmen in `tools/html5validator.yml` MÜSSEN eng gefasst
   sein, und jede braucht einen Gegentest in `tests/test_site.py`. Warnungen
   DÜRFEN NICHT pauschal unterdrückt werden.

@@ -23,7 +23,7 @@
    Stahlblau kennzeichnet, was sich anklicken lässt. Nicht anklickbare
    Nebenangaben bleiben in einem warmen Steingrau davon getrennt.
    Alle Farbwerte stehen im Block PALETTE; ein Wechsel ersetzt nur ihn.
-   Jede Textpaarung erfüllt WCAG AA, hell und dunkel; tests/test_kontrast.py
+   Jede Textpaarung erfüllt WCAG AA, hell und dunkel; tests/test_site.py
    rechnet es bei jeder Prüfung nach.
 */
 
@@ -814,34 +814,111 @@ dl.contact dd:last-child { margin-bottom: 0; }
   font-style: normal;
 }
 
-/* ================= Zwei Anbieter nebeneinander ================= */
+/* ================= Betreuende auf der Seite Büro ================= */
 
-/* Im Impressum stehen zwei eigenständige Freiberufler. Sie nebeneinander
-   zu setzen macht sichtbar, dass es zwei getrennte Diensteanbieter sind
-   und keine Gesellschaft. */
-.anbieter {
-  margin: var(--s2) 0;
-  max-width: var(--measure);
-  border-top: 1px solid var(--line);
+/* Jede Person eine eigene Karte: Sie arbeitet selbständig, und das soll man
+   sehen. Die Karten tragen dieselbe Bauform wie Kontakt und Exkurs —
+   Fläche, Goldlinie oben — und nur Farben, die es schon gibt. Das Raster
+   darf breiter sein als der Satzspiegel, damit zwei Karten nebeneinander
+   Platz haben; schmal steht eine unter der anderen. */
+.sheet > .team { max-width: 56rem; }
+.team {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+  gap: var(--s2);
+  margin: var(--s2) 0 0;
 }
-.anbieter > div {
-  padding: var(--s1) 0;
+.person-kopf { align-self: start; }
+
+/* Subgrid: Bild, Kopf, Stand, Blatt, Vorstellung und Fuß liegen in jeder
+   Karte einer Zeile auf derselben Höhe, auch wenn eine Berufsbezeichnung
+   umbricht. Ohne Subgrid stehen die Teile einfach untereinander. */
+.person {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 6;
+  row-gap: 0;
+  align-content: start;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);
+  padding: var(--s2);
+}
+
+.person h3 {
+  margin: 0;
+  font-size: clamp(1.18rem, 1.1rem + 0.4vw, 1.38rem);
+  line-height: 1.25;
+}
+.person .rolle {
+  margin: 0.2rem 0 0;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Das Porträt reicht bis an den Kartenrand, direkt unter der Goldlinie.
+   Ein Foto wird auf 3:4 (Hochformat) zugeschnitten, Gesichter sitzen im oberen Drittel.
+   Solange keines vorliegt, steht dort ein gezeichneter Platzhalter: eine
+   Gestalt unter einem Türbogen über der Schwelle — das Motiv des Namens. */
+.portrait {
+  margin: calc(var(--s2) * -1) calc(var(--s2) * -1) var(--s2);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
-.anbieter h3 {
-  margin: 0 0 var(--s0);
+.portrait img,
+.portrait svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.portrait img { object-fit: cover; object-position: 50% 30%; }
+.platzhalter .grund { fill: var(--paper); }
+.platzhalter .bogen { fill: none; stroke: var(--line); stroke-width: 2; }
+.platzhalter .figur { fill: var(--muted); fill-opacity: 0.18; }
+.platzhalter .schwelle { stroke: var(--accent); stroke-width: 3; }
+
+.person .stand {
+  margin: var(--s1) 0 0;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.person .stand span {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
   color: var(--accent-ink);
 }
-.anbieter p { font-size: 0.97rem; }
-.anbieter p:last-child { margin-bottom: 0; }
 
-@media (min-width: 46rem) {
-  .anbieter {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--s2);
-  }
+.person .ornament { margin: var(--s1) 0; max-width: none; }
+
+.vorstellung { margin-bottom: var(--s1); }
+.vorstellung p { font-size: 0.98rem; }
+
+/* Fuß unten angeschlagen, damit Karten gleicher Zeile gleich enden. */
+.person-fuss {
+  align-self: end;
+  padding-top: var(--s1);
+  border-top: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: var(--muted);
 }
+.person-fuss p { margin: 0 0 var(--s-1); }
+.person-fuss p:last-child { margin-bottom: 0; }
+.person-fuss .karte {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.symbol { width: 1.3rem; height: 1.3rem; flex: none; }
 
 /* ================= Dokumente und Verweise nach außen ================= */
 
