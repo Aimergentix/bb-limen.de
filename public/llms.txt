@@ -1,0 +1,27 @@
+# BB Limen
+
+> BB Limen ist ein Büro für rechtliche Betreuung in den Landkreisen Lörrach und Waldshut. Die Website erklärt rechtliche Betreuung und Vorsorge, stellt das Büro vor und verweist auf Hilfe in Krisen.
+
+Das Büro befindet sich derzeit in Gründung. Angaben zu Personen, Tätigkeit und Kontakt stehen auf den verlinkten HTML-Seiten. Diese Übersicht dient der Orientierung.
+
+## Büro und Kontakt
+
+- [Startseite](https://bb-limen.de/): Vorstellung des Büros und seiner Arbeitsweise.
+- [Büro](https://bb-limen.de/buero.html): Betreuende Personen, Einzugsgebiet und Kontaktangaben.
+
+## Betreuung und Vorsorge
+
+- [Betreuung](https://bb-limen.de/betreuung.html): Was rechtliche Betreuung ist und wie sie zustande kommt.
+- [Aufgabenbereiche](https://bb-limen.de/aufgaben.html): Aufgabenbereiche, Arbeitsweise und Grenzen rechtlicher Betreuung.
+- [Vorsorge](https://bb-limen.de/vorsorge.html): Vorsorgevollmacht, Betreuungsverfügung und Patientenverfügung.
+- [Betreuung in Leichter Sprache](https://bb-limen.de/leichte-sprache.html): Erläuterungen zur rechtlichen Betreuung in Leichter Sprache.
+
+## Fachkreise und Krisenhilfe
+
+- [Für Fachkreise](https://bb-limen.de/fachkreise.html): Angaben für Gerichte, Behörden, Kliniken, Sozialdienste, Pflege und Ärzte.
+- [Hilfe in einer Krise](https://bb-limen.de/hilfe.html): Akute Hilfe, unabhängige Beratung vor Ort und Gesprächsangebote.
+
+## Rechtliche Angaben
+
+- [Impressum](https://bb-limen.de/impressum.html): Angaben zum Diensteanbieter.
+- [Datenschutz](https://bb-limen.de/datenschutz.html): Informationen zur Verarbeitung personenbezogener Daten.

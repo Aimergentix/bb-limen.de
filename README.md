@@ -41,6 +41,7 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 | Farben oder Abstände ändern | `src/style.css`, Block PALETTE; die Kopien der Werte in `src/partials/head.html` und `src/grafik/` nachziehen ([docs/pflege.md](docs/pflege.md#gestaltung)); danach hell, dunkel und schmal ansehen |
 | eine Gemeinde ergänzen oder streichen | JSON-LD in `src/pages/index.html`, Liste `areaServed` |
 | Signet oder Vorschaubild ändern | `src/grafik/`, danach `tools/bilder-erzeugen.sh` (braucht Chromium) |
+| Seitenübersicht für Assistenzsysteme ändern | `public/llms.txt` |
 | eine Seite hinzufügen | [docs/pflege.md](docs/pflege.md#eine-seite-hinzufügen) |
 | Angaben einer betreuenden Person ändern | `src/betreuende.json`, Vorstellungstext in `src/betreuende/<kennung>.html` |
 | ein Porträt einsetzen | Foto als `src/betreuende/<kennung>.jpg` ablegen, in `src/betreuende.json` bei `bild` den Dateinamen eintragen |
@@ -69,6 +70,7 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 4. `aufgaben.html`: Register VI, „übernehmen wir nach Aufnahme der Tätigkeit".
 5. `leichte-sprache.html`: der Kasten „Wichtig: Unser Büro ist noch neu …".
 6. `index.html`: im JSON-LD die Zeile `description` („Büro in Gründung …").
+7. `public/llms.txt`: den Hinweis auf das Büro in Gründung nachziehen.
 
 ### Eine betreuende Person aufnehmen
 
