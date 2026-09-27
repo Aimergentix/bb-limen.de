@@ -56,6 +56,7 @@
   "public_files": [
     "BingSiteAuth.xml",
     "robots.txt",
+    "llms.txt",
     "CNAME",
     "favicon.ico",
     "apple-touch-icon.png",
