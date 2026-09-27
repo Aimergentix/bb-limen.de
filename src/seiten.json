@@ -8,7 +8,7 @@
     {
       "file": "buero.html",
       "sitemap": true,
-      "lastmod": "2026-09-26"
+      "lastmod": "2026-09-27"
     },
     {
       "file": "betreuung.html",
@@ -28,12 +28,12 @@
     {
       "file": "hilfe.html",
       "sitemap": true,
-      "lastmod": "2026-09-26"
+      "lastmod": "2026-09-27"
     },
     {
       "file": "fachkreise.html",
       "sitemap": true,
-      "lastmod": "2026-09-26"
+      "lastmod": "2026-09-27"
     },
     {
       "file": "leichte-sprache.html",
@@ -54,6 +54,7 @@
     }
   ],
   "public_files": [
+    "BingSiteAuth.xml",
     "robots.txt",
     "CNAME",
     "favicon.ico",
