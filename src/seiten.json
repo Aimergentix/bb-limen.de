@@ -54,6 +54,7 @@
     }
   ],
   "public_files": [
+    "BingSiteAuth.xml",
     "robots.txt",
     "CNAME",
     "favicon.ico",
