@@ -158,7 +158,7 @@ Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
-relativen Dateiverweise an die Domainwurzel (`/style.css`, `/index.html`); der
+relativen Dateiverweise an die Domainwurzel (`/style.css`, `/buero.html`); der
 Sprunglink `#inhalt` bleibt auf der Fehlerseite. Lokal lässt sie sich nur über
 einen Server ansehen, nicht als Datei.
 

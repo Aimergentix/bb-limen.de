@@ -89,7 +89,8 @@ class SiteStructureTests(unittest.TestCase):
                     continue
                 with self.subTest(tag=tag, value=value):
                     self.assertTrue(value.startswith("/"))
-                    self.assertTrue((ROOT / urlsplit(urljoin(missing, value)).path.lstrip("/")).is_file())
+                    target = urlsplit(urljoin(missing, value)).path.lstrip("/") or "index.html"
+                    self.assertTrue((ROOT / target).is_file())
 
     def test_local_assets_exist(self) -> None:
         for path in PAGES:
