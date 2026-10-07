@@ -350,15 +350,20 @@ def person_values(person: dict) -> dict[str, str]:
 
 def render_people(source: str, people: list[dict], name: str, base: str, organization: str) -> str:
     """%%BETREUENDE:personen%% (Abschnitte in buero.html), %%PERSON:<kennung>.<feld>%%
-    (einzelne Angaben, etwa in den Pflichtseiten) und das JSON-LD der Personen."""
+    (einzelne Angaben, etwa in den Pflichtseiten; bild ergibt das Porträt) und das
+    JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
         if match[1] != "personen":
             raise ValueError(f"{name}: unbekannter Personenplatzhalter {match[0]}")
         return '    <div class="team">\n' + "\n".join(section(person, organization) for person in people) + "\n    </div>"
 
     fields = {person["kennung"]: person_values(person) for person in people}
+    by_label = {person["kennung"]: person for person in people}
 
     def replace_field(match: re.Match) -> str:
+        # bild setzt das fertige Porträt ein, ohne Foto den Platzhalter wie im Büro.
+        if match[2] == "bild" and match[1] in by_label:
+            return portrait(by_label[match[1]])
         value = fields.get(match[1], {}).get(match[2])
         if value is None:
             raise ValueError(f"{name}: unbekannte Person, unbekanntes oder leeres Feld {match[0]}")
