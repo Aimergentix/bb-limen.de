@@ -14,9 +14,11 @@ import sys
 import tempfile
 import unittest
 from collections import Counter
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, urljoin
+from xml.etree import ElementTree
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
@@ -87,7 +89,8 @@ class SiteStructureTests(unittest.TestCase):
                     continue
                 with self.subTest(tag=tag, value=value):
                     self.assertTrue(value.startswith("/"))
-                    self.assertTrue((ROOT / urlsplit(urljoin(missing, value)).path.lstrip("/")).is_file())
+                    target = urlsplit(urljoin(missing, value)).path.lstrip("/") or "index.html"
+                    self.assertTrue((ROOT / target).is_file())
 
     def test_local_assets_exist(self) -> None:
         for path in PAGES:
@@ -176,6 +179,51 @@ class SiteStructureTests(unittest.TestCase):
             with self.subTest(page=name):
                 self.assertEqual(page.tags["main"], 1)
                 self.assertEqual(page.tags["h1"], 1)
+
+    def test_search_metadata_is_present_and_nonempty(self) -> None:
+        # R-QUELLE-2, R-REDAKTION-3: Nur die Kopfangaben prüfen, nie Wortlaut
+        # oder Länge. Pflichtseiten und Fehlerseite brauchen keine description.
+        indexed = {page["file"] for page in CATALOG if page["sitemap"]}
+        for name, page in self.parsed.items():
+            with self.subTest(page=name):
+                self.assertEqual(page.tags["title"], 1)
+                source = (ROOT / name).read_text(encoding="utf-8")
+                title = re.search(r"<title>(.*?)</title>", source, re.DOTALL)
+                self.assertIsNotNone(title)
+                self.assertTrue(title.group(1).strip())
+                for property_name in ("og:title", "og:description"):
+                    values = [attrs.get("content") for tag, attrs in page.elements
+                              if tag == "meta" and attrs.get("property") == property_name]
+                    self.assertEqual(len(values), 1)
+                    self.assertTrue((values[0] or "").strip())
+                if name in indexed:
+                    descriptions = [attrs.get("content") for tag, attrs in page.elements
+                                    if tag == "meta" and attrs.get("name") == "description"]
+                    self.assertEqual(len(descriptions), 1)
+                    self.assertTrue((descriptions[0] or "").strip())
+
+    def test_generated_sitemap_and_robots_follow_catalog(self) -> None:
+        # R-BESTAND-4, R-ORDNUNG-6: Ausgabe und Katalog müssen übereinstimmen;
+        # keine Erwartungen zu Seitenbestand, redaktionellem Datum oder Text.
+        namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+        sitemap = ElementTree.parse(ROOT / "sitemap.xml").getroot()
+        self.assertEqual(sitemap.tag, namespace + "urlset")
+        actual = []
+        for entry in sitemap:
+            self.assertEqual(entry.tag, namespace + "url")
+            locations = entry.findall(namespace + "loc")
+            dates = entry.findall(namespace + "lastmod")
+            self.assertEqual(len(locations), 1)
+            self.assertEqual(len(dates), 1)
+            date.fromisoformat(dates[0].text)
+            actual.append((locations[0].text, dates[0].text))
+        expected = [(address(page["file"]), page["lastmod"])
+                    for page in CATALOG if page["sitemap"]]
+        self.assertEqual(actual, expected)
+        self.assertEqual(len({location for location, _ in actual}), len(actual))
+        declarations = re.findall(r"(?im)^Sitemap:\s*(\S+)\s*$",
+                                  (ROOT / "robots.txt").read_text(encoding="utf-8"))
+        self.assertIn(BASE + "sitemap.xml", declarations)
 
     def test_internal_links_and_fragments_exist(self) -> None:
         for source_name, page in self.parsed.items():

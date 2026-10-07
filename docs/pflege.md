@@ -158,7 +158,7 @@ Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
-relativen Dateiverweise an die Domainwurzel (`/style.css`, `/index.html`); der
+relativen Dateiverweise an die Domainwurzel (`/style.css`, `/buero.html`); der
 Sprunglink `#inhalt` bleibt auf der Fehlerseite. Lokal lässt sie sich nur über
 einen Server ansehen, nicht als Datei.
 
@@ -174,9 +174,10 @@ wenn etwas kaputt ist: ein Verweis ohne Ziel, ein falsch geschriebener
 Platzhalter, ungültiges JSON-LD, ein beschädigtes Werkzeug.
 
 `tests/test_site.py` prüft die frisch erzeugte Website: Verweise,
-Sprungmarken, Überschriftenfolge, Kopfangaben, CSP, Pflichtverweise und
-`noindex`; dass keine Büro- oder Personenangabe wörtlich in einer Quelle
-steht; und WCAG AA für jede Textpaarung, hell und dunkel. Die
+Sprungmarken, Überschriftenfolge, vorhandene Kopfangaben, CSP, Pflichtverweise,
+`noindex` und die Übereinstimmung der erzeugten Sitemap mit dem Katalog samt
+Sitemap-Verweis in `robots.txt`; dass keine Büro- oder Personenangabe wörtlich
+in einer Quelle steht; und WCAG AA für jede Textpaarung, hell und dunkel. Die
 Werkzeuge selbst haben keine eigenen Tests: Der Build prüft seine
 Eingaben vor dem Schreiben (siehe oben), und was er ausgibt, prüfen die Tests
 der Seiten. Wer `tools/` ändert, sieht das Ergebnis deshalb selbst an.
