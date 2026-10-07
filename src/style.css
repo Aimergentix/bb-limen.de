@@ -898,6 +898,40 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .platzhalter .figur { fill: var(--muted); fill-opacity: 0.18; }
 .platzhalter .schwelle { stroke: var(--accent); stroke-width: 3; }
 
+/* Kleine runde Porträts mit Unterschrift, auf Leichter Sprache und
+   Fachkreise. Die Karten mit Vorstellung stehen in buero.html. Die Leichte
+   Sprache bekommt größere, dunklere Unterschriften. */
+.portraits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin: var(--s2) 0;
+}
+.portraits figure { margin: 0; width: 9.5rem; }
+.portraits img,
+.portraits svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+.portraits figcaption {
+  margin-top: var(--s-1);
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: center;
+}
+.portraits .rolle { display: block; }
+.ls .portraits img,
+.ls .portraits svg { border-color: var(--leicht-ink); }
+.ls .portraits figcaption { font-size: 1.05rem; color: var(--ink); }
+
 .person .stand {
   margin: var(--s1) 0 0;
   font-family: var(--sans);

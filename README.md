@@ -84,8 +84,9 @@ Stand und sind dann zu ändern — kein Test erinnert daran:
 
 ### Eine betreuende Person entfernen
 
-Eintrag und Vorstellungstext löschen, `lastmod` von `buero.html` nachziehen,
-`tools/pruefen.sh`.
+Eintrag und Vorstellungstext löschen, die Porträtgruppen in
+`leichte-sprache.html` und `fachkreise.html` anpassen, `lastmod` der drei
+Seiten nachziehen, `tools/pruefen.sh`.
 
 ### Wenn sich ein Gesetz ändert
 

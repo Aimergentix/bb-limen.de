@@ -137,7 +137,10 @@ Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
 `buero.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite) und `%%PERSON:<kennung>.<feld>%%` für eine einzelne Angabe, etwa
 `%%PERSON:aranda-moeller.registrierung%%` im Impressum. Die Felder heißen wie in der
-Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. Eine
+Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. `bild`
+ergibt das fertige Porträt samt Alternativtext, ohne Foto den gezeichneten
+Platzhalter; so zeigen `leichte-sprache.html` und `fachkreise.html` kleine
+runde Porträts (`.portraits`). Eine
 unbekannte Kennung oder ein Feld mit `null` bricht den Build ab. Eine
 Änderung in `src/betreuende.json` ändert deshalb `buero.html` und die
 Pflichtseiten; nachgezogen werden das `lastmod` von
