@@ -899,7 +899,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .platzhalter .schwelle { stroke: var(--accent); stroke-width: 3; }
 
 /* Kleine runde Porträts mit Unterschrift, auf Leichter Sprache und
-   Fachkreise. Die Karten mit Vorstellung stehen in buero.html. Die Leichte
+   Fachkreise. Die Karten mit Vorstellung stehen in index.html. Die Leichte
    Sprache bekommt größere, dunklere Unterschriften. */
 .portraits {
   display: flex;

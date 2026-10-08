@@ -24,7 +24,7 @@ in [docs/pflege.md](docs/pflege.md).
 | Begriff | Bedeutung |
 | --- | --- |
 | Seite | eine HTML-Datei unter `src/pages/`; der Bestand steht im Katalog |
-| Personenabschnitt | der erzeugte Abschnitt einer betreuenden Person aus `src/betreuende.json` in `buero.html` |
+| Personenabschnitt | der erzeugte Abschnitt einer betreuenden Person aus `src/betreuende.json` in `index.html` |
 | Katalog | `src/seiten.json` |
 | Pflichtseiten | `impressum.html` und `datenschutz.html` |
 | Baustein | Datei unter `src/partials/`, über eine Include-Zeile in jede Seite eingesetzt |
@@ -135,7 +135,6 @@ Geltende Rechtsstände: [docs/pflege.md](docs/pflege.md#rechtsstände-und-wieder
   | `fachkreise.html` | Fachsprache, Paragraphen ohne Erklärung |
   | `impressum.html`, `datenschutz.html` | juristisches Standarddeutsch |
   | `index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`, `hilfe.html` | Einfache Sprache (A2–B1) |
-  | `buero.html` | Einfache Sprache (A2–B1) |
   | `404.html` | kurz und einfach |
 
 - **R-SPRACHE-2** Die Leichte Sprache gilt erst als geprüft, wenn eine
@@ -180,7 +179,7 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   nachgezogen werden: `lastmod` im Katalog, bei `impressum.html` und
   `datenschutz.html` das sichtbare Datum, in `fachkreise.html` der gesonderte
   Stand für Rückrufe und Abwesenheit (R-ORDNUNG-6). Eine Änderung in
-  `src/betreuende.json` ändert `buero.html` und je nach Feld die
+  `src/betreuende.json` ändert `index.html` und je nach Feld die
   Pflichtseiten.
 - **R-ANGABEN-6** Visitenkarten (`.vcf`) erzeugt der Build aus dem JSON-LD
   der Startseite und aus `src/betreuende.json`. Eine manuell gepflegte vCard
@@ -201,7 +200,7 @@ Bedeutung der Farben: [docs/pflege.md](docs/pflege.md#gestaltung).
   `https://bb-limen.de/`. Eine Seite DARF NICHT umbenannt oder in eine
   Verzeichnisform überführt werden ohne Entscheidung über bestehende Verweise.
   Eigene Seiten je Person gibt es vorerst nicht; die Personen stehen als
-  Abschnitte in `buero.html`, Sprungmarke ist ihre Kennung.
+  Abschnitte auf der Startseite `index.html`, Sprungmarke ist ihre Kennung.
 - **R-BESTAND-4** Die Pflichtseiten und `404.html` tragen `noindex` und stehen
   nicht in der Sitemap; alle anderen Seiten DÜRFEN `noindex` NICHT tragen.
 

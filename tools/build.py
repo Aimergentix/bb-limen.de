@@ -31,7 +31,6 @@ PEOPLE_TOKEN = re.compile(r"%%BETREUENDE:([a-z]+)%%")
 PEOPLE_JSON = '"%%BETREUENDE_JSON:personen%%"'
 PERSON_TOKEN = re.compile(r"%%PERSON:([a-z0-9-]+)\.([a-z0-9_.]+)%%")
 # Die Personen stehen als Abschnitte auf dieser Seite; die Kennung ist ihre Sprungmarke.
-PEOPLE_PAGE = "buero.html"
 PEOPLE_KEYS = {"kennung", "vorname", "nachname", "beruf", "registrierung", "haftpflicht", "telefon", "email", "anschrift", "sprechzeiten", "bild"}
 SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 POST_KEYS = {"postfach", "plz", "ort", "bundesland", "land"}
@@ -261,7 +260,8 @@ def html(value: str) -> str:
 
 
 def person_url(person: dict, base: str) -> str:
-    return f"{base}{PEOPLE_PAGE}#{person['kennung']}"
+    # Die Personenabschnitte stehen auf der Startseite.
+    return f"{base}#{person['kennung']}"
 
 
 def source_files(person: dict) -> set[str]:
@@ -293,6 +293,8 @@ def portrait(person: dict) -> str:
     PALETTE (R-FARBE-1) und folgen damit auch der Dunkeldarstellung.
     """
     if person["bild"] is not None:
+        # Porträts sind .webp im Format 600 × 600 Pixel (docs/pflege.md);
+        # width und height nennen dem Browser dieses Format vorab.
         return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
                 'width="600" height="600" loading="lazy" decoding="async">')
     return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '
@@ -349,7 +351,7 @@ def person_values(person: dict) -> dict[str, str]:
 
 
 def render_people(source: str, people: list[dict], name: str, base: str, organization: str) -> str:
-    """%%BETREUENDE:personen%% (Abschnitte in buero.html), %%PERSON:<kennung>.<feld>%%
+    """%%BETREUENDE:personen%% (Abschnitte in index.html), %%PERSON:<kennung>.<feld>%%
     (einzelne Angaben, etwa in den Pflichtseiten; bild ergibt das Porträt) und das
     JSON-LD der Personen."""
     def replace(match: re.Match) -> str:
