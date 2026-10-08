@@ -128,7 +128,7 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
   Visitenkarte die Postanschrift des Büros.
 - `bild` — `null` oder der Dateiname eines Porträts `<kennung>.jpg`, `.webp`
   oder `.png` in `src/betreuende/`; der Build kopiert es in die Ausgabe. Die
-  Karte schneidet es quadratisch zu, das Gesicht im oberen Drittel. Die
+  Karte zeigt es rund im Goldrahmen, das Gesicht im oberen Drittel. Die
   Porträts sind `.webp` im Format 600 × 600 Pixel; das Markup nennt dem
   Browser dieses Format vorab, damit beim Laden nichts springt. Ohne Foto
   zeigt die Karte einen gezeichneten Platzhalter.
@@ -136,12 +136,12 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`index.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+`index.html` und `fachkreise.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite) und `%%PERSON:<kennung>.<feld>%%` für eine einzelne Angabe, etwa
 `%%PERSON:aranda-moeller.registrierung%%` im Impressum. Die Felder heißen wie in der
 Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. `bild`
 ergibt das fertige Porträt samt Alternativtext, ohne Foto den gezeichneten
-Platzhalter; so zeigen `leichte-sprache.html` und `fachkreise.html` kleine
+Platzhalter; so zeigt `leichte-sprache.html` kleine
 runde Porträts (`.portraits`). Eine
 unbekannte Kennung oder ein Feld mit `null` bricht den Build ab. Eine
 Änderung in `src/betreuende.json` ändert deshalb `index.html` und die
