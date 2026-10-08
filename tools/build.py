@@ -322,18 +322,21 @@ def section(person: dict, organization: str) -> str:
              person["vorstellung"].rstrip("\n"),
              "        </div>",
              '        <footer class="person-fuss">']
-    if person["telefon"] is not None:
-        lines.append(f'          <p>Telefon direkt: <a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a></p>')
+    contact = []
     if person["sprechzeiten"] is not None:
         hours = person["sprechzeiten"]
         start, end = (hour_label(hours[key]) for key in ("von", "bis"))
-        lines.append(f'          <p>Sprechzeiten: {html(join_words(hours["tage"]))} von {start} bis {end} Uhr</p>')
+        contact += ["Sprechzeiten:", f'{html(join_words(hours["tage"]))} von {start} bis {end} Uhr']
+    if person["telefon"] is not None:
+        contact.append(f'<a href="tel:{html(person["telefon"]["e164"])}">{html(person["telefon"]["sichtbar"])}</a>')
     if person["email"] is not None:
-        lines.append(f'          <p>E-Mail direkt: <a href="mailto:{html(person["email"])}">{html(person["email"])}</a></p>')
+        contact.append(f'<a href="mailto:{html(person["email"])}">{html(person["email"])}</a>')
+    if contact:
+        lines.append(f'          <p>{"<br>".join(contact)}</p>')
     if person["anschrift"] is not None:
         post = person["anschrift"]
-        address = f'{organization}, {person["name"]}, Postfach {post["postfach"]}, {post["plz"]} {post["ort"]}'
-        lines.append(f'          <p>Post: {html(address)}</p>')
+        address = (organization, person["name"], f'Postfach {post["postfach"]}', f'{post["plz"]} {post["ort"]}')
+        lines.append(f'          <p>Post:<br>{"<br>".join(html(line) for line in address)}</p>')
     lines += [f'          <p><a class="karte" href="{vcard_name(person)}" download>{CARD}Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>',
               "        </footer>",
               "      </article>"]

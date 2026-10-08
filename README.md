@@ -59,18 +59,11 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 Die Registrierung wird jeder Person einzeln erteilt. Diese Stellen nennen den
 Stand und sind dann zu ändern — kein Test erinnert daran:
 
-1. `src/betreuende.json`: das Feld `registrierung` der Person. Es erscheint im
-   Personenabschnitt auf `index.html` und im Impressum; dessen Stand
+1. `src/betreuende.json`: die Felder `registrierung` und `beruf` („beantragt")
+   der Person. Sie erscheinen im Personenabschnitt auf `index.html`, in
+   `fachkreise.html` und, bei der Betreiberin, im Impressum; dessen Stand
    nachziehen.
-2. Der Kasten „Büro in Gründung" auf `index.html`, `betreuung.html`,
-   `aufgaben.html`, `vorsorge.html` und `fachkreise.html`.
-3. `fachkreise.html`: die Einträge „Stammbehörde" („Dort ist die Registrierung
-   … beantragt") und „Vorschlagslisten" („sobald die Registrierung erteilt
-   ist").
-4. `aufgaben.html`: Register VI, „übernehmen wir nach Aufnahme der Tätigkeit".
-5. `leichte-sprache.html`: der Kasten „Wichtig: Unser Büro ist noch neu …".
-6. `index.html`: im JSON-LD die Zeile `description` („Büro in Gründung …").
-7. `public/llms.txt`: den Hinweis auf das Büro in Gründung nachziehen.
+2. `fachkreise.html`: der Eintrag „Stammbehörde" („… ist beantragt").
 
 ### Eine betreuende Person aufnehmen
 
