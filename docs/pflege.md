@@ -13,7 +13,7 @@ src/style.css           ein Stylesheet; alle Farbwerte im Block PALETTE
 src/grafik/             bearbeitbare SVG-Originale für Signet und Vorschaubild
 src/seiten.json         Katalog: Seitenbestand, Sitemap, öffentliche Dateien
 src/bureauangaben.json  Betreiber, Zentrale, E-Mail, Anschriften, Sprechzeiten
-src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in buero.html und eine vCard
+src/betreuende.json     die betreuenden Personen; je Eintrag ein Abschnitt in index.html und eine vCard
 src/betreuende/         Vorstellungstext und gegebenenfalls Porträt je Person
 public/                 bewusst öffentliche Dateien, unverändert kopiert
 dist/                   die Ausgabe: vollständig erzeugt, unversioniert
@@ -57,7 +57,7 @@ und Sprechzeiten (R-ANGABEN-1). Der Build setzt die Werte ein und erzeugt die
 Sprachfassungen der Sprechzeiten; die Datei selbst wird nicht veröffentlicht.
 
 - `betreiber` hat den `name` der Person, die das Büro bereitstellt und für
-  den Inhalt der Website verantwortlich ist. Er steht in `buero.html`, im
+  den Inhalt der Website verantwortlich ist. Er steht im
   Impressum und in der Datenschutzerklärung; im Impressum ist er der
   Diensteanbieter nach § 5 DDG, in der Datenschutzerklärung der
   Verantwortliche.
@@ -99,14 +99,14 @@ und das Land ausgeschrieben.
 
 Die Bürogemeinschaft vermietet an selbständige Berufsbetreuer; Registrierung,
 Haftpflicht und Verantwortung liegen bei jeder Person einzeln. Deshalb hat
-jede Person einen eigenen Abschnitt auf `buero.html` und eine eigene
+jede Person einen eigenen Abschnitt auf der Startseite und eine eigene
 Visitenkarte, und die Website wächst mit einem Datensatz statt mit einem
 Umbau. Eigene Seiten je Person gibt es vorerst nicht.
 
 Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 
 - `kennung` — Name in ASCII-Kleinbuchstaben mit Bindestrichen (ä → ae,
-  ß → ss). Sie ist die Sprungmarke `buero.html#<kennung>` und bestimmt
+  ß → ss). Sie ist die Sprungmarke `index.html#<kennung>` und bestimmt
   `<kennung>.vcf` und den Vorstellungstext `src/betreuende/<kennung>.html`.
 - `vorname`, `nachname` — zusammen der Name im Personenabschnitt und im
   Impressum; die vCard führt sie getrennt.
@@ -136,7 +136,7 @@ Ein Eintrag in `src/betreuende.json` hat genau diese Felder:
 Der Vorstellungstext ist ein HTML-Ausschnitt ohne Platzhalter; er gehört dem
 Büro und wird unverändert eingesetzt (R-REDAKTION-1). Die Seiten beziehen die
 Personenangaben über Platzhalter: `%%BETREUENDE:personen%%` (Abschnitte in
-`buero.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
+`index.html`), `"%%BETREUENDE_JSON:personen%%"` (JSON-LD `member` der
 Startseite) und `%%PERSON:<kennung>.<feld>%%` für eine einzelne Angabe, etwa
 `%%PERSON:aranda-moeller.registrierung%%` im Impressum. Die Felder heißen wie in der
 Datei, Unterfelder mit Punkt (`telefon.sichtbar`), dazu `name`. `bild`
@@ -144,9 +144,9 @@ ergibt das fertige Porträt samt Alternativtext, ohne Foto den gezeichneten
 Platzhalter; so zeigen `leichte-sprache.html` und `fachkreise.html` kleine
 runde Porträts (`.portraits`). Eine
 unbekannte Kennung oder ein Feld mit `null` bricht den Build ab. Eine
-Änderung in `src/betreuende.json` ändert deshalb `buero.html` und die
+Änderung in `src/betreuende.json` ändert deshalb `index.html` und die
 Pflichtseiten; nachgezogen werden das `lastmod` von
-`buero.html` und das sichtbare Datum der betroffenen Pflichtseite
+`index.html` und das sichtbare Datum der betroffenen Pflichtseite
 (R-ANGABEN-5).
 
 ## Verhalten des Builds
@@ -163,7 +163,7 @@ Buildfehler die genannte Quelldatei und Zeile bearbeiten.
 
 GitHub Pages liefert `404.html` für jede unbekannte Adresse aus, auch für
 `/ein/tiefer/pfad/`. Der Build setzt deshalb in dieser einen Seite alle
-relativen Dateiverweise an die Domainwurzel (`/style.css`, `/buero.html`); der
+relativen Dateiverweise an die Domainwurzel (`/style.css`, `/fachkreise.html`); der
 Sprunglink `#inhalt` bleibt auf der Fehlerseite. Lokal lässt sie sich nur über
 einen Server ansehen, nicht als Datei.
 
@@ -254,8 +254,8 @@ Die Seite hat vier Sprachebenen (R-SPRACHE-1):
   Typografie über `body class="ls"`.
 - **`fachkreise.html`** — Fachsprache; Genauigkeit vor Einfachheit. Das
   Sprungmenü oben muss zu den `id`-Attributen der Überschriften passen.
-- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`,
-  `hilfe.html` und `buero.html`** —
+- **`index.html`, `betreuung.html`, `aufgaben.html`, `vorsorge.html`
+  und `hilfe.html`** —
   Einfache Sprache (etwa A2 bis B1): kurze Sätze, aktiv, Verben statt
   Substantivierungen, Fachwörter bei der ersten Nennung erklärt.
 - **`impressum.html`, `datenschutz.html`** — juristisches Standarddeutsch. Eine
@@ -314,7 +314,7 @@ Wirtschafts-Identifikationsnummer; kommt eine solche Nummer hinzu, gehört sie
 ins Impressum (§ 5 Abs. 1 Nr. 6 DDG). Die übrigen Personen aus
 `src/betreuende.json` nennt das Impressum nicht einzeln: Ein allgemeiner
 Abschnitt sagt, dass die im Büro tätigen Berufsbetreuer selbständig und nicht
-Inhaber sind, und verweist für die Anschriften auf `buero.html`. Für den Inhalt verantwortlich ist ebenfalls der
+Inhaber sind, und verweist für die Anschriften auf die Startseite. Für den Inhalt verantwortlich ist ebenfalls der
 Betreiber. Das Impressum nennt ihn ohne Verweis auf § 18 Abs. 2
 MStV, denn die Vorschrift gilt nur für journalistisch-redaktionell gestaltete
 Angebote. Das Impressum nennt die Stammbehörde
@@ -357,7 +357,7 @@ allein der Betreiber aus `src/bureauangaben.json`; eine gemeinsame
 Verantwortung nach Art. 26 DSGVO besteht nicht. Für Nachrichten und Anrufe an
 ihre eigenen Kontaktangaben ist jede Person selbst verantwortlich; die
 Datenschutzerklärung sagt das allgemein und verweist für die Angaben auf
-`buero.html`. Das hat das Büro am 26.09.2026 entschieden.
+die Startseite. Das hat das Büro am 26.09.2026 entschieden.
 
 **Einzugsgebiet.** Landkreise Lörrach (35 Gemeinden) und Waldshut
 (32 Gemeinden), zusammen 67. Die vollständige Liste steht an genau einer Stelle:

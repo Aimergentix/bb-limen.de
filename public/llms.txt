@@ -6,8 +6,7 @@ Das Büro befindet sich derzeit in Gründung. Angaben zu Personen, Tätigkeit un
 
 ## Büro und Kontakt
 
-- [Startseite](https://bb-limen.de/): Vorstellung des Büros und seiner Arbeitsweise.
-- [Büro](https://bb-limen.de/buero.html): Betreuende Personen, Einzugsgebiet und Kontaktangaben.
+- [Startseite](https://bb-limen.de/): Vorstellung des Büros, betreuende Personen, Einzugsgebiet und Kontaktangaben.
 
 ## Betreuung und Vorsorge
 
