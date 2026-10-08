@@ -293,6 +293,8 @@ def portrait(person: dict) -> str:
     PALETTE (R-FARBE-1) und folgen damit auch der Dunkeldarstellung.
     """
     if person["bild"] is not None:
+        # Porträts sind .webp im Format 600 × 600 Pixel (docs/pflege.md);
+        # width und height nennen dem Browser dieses Format vorab.
         return (f'<img src="{person["bild"]}" alt="Porträt von {html(person["name"])}" '
                 'width="600" height="600" loading="lazy" decoding="async">')
     return ('<svg class="platzhalter" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" '

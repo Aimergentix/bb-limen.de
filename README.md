@@ -44,7 +44,7 @@ HTML. Was auf den Seiten steht, entscheidet das Büro.
 | Seitenübersicht für Assistenzsysteme ändern | `public/llms.txt` |
 | eine Seite hinzufügen | [docs/pflege.md](docs/pflege.md#eine-seite-hinzufügen) |
 | Angaben einer betreuenden Person ändern | `src/betreuende.json`, Vorstellungstext in `src/betreuende/<kennung>.html` |
-| ein Porträt einsetzen | Foto als `src/betreuende/<kennung>.jpg` ablegen, in `src/betreuende.json` bei `bild` den Dateinamen eintragen |
+| ein Porträt einsetzen | Foto quadratisch im Format 600 × 600 Pixel als `src/betreuende/<kennung>.webp` ablegen (`.jpg` und `.png` gehen auch), in `src/betreuende.json` bei `bild` den Dateinamen eintragen |
 | eine betreuende Person aufnehmen oder entfernen | siehe unten |
 
 ### Nach jeder inhaltlichen Änderung
