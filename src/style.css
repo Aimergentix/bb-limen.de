@@ -907,7 +907,7 @@ dl.contact dd:last-child { margin-bottom: 0; }
   gap: var(--s2);
   margin: var(--s2) 0;
 }
-.portraits figure { margin: 0; width: 9.5rem; }
+.portraits figure { margin: 0; width: min(9.5rem, calc(50% - var(--s2) / 2)); }
 .portraits img,
 .portraits svg {
   display: block;
@@ -931,6 +931,27 @@ dl.contact dd:last-child { margin-bottom: 0; }
 .ls .portraits img,
 .ls .portraits svg { border-color: var(--leicht-ink); }
 .ls .portraits figcaption { font-size: 1.05rem; color: var(--ink); }
+
+/* Kasten um die Porträts auf fachkreise.html, gestaltet wie das
+   Sprungmenü „Auf dieser Seite“; die Überschrift wie dessen Marke. */
+.betreuende-kasten {
+  margin: var(--s3) 0 0;
+  background: var(--surface);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  padding: var(--s1) var(--s2);
+}
+.betreuende-kasten h2 {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent-ink);
+  margin: 0 0 var(--s1);
+}
+.betreuende-kasten .portraits { margin: 0; }
 
 .person .stand {
   margin: var(--s1) 0 0;
