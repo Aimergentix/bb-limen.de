@@ -117,7 +117,9 @@ def load_office(root: Path) -> dict:
     """src/bureauangaben.json (R-ANGABEN-1)."""
     name = "bureauangaben.json"
     data = load_json(root / "src" / name)
-    require_keys(data, {"betreiber", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
+    require_keys(data, {"geschaeftsbezeichnung", "betreiber", "sprechzeiten", "telefon", "email", "email_datenschutz", "anschrift", "postanschrift"}, name)
+    if not text_ok(data["geschaeftsbezeichnung"]):
+        raise ValueError(f"{name}: geschaeftsbezeichnung: erwartet nicht leeren, einzeiligen Text")
     require_keys(data["betreiber"], {"name"}, f"{name}: betreiber")
     require_keys(data["anschrift"], {"strasse", "plz", "ort", "bundesland", "land"}, f"{name}: anschrift")
     require_keys(data["postanschrift"], POST_KEYS, f"{name}: postanschrift")
@@ -216,7 +218,7 @@ def office_values(data: dict) -> dict[str, str]:
         "sprechzeiten.leicht.termin": "A" + appointment_text[1:] + " geht es auch.",
         "sprechzeiten.leicht.hinweis": "Aber nur mit einem Termin.",
     }
-    values.update({key: data[key] for key in ("email", "email_datenschutz")})
+    values.update({key: data[key] for key in ("geschaeftsbezeichnung", "email", "email_datenschutz")})
     for group in ("betreiber", "telefon", "anschrift", "postanschrift"):
         values.update({f"{group}.{key}": value for key, value in data[group].items()})
     return values
