@@ -88,6 +88,41 @@ Wiedervorlagen stehen in
 [docs/pflege.md](docs/pflege.md#rechtsstände-und-wiedervorlagen). Mit dem
 Gesetz ändern sich auch die Jahreszahlen im Text (R-RECHT-4).
 
+## Dokumentvarianten als PDF und E-Mail bauen
+
+Die bearbeitbaren Vorlagen sind
+[Stammdaten](dokumente/bb-limen-stammdaten.md) und
+[Vorstellung](dokumente/bb-limen-vorstellung.md). Einmalig eine lokale
+Python-Umgebung mit ReportLab einrichten:
+
+```sh
+python3 -m venv .venv-documents
+.venv-documents/bin/python -m pip install reportlab
+```
+
+Der PDF-Satz benötigt die Systemschriften aus `fonts-noto-core`
+(Debian/Ubuntu: `sudo apt install fonts-noto-core`). Nach Änderungen an den
+Markdown-Vorlagen beide Dokumente neu erzeugen:
+
+```sh
+.venv-documents/bin/python tools/build_documents.py
+```
+
+Die Ausgabe liegt neben den Quellen in `dokumente/`: pro Vorlage ein einseitiges
+A4-PDF, eine HTML-Datei und ein unadressierter EML-Entwurf. Vorhandene Ausgaben
+werden überschrieben; die Markdown-Quellen bleiben unverändert.
+PDF-Seitenumbrüche und E-Mails nach Änderungen ansehen.
+Vor dem Versand den Namensplatzhalter durch die zuständige Person ersetzen.
+
+Ein einzelnes Dokument bauen:
+
+```sh
+.venv-documents/bin/python tools/build_documents.py dokumente/bb-limen-stammdaten.md
+```
+
+Die lokale Python-Umgebung wird nicht versioniert.
+Dieser Dokument-Build ist unabhängig von `tools/build.sh` für die Website.
+
 ## Veröffentlichen
 
 Jeder Push nach `main` veröffentlicht die Website; `main` ist geschützt.
