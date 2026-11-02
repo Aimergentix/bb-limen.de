@@ -3,6 +3,8 @@
 .build.*/
 *.neu
 __pycache__/
+/.venv-documents/
+/dokumente/varianten/build/
 
 # Gemeinsame technische Dokumentation wird versioniert.
 # Persönliche Unterlagen und Auditberichte bleiben lokal.
