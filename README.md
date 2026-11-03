@@ -92,7 +92,9 @@ Gesetz ändern sich auch die Jahreszahlen im Text (R-RECHT-4).
 
 Die bearbeitbaren Vorlagen sind
 [Stammdaten](dokumente/bb-limen-stammdaten.md) und
-[Vorstellung](dokumente/bb-limen-vorstellung.md). Einmalig eine lokale
+[Vorstellung](dokumente/bb-limen-vorstellung.md) sowie die persönlichen
+Vorstellungen von [Mika Möller](dokumente/mika-moeller-vorstellung.md) und
+[Aranda Möller](dokumente/aranda-moeller-vorstellung.md). Einmalig eine lokale
 Python-Umgebung mit ReportLab einrichten:
 
 ```sh
@@ -102,7 +104,7 @@ python3 -m venv .venv-documents
 
 Der PDF-Satz benötigt die Systemschriften aus `fonts-noto-core`
 (Debian/Ubuntu: `sudo apt install fonts-noto-core`). Nach Änderungen an den
-Markdown-Vorlagen beide Dokumente neu erzeugen:
+Markdown-Vorlagen alle Dokumente neu erzeugen:
 
 ```sh
 .venv-documents/bin/python tools/build_documents.py
@@ -111,6 +113,12 @@ Markdown-Vorlagen beide Dokumente neu erzeugen:
 Die Ausgabe liegt neben den Quellen in `dokumente/`: pro Vorlage ein einseitiges
 A4-PDF, eine HTML-Datei und ein unadressierter EML-Entwurf. Vorhandene Ausgaben
 werden überschrieben; die Markdown-Quellen bleiben unverändert.
+Ohne Dateiangaben werden alle `.md`-Dateien mit kleingeschriebenen Dateinamen
+direkt in `dokumente/` gebaut. Ältere Vorlagen mit Großbuchstaben im Dateinamen
+und Dateien in Unterverzeichnissen werden dabei nicht verarbeitet.
+Ein Porträt wird als eigener Markdown-Absatz eingebunden, zum Beispiel
+`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund;
+HTML und EML enthalten die Bilddaten und benötigen keine externen Bilddateien.
 PDF-Seitenumbrüche und E-Mails nach Änderungen ansehen.
 Vor dem Versand den Namensplatzhalter durch die zuständige Person ersetzen.
 
