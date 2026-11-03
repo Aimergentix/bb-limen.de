@@ -120,9 +120,10 @@ def pdf_story(source):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("sources", nargs="*", type=Path,
-                        help="Markdown-Quellen; Standard: alle .md-Dateien direkt in dokumente/.")
+                        help="Markdown-Quellen; Standard: alle kleingeschriebenen .md-Dateien direkt in dokumente/.")
     args = parser.parse_args()
-    sources = args.sources or sorted(pdfs.OUT_DIR.glob("*.md"))
+    sources = args.sources or sorted(path for path in pdfs.OUT_DIR.glob("*.md")
+                                    if path.name == path.name.lower())
     pdfs.register_fonts()
     for path in sources:
         source = path.read_text(encoding="utf-8")

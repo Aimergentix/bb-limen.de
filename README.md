@@ -113,7 +113,9 @@ Markdown-Vorlagen alle Dokumente neu erzeugen:
 Die Ausgabe liegt neben den Quellen in `dokumente/`: pro Vorlage ein einseitiges
 A4-PDF, eine HTML-Datei und ein unadressierter EML-Entwurf. Vorhandene Ausgaben
 werden überschrieben; die Markdown-Quellen bleiben unverändert.
-Ohne Dateiangaben werden alle `.md`-Dateien direkt in `dokumente/` gebaut.
+Ohne Dateiangaben werden alle `.md`-Dateien mit kleingeschriebenen Dateinamen
+direkt in `dokumente/` gebaut. Ältere Vorlagen mit Großbuchstaben im Dateinamen
+und Dateien in Unterverzeichnissen werden dabei nicht verarbeitet.
 Ein Porträt wird als eigener Markdown-Absatz eingebunden, zum Beispiel
 `![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund;
 HTML und EML enthalten die Bilddaten und benötigen keine externen Bilddateien.
