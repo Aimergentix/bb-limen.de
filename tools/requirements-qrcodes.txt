@@ -1,0 +1,4 @@
+# Gepinnte Abhängigkeiten für Website-Build und QR-Rücklesetest.
+qrcode==8.2
+pillow==13.0.0
+zxing-cpp==3.0.0

@@ -24,8 +24,8 @@ docs/lokal/, reports/   persönliche Unterlagen und Berichte, unversioniert — 
 ```
 
 `tools/build.sh` ruft `tools/build.py` auf und erzeugt `dist/`; ausgeliefert
-wird ausschließlich dieser Ordner. Der Build braucht nur die
-Python-Standardbibliothek, der Browser erhält ausschließlich statische
+wird ausschließlich dieser Ordner. Der Build benötigt die gepinnten Pakete
+aus `tools/requirements-qrcodes.txt`; der Browser erhält ausschließlich statische
 Dateien. Die öffentliche Adresse hängt am Namen in der Ausgabe:
 `src/pages/betreuung.html` ist unter `/betreuung.html` erreichbar.
 
@@ -94,6 +94,27 @@ hat keinen Vor- und Nachnamen; sie heißt „<Organisation> Büro“ und trägt
 und nur die Organisation. Die Anschrift ist gegliedert; das Postfach steht in
 der Straßenzeile, weil viele Programme das eigene Postfachfeld nicht zeigen,
 und das Land ausgeschrieben.
+
+### QR-Codes und Dokumentkopien
+
+Der Website-Build übergibt die gerade erzeugten vCard-Bytes an
+`tools/generate_qrcodes.py`. Alle PNGs werden im Speicher mit Fehlerkorrektur H,
+mindestens vier Modulen Ruhezone und dem PNG-Signet erzeugt. Das weiße Logo-Pad
+belegt höchstens 20 Prozent der Bildkante. Der Rücklesetest mit ZXing vergleicht den
+vollständigen Inhalt mit der jeweiligen vCard, bevor die Ausgabe ersetzt wird.
+Ein Fehler erhält die bisherige Ausgabe. `dist/qrcodes/<kennung>.png` gehört
+zur generierten Ausgabe; entfernte Kontakte verschwinden beim nächsten Build.
+
+Die Kolumne enthält den Bürokontakt mit Name, Funktion und Downloadlink;
+am Desktop steht dort ausschließlich der QR-Code des Büros. Persönliche
+vCard-Links und QR-Codes stehen in den Personenabschnitten der Startseite.
+Persönliche Telefonnummern werden in der Kolumne nicht als Text wiederholt
+(R-RECHT-6).
+
+`dokumente/assets/*-qr.png` sind gesonderte Kopien für bestehende Handouts und
+E-Mails. Der manuelle Export nutzt dieselben geprüften Build-Ergebnisse,
+ersetzt nur geänderte Dateien und entfernt Bilder entfallener Kontakte.
+Die Bedienung steht im [README](../README.md#qr-codes-für-die-kontaktdaten).
 
 ## Betreuende Personen
 

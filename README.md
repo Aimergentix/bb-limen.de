@@ -14,6 +14,8 @@ JavaScript im Browser. Bearbeitet werden `src/` und `public/`;
 Voraussetzungen: Python 3.12 oder neuer, eine POSIX-Shell und Git.
 
 ```sh
+python3 -m venv .venv-documents
+.venv-documents/bin/python -m pip install -r tools/requirements-qrcodes.txt
 tools/einrichten.sh     # einmalig: schaltet die Prüfung vor jedem Commit ein
 tools/build.sh          # erzeugt dist/
 python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
@@ -99,7 +101,7 @@ Python-Umgebung mit ReportLab einrichten:
 
 ```sh
 python3 -m venv .venv-documents
-.venv-documents/bin/python -m pip install reportlab
+.venv-documents/bin/python -m pip install reportlab -r tools/requirements-qrcodes.txt
 ```
 
 Der PDF-Satz benötigt die Systemschriften aus `fonts-noto-core`
@@ -117,7 +119,11 @@ Ohne Dateiangaben werden alle `.md`-Dateien mit kleingeschriebenen Dateinamen
 direkt in `dokumente/` gebaut. Ältere Vorlagen mit Großbuchstaben im Dateinamen
 und Dateien in Unterverzeichnissen werden dabei nicht verarbeitet.
 Ein Porträt wird als eigener Markdown-Absatz eingebunden, zum Beispiel
-`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund;
+`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund.
+Ein QR-Code mit den Kontaktdaten wird ebenfalls als eigener Markdown-Absatz
+eingebunden, am Alt-Text `QR-Code:` erkennbar, zum Beispiel
+`![QR-Code: Kontaktdaten von Mika Möller](assets/mika-moeller-qr.png)`;
+der Build setzt ihn quadratisch (im PDF neben einem Porträt oder Text).
 HTML und EML enthalten die Bilddaten und benötigen keine externen Bilddateien.
 PDF-Seitenumbrüche und E-Mails nach Änderungen ansehen.
 Vor dem Versand den Namensplatzhalter durch die zuständige Person ersetzen.
@@ -130,6 +136,29 @@ Ein einzelnes Dokument bauen:
 
 Die lokale Python-Umgebung wird nicht versioniert.
 Dieser Dokument-Build ist unabhängig von `tools/build.sh` für die Website.
+
+## QR-Codes für die Kontaktdaten
+
+`tools/build.sh` erzeugt die vCards und die zugehörigen QR-PNGs gemeinsam.
+Installation und erster Lauf stehen im [Schnellstart](#schnellstart).
+`tools/pruefen.sh` und die GitHub-Workflows verwenden denselben Build.
+Die Shell-Befehle nutzen `.venv-documents/bin/python`, sofern vorhanden,
+sonst `python3`; mit `PYTHON` lässt sich ein anderer Interpreter wählen.
+
+Nach Änderungen an Kontaktdaten genügt für die Website der normale Build.
+Für bestehende Handouts und E-Mails werden die separaten Bildkopien bei Bedarf
+aktualisiert und anschließend die betroffenen Dokumente neu gebaut:
+
+```sh
+.venv-documents/bin/python tools/generate_qrcodes.py
+.venv-documents/bin/python tools/generate_qrcodes.py --check
+.venv-documents/bin/python tools/build_documents.py
+```
+
+Der Dokument-Check liest die vorhandenen Dokumentbilder zurück. Er ist ein
+manueller Pflegeschritt und keine Voraussetzung für Website-Build oder CI.
+Dokumente vor Verwendung ansehen; die Website-Kolumne lässt sich am Desktop
+scrollen, am Telefon stehen die Speicherlinks ohne QR-Bilder bereit.
 
 ## Veröffentlichen
 

@@ -51,3 +51,5 @@ Bitte nennen Sie bei Schreiben und Rückfragen den Namen der betreuten Person un
 **Website des Büros:** https://bb-limen.de
 
 **Angaben zur Betreuung eingetragen / abgeglichen am:** ___________
+
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)
