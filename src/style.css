@@ -222,7 +222,7 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
   .rail-ls { order: 0; }
   .rail nav { order: 1; }
   .rail-fach { order: 1; margin-top: var(--s2); }
-  .rail-spacer, .rail-contact, .rail-legal { order: 2; }
+  .rail-spacer, .rail-contact, .rail-cards, .rail-legal { order: 2; }
 }
 
 .rail-brand {
@@ -367,27 +367,38 @@ a { color: var(--link-ink); text-underline-offset: 0.18em; }
 .rail-legal a { color: var(--link-on-carrier); text-decoration: underline; text-underline-offset: 0.18em; }
 .rail-legal a:hover { color: var(--on-carrier); }
 
-/* Aufklappbarer QR-Code mit Visitenkarte; ohne JavaScript bedienbar. */
-.rail-qr {
-  margin: var(--s1) 0 0;
-  font-size: 0.88rem;
-}
-.rail-qr summary {
+/* Kontaktdaten bleiben als Text und Download unabhängig vom QR-Bild zugänglich. */
+.rail-cards { margin-top: var(--s1); }
+.rail-card { padding-block: var(--s1); border-top: 1px solid var(--carrier-line); }
+.rail-card p { margin: 0 0 var(--s-1); line-height: 1.5; }
+.rail-card-name { color: var(--on-carrier); font-weight: 600; font-size: 1rem; }
+.rail-card-role { color: var(--meta-on-carrier); font-size: 0.8rem; }
+.rail-card img { display: block; width: 180px; height: 180px; margin-top: var(--s1); }
+.contact-save {
+  display: inline-block;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 0.3rem;
   color: var(--link-on-carrier);
-  text-decoration: underline;
+  font-size: 0.85rem;
+  line-height: 1.5;
   text-underline-offset: 0.18em;
-  cursor: pointer;
 }
-.rail-qr summary:hover { color: var(--on-carrier); }
-.rail-qr img {
-  display: block;
-  width: 9.25rem;
-  height: 9.25rem;
-  margin: var(--s-1) 0;
-  border-radius: 0.35rem;
+.contact-save:hover { color: var(--on-carrier); }
+.contact-save:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+@media screen and (max-width: 60rem) {
+  .rail-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--s0);
+    align-items: start;
+    padding-block: var(--s0);
+  }
+  .rail-card-name, .rail-card-role { grid-column: 1; }
+  .rail-card .contact-save { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  .rail-card img { display: none; }
 }
-.rail-qr .karte { color: var(--link-on-carrier); text-decoration: underline; text-underline-offset: 0.18em; }
-.rail-qr .karte:hover { color: var(--on-carrier); }
 
 /* ================= Satzspiegel ================= */
 

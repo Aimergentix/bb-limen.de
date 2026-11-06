@@ -11,6 +11,10 @@ ARBEITSVERZEICHNIS=$(mktemp -d)
 trap 'rm -rf "$ARBEITSVERZEICHNIS"' EXIT HUP INT TERM
 BB_LIMEN_TEST_SITE="$ARBEITSVERZEICHNIS/site"
 export BB_LIMEN_TEST_SITE
-python3 tools/build.py --output "$BB_LIMEN_TEST_SITE"
-python3 -m unittest discover -s tests
+if [ -z "${PYTHON:-}" ]; then
+  PYTHON="$PWD/.venv-documents/bin/python"
+  [ -x "$PYTHON" ] || PYTHON=python3
+fi
+"$PYTHON" tools/build.py --output "$BB_LIMEN_TEST_SITE"
+"$PYTHON" -m unittest discover -s tests
 echo 'Geprüft: Build, Verweise und Struktur.'

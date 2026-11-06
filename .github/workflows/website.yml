@@ -22,15 +22,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: QR-Abhängigkeiten einrichten
+        run: python -m pip install -r tools/requirements-qrcodes.txt
       - name: Build und Tests
         run: tools/pruefen.sh
-      # Die versionierten QR-Codes (public/*-qr.png) müssen zu den JSON-Quellen
-      # passen; erzeugt werden sie lokal bzw. im Pre-Commit-Hook, nie im CI-Commit.
-      # cairosvg braucht libcairo2, auf ubuntu-latest vorinstalliert.
-      - name: QR-Codes auf Stand prüfen
-        run: |
-          pip install --quiet -r tools/requirements-qrcodes.txt
-          python3 tools/generate_qrcodes.py --check
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -50,6 +45,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: QR-Abhängigkeiten einrichten
+        run: python -m pip install -r tools/requirements-qrcodes.txt
       - uses: actions/configure-pages@v6
       - name: Veröffentlichungsdateien erzeugen
         run: tools/build.sh

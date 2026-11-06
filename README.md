@@ -14,6 +14,8 @@ JavaScript im Browser. Bearbeitet werden `src/` und `public/`;
 Voraussetzungen: Python 3.12 oder neuer, eine POSIX-Shell und Git.
 
 ```sh
+python3 -m venv .venv-documents
+.venv-documents/bin/python -m pip install -r tools/requirements-qrcodes.txt
 tools/einrichten.sh     # einmalig: schaltet die Prüfung vor jedem Commit ein
 tools/build.sh          # erzeugt dist/
 python3 -m http.server 8391 --bind 127.0.0.1 --directory dist
@@ -137,26 +139,26 @@ Dieser Dokument-Build ist unabhängig von `tools/build.sh` für die Website.
 
 ## QR-Codes für die Kontaktdaten
 
-Die QR-Codes liegen als fertige PNGs versioniert im Repository, damit Website-Build
-und CI dafür keine zusätzlichen Bibliotheken brauchen:
+`tools/build.sh` erzeugt die vCards und die zugehörigen QR-PNGs gemeinsam.
+Installation und erster Lauf stehen im [Schnellstart](#schnellstart).
+`tools/pruefen.sh` und die GitHub-Workflows verwenden denselben Build.
+Die Shell-Befehle nutzen `.venv-documents/bin/python`, sofern vorhanden,
+sonst `python3`; mit `PYTHON` lässt sich ein anderer Interpreter wählen.
 
-* `public/<kennung>-qr.png` — Website (in `src/seiten.json` unter `public_files`
-  registriert; Kolumne auf jeder Seite, Personenabschnitte auf der Startseite)
-* `dokumente/assets/<kennung>-qr.png` — Handouts in `dokumente/`
-
-Erzeugt werden sie aus denselben JSON-Quellen wie die Website
-(`src/bureauangaben.json`, `src/betreuende.json`); kodiert wird exakt die vCard,
-die `tools/build.py` als `.vcf` in `dist/` erzeugt:
+Nach Änderungen an Kontaktdaten genügt für die Website der normale Build.
+Für bestehende Handouts und E-Mails werden die separaten Bildkopien bei Bedarf
+aktualisiert und anschließend die betroffenen Dokumente neu gebaut:
 
 ```sh
-.venv-documents/bin/python tools/generate_qrcodes.py          # erzeugt nur bei Änderung
-.venv-documents/bin/python tools/generate_qrcodes.py --check    # prüft ohne zu schreiben
+.venv-documents/bin/python tools/generate_qrcodes.py
+.venv-documents/bin/python tools/generate_qrcodes.py --check
+.venv-documents/bin/python tools/build_documents.py
 ```
 
-Der Pre-Commit-Hook (`tools/hooks/pre-commit`, eingeschaltet über
-`tools/einrichten.sh`) führt `--check` automatisch aus, solange `.venv-documents`
-existiert, und die CI prüft es in jedem Pull Request. Nach dem Erzeugen wird jeder
-Code testweise zurückgelesen und mit der vCard verglichen.
+Der Dokument-Check liest die vorhandenen Dokumentbilder zurück. Er ist ein
+manueller Pflegeschritt und keine Voraussetzung für Website-Build oder CI.
+Dokumente vor Verwendung ansehen; die Website-Kolumne lässt sich am Desktop
+scrollen, am Telefon stehen die Speicherlinks ohne QR-Bilder bereit.
 
 ## Veröffentlichen
 

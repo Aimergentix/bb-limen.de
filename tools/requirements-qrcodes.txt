@@ -1,10 +1,4 @@
-# Gepinnte Abhängigkeiten für tools/generate_qrcodes.py (QR-Codes der vCards).
-# Installation in die lokale Dokument-Umgebung:
-#   .venv-documents/bin/python -m pip install -r tools/requirements-qrcodes.txt
-# cairosvg rendert das Signet (src/grafik/signet.svg) und braucht die
-# Systembibliothek libcairo2 (auf Debian/Ubuntu: sudo apt install libcairo2;
-# auf den GitHub-Läufern ubuntu-latest ist sie vorinstalliert).
+# Gepinnte Abhängigkeiten für Website-Build und QR-Rücklesetest.
 qrcode==8.2
 pillow==13.0.0
-CairoSVG==2.9.1
-opencv-python-headless==5.0.0.93
+zxing-cpp==3.0.0

@@ -1,4 +1,4 @@
-"""Erzeugt die statische Website aus src/ und public/. Nur Python-Standardbibliothek.
+"""Erzeugt die statische Website aus src/ und public/ mit geprüften vCard-QR-Codes.
 
     tools/build.sh                     erzeugt dist/
     tools/build.sh --output VERZ       erzeugt ein neues Verzeichnis (für die Prüfung)
@@ -276,12 +276,25 @@ def vcard_name(person: dict) -> str:
 
 
 def qr_name(person: dict) -> str:
-    """QR-Code der Person in public/; wird von tools/generate_qrcodes.py erzeugt."""
-    return f"{person['kennung']}-qr.png"
+    """Generierter QR-Code, benannt wie die zugehörige Visitenkarte."""
+    return f"qrcodes/{person['kennung']}.png"
 
 
-# QR-Code des Büros in public/.
-OFFICE_QR = "bb-limen-qr.png"
+def contact_cards(people: list[dict], organization: str) -> str:
+    """Kontakte der Kolumne aus denselben Datensätzen wie die vCards."""
+    contacts = [("bb-limen", organization, OFFICE_UNIT)]
+    contacts += [(person["kennung"], person["name"], person["beruf"]) for person in people]
+    lines = ['    <div class="rail-cards" role="group" aria-label="Kontakte speichern">']
+    for slug, name, role in contacts:
+        lines += [
+            '      <div class="rail-card">',
+            f'        <p class="rail-card-name">{html(name)}</p>',
+            f'        <p class="rail-card-role">{html(role)}</p>',
+            f'        <a class="contact-save" href="{slug}.vcf" download aria-label="Kontakt speichern: {html(name)}">Kontakt speichern</a>',
+            f'        <img src="qrcodes/{slug}.png" alt="QR-Code mit den Kontaktdaten von {html(name)}" width="180" height="180" loading="lazy">',
+            '      </div>',
+        ]
+    return "\n".join([*lines, '    </div>'])
 
 
 # Dasselbe Blatt wie Signet und .zierblatt; hier als Trenner in der Karte.
@@ -401,7 +414,8 @@ def render_people(source: str, people: list[dict], name: str, base: str, organiz
 # ---------------------------------------------------------------- Visitenkarten (R-ANGABEN-6)
 
 def vcard_text(value: str) -> str:
-    return value.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
+    value = value.replace("\\", "\\\\").replace("\r\n", "\n").replace("\r", "\n")
+    return value.replace("\n", "\\n").replace(";", "\\;").replace(",", "\\,")
 
 
 def vcard_bytes(lines: list[str]) -> bytes:
@@ -600,6 +614,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             if match[1] + ".html" not in names:
                 raise ValueError(f"{path}: unbekanntes Navigationsziel {match[1]}")
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
+        text = text.replace("%%KONTAKTKARTEN%%", contact_cards(people, organization))
         text = render_people(text, people, str(path), base, organization)
         text = render_office(text, office)
         if page["file"] == "404.html":
@@ -615,6 +630,14 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             result[person["bild"]] = read_source(root / "src/betreuende" / person["bild"])
     for name in catalog["public_files"]:
         result[name] = read_source(root / "public" / name)
+    try:
+        from generate_qrcodes import generate
+    except ImportError as error:
+        raise ValueError("QR-Abhängigkeiten fehlen; Python-Umgebung aktivieren und "
+                         "python -m pip install -r tools/requirements-qrcodes.txt ausführen") from error
+    cards = {Path(name).stem: data for name, data in result.items() if name.endswith(".vcf")}
+    for slug, data in generate(cards, root / "public/apple-touch-icon.png").items():
+        result[f"qrcodes/{slug}.png"] = data
     return result
 
 
@@ -634,7 +657,9 @@ def write_output(files: dict[str, bytes], output: Path, root: Path = ROOT) -> No
         stage = Path(temp) / "neu"
         stage.mkdir()
         for name, data in files.items():
-            (stage / name).write_bytes(data)
+            target = stage / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
         old = Path(temp) / "alt"
         if output.exists():
             output.rename(old)
