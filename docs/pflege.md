@@ -105,10 +105,11 @@ vollständigen Inhalt mit der jeweiligen vCard, bevor die Ausgabe ersetzt wird.
 Ein Fehler erhält die bisherige Ausgabe. `dist/qrcodes/<kennung>.png` gehört
 zur generierten Ausgabe; entfernte Kontakte verschwinden beim nächsten Build.
 
-Die Kolumne enthält für Büro und Personen Name, Funktion und Downloadlink;
-QR-Bilder stehen am Desktop zusätzlich bereit. Die persönlichen vCard-Links
-in den Personenabschnitten bleiben erhalten. Persönliche Telefonnummern werden
-in der Kolumne nicht als Text wiederholt (R-RECHT-6).
+Die Kolumne enthält den Bürokontakt mit Name, Funktion und Downloadlink;
+am Desktop steht dort ausschließlich der QR-Code des Büros. Persönliche
+vCard-Links und QR-Codes stehen in den Personenabschnitten der Startseite.
+Persönliche Telefonnummern werden in der Kolumne nicht als Text wiederholt
+(R-RECHT-6).
 
 `dokumente/assets/*-qr.png` sind gesonderte Kopien für bestehende Handouts und
 E-Mails. Der manuelle Export nutzt dieselben geprüften Build-Ergebnisse,

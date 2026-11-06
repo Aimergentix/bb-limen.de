@@ -280,10 +280,9 @@ def qr_name(person: dict) -> str:
     return f"qrcodes/{person['kennung']}.png"
 
 
-def contact_cards(people: list[dict], organization: str) -> str:
-    """Kontakte der Kolumne aus denselben Datensätzen wie die vCards."""
+def contact_cards(organization: str) -> str:
+    """Bürokontakt der Kolumne aus demselben Datensatz wie die vCard."""
     contacts = [("bb-limen", organization, OFFICE_UNIT)]
-    contacts += [(person["kennung"], person["name"], person["beruf"]) for person in people]
     lines = ['    <div class="rail-cards" role="group" aria-label="Kontakte speichern">']
     for slug, name, role in contacts:
         lines += [
@@ -614,7 +613,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
             if match[1] + ".html" not in names:
                 raise ValueError(f"{path}: unbekanntes Navigationsziel {match[1]}")
         text = CURRENT.sub(lambda match: ' aria-current="page"' if match[1] + ".html" == page["file"] else "", text)
-        text = text.replace("%%KONTAKTKARTEN%%", contact_cards(people, organization))
+        text = text.replace("%%KONTAKTKARTEN%%", contact_cards(organization))
         text = render_people(text, people, str(path), base, organization)
         text = render_office(text, office)
         if page["file"] == "404.html":
