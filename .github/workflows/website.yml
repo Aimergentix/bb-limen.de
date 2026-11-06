@@ -24,6 +24,13 @@ jobs:
           python-version: "3.12"
       - name: Build und Tests
         run: tools/pruefen.sh
+      # Die versionierten QR-Codes (public/*-qr.png) müssen zu den JSON-Quellen
+      # passen; erzeugt werden sie lokal bzw. im Pre-Commit-Hook, nie im CI-Commit.
+      # cairosvg braucht libcairo2, auf ubuntu-latest vorinstalliert.
+      - name: QR-Codes auf Stand prüfen
+        run: |
+          pip install --quiet -r tools/requirements-qrcodes.txt
+          python3 tools/generate_qrcodes.py --check
       - uses: actions/setup-java@v6
         with:
           distribution: temurin

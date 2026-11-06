@@ -48,3 +48,5 @@ Bitte richten Sie sämtliche Post an das Postfach. Bei bestehenden Betreuungen g
 **E-Mail:** info@bb-limen.de  
 **Website:** https://bb-limen.de  
 **Bürosprechzeiten:** Dienstag, Mittwoch und Donnerstag von 10:00 bis 12:00 Uhr
+
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)

@@ -3,6 +3,8 @@
 
 ![Porträt von Mika Möller](assets/mika.png)
 
+![QR-Code: Kontaktdaten von Mika Möller](assets/mika-moeller-qr.png)
+
 **Anrede:** Frau  
 **Name:** Mika Möller  
 **Status:** Staatlich anerkannte Sozialpädagogin · Berufsbetreuerin   

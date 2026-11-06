@@ -57,3 +57,5 @@ E-Mail wird bevorzugt und zügig beantwortet. Bei Rückfragen zu einer bestehend
 Erfasst oder aktualisiert am: ____________________
 
 Bearbeitet durch: _______________________________
+
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)

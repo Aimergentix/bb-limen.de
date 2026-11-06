@@ -3,6 +3,8 @@
 
 ![Porträt von Aranda Möller](assets/aranda.png)
 
+![QR-Code: Kontaktdaten von Aranda Möller](assets/aranda-moeller-qr.png)
+
 #### Aranda Möller
 **Anrede:** Herr  
 **Name:** Aranda Möller  

@@ -3,37 +3,37 @@
     {
       "file": "index.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "betreuung.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "aufgaben.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "vorsorge.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "hilfe.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "fachkreise.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "leichte-sprache.html",
       "sitemap": true,
-      "lastmod": "2026-10-08"
+      "lastmod": "2026-11-06"
     },
     {
       "file": "impressum.html",
@@ -55,6 +55,9 @@
     "CNAME",
     "favicon.ico",
     "apple-touch-icon.png",
-    "vorschau.png"
+    "vorschau.png",
+    "bb-limen-qr.png",
+    "aranda-moeller-qr.png",
+    "mika-moeller-qr.png"
   ]
 }

@@ -51,3 +51,5 @@ E-Mail wird bevorzugt und zügig beantwortet. Bei Rückfragen zu einer bestehend
 Zuständige betreuende Person: ____________________________________
 
 Ihr Anliegen: __________________________________________________
+
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)

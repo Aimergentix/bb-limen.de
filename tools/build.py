@@ -275,6 +275,15 @@ def vcard_name(person: dict) -> str:
     return f"{person['kennung']}.vcf"
 
 
+def qr_name(person: dict) -> str:
+    """QR-Code der Person in public/; wird von tools/generate_qrcodes.py erzeugt."""
+    return f"{person['kennung']}-qr.png"
+
+
+# QR-Code des Büros in public/.
+OFFICE_QR = "bb-limen-qr.png"
+
+
 # Dasselbe Blatt wie Signet und .zierblatt; hier als Trenner in der Karte.
 LEAF = ('<svg class="zierblatt" viewBox="0 0 24 26" aria-hidden="true" focusable="false" fill="none" '
         'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
@@ -340,6 +349,7 @@ def section(person: dict, organization: str) -> str:
         address = (organization, person["name"], f'Postfach {post["postfach"]}', f'{post["plz"]} {post["ort"]}')
         lines.append(f'          <p>Post:<br>{"<br>".join(html(line) for line in address)}</p>')
     lines += [f'          <p><a class="karte" href="{vcard_name(person)}" download>{CARD}Kontaktdaten von {html(person["name"])} speichern (Visitenkarte)</a></p>',
+              f'          <p class="qr"><img src="{qr_name(person)}" alt="QR-Code mit den Kontaktdaten von {html(person["name"])}" width="148" height="148" loading="lazy"></p>',
               "        </footer>",
               "      </article>"]
     return "\n".join(lines)
@@ -434,7 +444,22 @@ def vcard_address(post: dict) -> str:
         "Postfach " + post["postfach"], post["ort"], post["bundesland"], post["plz"], COUNTRIES[post["land"]]))
 
 
-def office_vcard(index: str) -> bytes:
+def sprechzeiten_text(data: dict) -> str:
+    """Sprechzeiten des Büros als Fließtext für die vCard-NOTE."""
+    values = office_values(data)
+    return values["sprechzeiten.text.regulaer"] + " " + values["sprechzeiten.text.termin"]
+
+
+def person_sprechzeiten(person: dict, office_data: dict) -> str:
+    """Sprechzeiten einer Person; ohne eigene Angabe die des Büros."""
+    hours = person["sprechzeiten"]
+    if hours is None:
+        return sprechzeiten_text(office_data)
+    start, end = (hour_label(hours[key]) for key in ("von", "bis"))
+    return f"{join_words(hours['tage'])} von {start} bis {end} Uhr."
+
+
+def office_vcard(index: str, data: dict) -> bytes:
     """Bürovisitenkarte aus dem erzeugten Organization-Knoten."""
     office = office_node(index)
     address = office.get("address")
@@ -452,6 +477,7 @@ def office_vcard(index: str) -> bytes:
                        "ort": node_field(address, "addressLocality"),
                        "bundesland": node_field(address, "addressRegion"),
                        "land": node_field(address, "addressCountry")}),
+        "NOTE:" + vcard_text("Sprechzeiten: " + sprechzeiten_text(data)),
         "URL:" + node_field(office, "url")])
 
 
@@ -468,6 +494,7 @@ def person_vcard(person: dict, index: str, office: dict, base: str) -> bytes:
         lines.append("TEL;TYPE=WORK,VOICE:" + vcard_text(office["telefon"]["e164"]))
     lines.append("EMAIL;TYPE=INTERNET,WORK:" + vcard_text(person["email"] or office["email"]))
     lines.append(vcard_address(person["anschrift"] or office["postanschrift"]))
+    lines.append("NOTE:" + vcard_text("Sprechzeiten: " + person_sprechzeiten(person, office)))
     lines.append("URL:" + person_url(person, base))
     return vcard_bytes(lines)
 
@@ -581,7 +608,7 @@ def render(root: Path = ROOT) -> dict[str, bytes]:
     result["style.css"] = read_source(root / "src/style.css")
     result["sitemap.xml"] = sitemap(pages, base)
     index = result["index.html"].decode("utf-8")
-    result["bb-limen.vcf"] = office_vcard(index)
+    result["bb-limen.vcf"] = office_vcard(index, office)
     for person in people:
         result[vcard_name(person)] = person_vcard(person, index, office, base)
         if person["bild"]:

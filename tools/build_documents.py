@@ -12,13 +12,19 @@ from html import escape
 import mimetypes
 import re
 
+from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Spacer
 
 import generate_emails as emails
 import generate_pdfs as pdfs
 
 
 IMAGE = re.compile(r"(?m)^!\[([^\]\n]*)\]\(([^)\n]+)\)[ \t]*$")
+# Alt-Texte mit diesem Präfix sind QR-Codes (quadratisch), keine runden Porträts.
+QR_ALT = "QR-Code"
+QR_MM = 20   # Kantenlänge des QR-Code im PDF
+QR_PX = 112  # Kantenlänge des QR-Code in HTML und E-Mail
 
 
 class Portrait(pdfs.Flowable):
@@ -50,38 +56,73 @@ def source_parts(source, directory):
     """Lokale Markdown-Bildblöcke unabhängig vom Textsatz auflösen."""
     start = 0
     for match in IMAGE.finditer(source):
-        yield source[start:match.start()], None
+        yield source[start:match.start()], None, False
         path = (directory / match[2]).resolve()
         if not path.is_file():
-            raise FileNotFoundError(f"Porträt nicht gefunden: {path}")
-        yield match[1], path
+            raise FileNotFoundError(f"Bild nicht gefunden: {path}")
+        yield match[1], path, match[1].startswith(QR_ALT)
         start = match.end()
-    yield source[start:], None
+    yield source[start:], None, False
 
 
 def illustrated_pdf_story(source, directory):
     story = []
-    for text, image in source_parts(source, directory):
-        story.extend([Portrait(image)] if image else pdf_story(text))
+    row = []  # Aufeinanderfolgende Bilder (Porträt, QR-Code) landen nebeneinander.
+
+    def flush_row():
+        if row:
+            story.append(pdfs.columns(row) if len(row) > 1 else row[0])
+            story.append(Spacer(1, 4 * mm))
+            row.clear()
+
+    parts = list(source_parts(source, directory))
+    index = 0
+    while index < len(parts):
+        text, image, is_qr = parts[index]
+        if image is None:
+            # Folgt dem Text direkt ein QR-Code, steht der Code daneben statt darunter.
+            if index + 1 < len(parts) and parts[index + 1][1] is not None and parts[index + 1][2]:
+                qr_path = parts[index + 1][1]
+                width = QR_MM * mm
+                story.append(pdfs.columns(
+                    [pdf_story(text), pdfs.Image(str(qr_path), width=width, height=width)],
+                    [pdfs.WIDTH - width - pdfs.GAP, width]))
+                story.append(Spacer(1, 4 * mm))
+                index += 2
+                continue
+            flush_row()
+            story.extend(pdf_story(text))
+        elif is_qr:
+            row.append(pdfs.Image(str(image), width=QR_MM * mm, height=QR_MM * mm))
+        else:
+            row.append(Portrait(image))
+        index += 1
+    flush_row()
     return story
 
 
 def illustrated_html(source, directory, title, embedded=False):
     content, images = [], []
-    for text, image in source_parts(source, directory):
+    for text, image, is_qr in source_parts(source, directory):
         if image is None:
             content.append(emails.markdown(text))
             continue
         mime = mimetypes.guess_type(image.name)[0]
         if mime not in ("image/png", "image/jpeg", "image/webp"):
-            raise ValueError(f"Nicht unterstütztes Porträtformat: {image}")
+            raise ValueError(f"Nicht unterstütztes Bildformat: {image}")
         data = image.read_bytes()
-        cid = f"portrait-{len(images)}@bb-limen.de"
+        cid = f"{'qr' if is_qr else 'portrait'}-{len(images)}@bb-limen.de"
         url = f"cid:{cid}" if embedded else f"data:{mime};base64,{base64.b64encode(data).decode('ascii')}"
-        content.append(
-            f'<p style="margin:0 0 16px;"><img src="{url}" '
-            f'alt="{escape(text, quote=True)}" width="72" height="72" '
-            'style="display:block;width:72px;height:72px;object-fit:cover;border-radius:50%;"></p>')
+        if is_qr:
+            content.append(
+                f'<p style="margin:0 0 16px;"><img src="{url}" '
+                f'alt="{escape(text, quote=True)}" width="{QR_PX}" height="{QR_PX}" '
+                f'style="display:block;width:{QR_PX}px;height:{QR_PX}px;"></p>')
+        else:
+            content.append(
+                f'<p style="margin:0 0 16px;"><img src="{url}" '
+                f'alt="{escape(text, quote=True)}" width="72" height="72" '
+                'style="display:block;width:72px;height:72px;object-fit:cover;border-radius:50%;"></p>')
         images.append((cid, mime, data))
     html = emails.document_html(
         '<tr><td style="padding:28px;">' + "\n".join(content) + '</td></tr>', title)

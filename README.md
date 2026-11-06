@@ -99,7 +99,7 @@ Python-Umgebung mit ReportLab einrichten:
 
 ```sh
 python3 -m venv .venv-documents
-.venv-documents/bin/python -m pip install reportlab
+.venv-documents/bin/python -m pip install reportlab -r tools/requirements-qrcodes.txt
 ```
 
 Der PDF-Satz benötigt die Systemschriften aus `fonts-noto-core`
@@ -117,7 +117,11 @@ Ohne Dateiangaben werden alle `.md`-Dateien mit kleingeschriebenen Dateinamen
 direkt in `dokumente/` gebaut. Ältere Vorlagen mit Großbuchstaben im Dateinamen
 und Dateien in Unterverzeichnissen werden dabei nicht verarbeitet.
 Ein Porträt wird als eigener Markdown-Absatz eingebunden, zum Beispiel
-`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund;
+`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund.
+Ein QR-Code mit den Kontaktdaten wird ebenfalls als eigener Markdown-Absatz
+eingebunden, am Alt-Text `QR-Code:` erkennbar, zum Beispiel
+`![QR-Code: Kontaktdaten von Mika Möller](assets/mika-moeller-qr.png)`;
+der Build setzt ihn quadratisch (im PDF neben einem Porträt oder Text).
 HTML und EML enthalten die Bilddaten und benötigen keine externen Bilddateien.
 PDF-Seitenumbrüche und E-Mails nach Änderungen ansehen.
 Vor dem Versand den Namensplatzhalter durch die zuständige Person ersetzen.
@@ -130,6 +134,29 @@ Ein einzelnes Dokument bauen:
 
 Die lokale Python-Umgebung wird nicht versioniert.
 Dieser Dokument-Build ist unabhängig von `tools/build.sh` für die Website.
+
+## QR-Codes für die Kontaktdaten
+
+Die QR-Codes liegen als fertige PNGs versioniert im Repository, damit Website-Build
+und CI dafür keine zusätzlichen Bibliotheken brauchen:
+
+* `public/<kennung>-qr.png` — Website (in `src/seiten.json` unter `public_files`
+  registriert; Kolumne auf jeder Seite, Personenabschnitte auf der Startseite)
+* `dokumente/assets/<kennung>-qr.png` — Handouts in `dokumente/`
+
+Erzeugt werden sie aus denselben JSON-Quellen wie die Website
+(`src/bureauangaben.json`, `src/betreuende.json`); kodiert wird exakt die vCard,
+die `tools/build.py` als `.vcf` in `dist/` erzeugt:
+
+```sh
+.venv-documents/bin/python tools/generate_qrcodes.py          # erzeugt nur bei Änderung
+.venv-documents/bin/python tools/generate_qrcodes.py --check    # prüft ohne zu schreiben
+```
+
+Der Pre-Commit-Hook (`tools/hooks/pre-commit`, eingeschaltet über
+`tools/einrichten.sh`) führt `--check` automatisch aus, solange `.venv-documents`
+existiert, und die CI prüft es in jedem Pull Request. Nach dem Erzeugen wird jeder
+Code testweise zurückgelesen und mit der vCard verglichen.
 
 ## Veröffentlichen
 

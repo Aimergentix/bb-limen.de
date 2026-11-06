@@ -50,3 +50,5 @@ Bitte richten Sie sämtliche Post an das Postfach. Bei bestehenden Betreuungen g
 **Bürosprechzeiten:** Dienstag, Mittwoch und Donnerstag von 10:00 bis 12:00 Uhr
 
 **Geschäftssitz für persönliche Termine, Besprechungen und Anhörungen:** BB Limen, Am Dreispitz 6/6-1, 79589 Binzen. Bitte keine allgemeine Geschäftspost dorthin senden.
+
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)
