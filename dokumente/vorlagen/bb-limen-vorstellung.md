@@ -8,7 +8,7 @@ Berufliche Betreuung nach § 1814 ff. BGB · Landkreise Lörrach und Waldshut ·
 Wir führen berufliche Betreuungen im Dreiländereck und am Hochrhein. Für Angehörige, Gerichte, Behörden, Kliniken, Pflegeheime, Ärzte und soziale Dienste gewährleisten wir eine strukturierte, zügige und verlässliche Kooperation.
 &nbsp;
 
-![QR-Code: Kontaktdaten von BB Limen](assets/bb-limen-qr.png)
+![QR-Code: Kontaktdaten von BB Limen](../assets/bb-limen-qr.png)
 
 ---
 

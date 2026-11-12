@@ -1,39 +1,38 @@
 # 
 ## Betreuer im Gemeinschaftsbüro
 
-![Porträt von Aranda Möller](assets/aranda.png)
+![Porträt von Mika Möller](../assets/mika.png)
 
-![QR-Code: Kontaktdaten von Aranda Möller](assets/aranda-moeller-qr.png)
+![QR-Code: Kontaktdaten von Mika Möller](../assets/mika-moeller-qr.png)
 
-#### Aranda Möller
-**Anrede:** Herr  
-**Name:** Aranda Möller  
-**Status:** Selbständig · Berufsbetreuer   
-**Umfang der Selbständigkeit:** hauptberuflich  
+**Anrede:** Frau  
+**Name:** Mika Möller  
+**Status:** Staatlich anerkannte Sozialpädagogin · Berufsbetreuerin   
+**Umfang der Selbständigkeit:** nebenberuflich  
 **Registrierung:** nach § 23 BtOG erteilt  
 **Stammbehörde:** Betreuungsbehörde Lörrach 
 
 * **Postanschrift:**  
   BB Limen  
-  Aranda Möller  
+  Mika Möller  
   Postfach 11 16  
   79601 Rheinfelden (Baden)
 
 * **Kontaktdaten:**  
-  Telefon: +49 176 4290 4270  
-  E-Mail: aranda.moeller@bb-limen.de  
+  Telefon: +49 177 85 267 85  
+  E-Mail: mika.moeller@bb-limen.de  
   Web: https://bb-limen.de  
 
 **Sprachen:** Deutsch & Englisch  
-**Sprechzeiten:** Dienstag & Donnerstag von 10:00 bis 12:00 Uhr  
+**Sprechzeiten:** Donnerstag von 8:00 bis 12:00 Uhr  
 **Email** wird bevorzugt und zügig beantwortet.  
 
 **Fachprofil & Schwerpunkte:**
 * Übernahme aller Aufgabenbereiche der rechtlichen Betreuung.
-* Mediation, Begleitung aller Kommunikationsprofile.
-* Der rechtliche Papierkram wird erledigt. 
-* Bürokratie, Juristen- und Behördendeutsch sind kein Problem.
-*  Datenschutzsichere, moderne Büroorganisation.
+* Jahrzehntelange, fundierte Praxiserfahrung, Leitung, diverse Wohnformen, Jugendhilfe.
+* Besondere Erfahrung in der Betreuung von Eltern & Kindern.
+* Menschen mit psychischer Erkrankung, Suchterkrankung sowie Menschen mit Behinderung werden gerne angenommen.
+* Fachkraft für komplexe Lebenssituationen und Kommunikationsprofile.
 
 ---
 

@@ -95,6 +95,53 @@ und nur die Organisation. Die Anschrift ist gegliedert; das Postfach steht in
 der Straßenzeile, weil viele Programme das eigene Postfachfeld nicht zeigen,
 und das Land ausgeschrieben.
 
+### Dokumentvorlagen und lokale Ausgaben
+
+`tools/document_paths.py` legt die Dokumentpfade gemeinsam fest: versionierte
+Markdown-Quellen in `dokumente/vorlagen/`, gemeinsam verwendete Bilder in
+`dokumente/assets/` und nicht versionierte Ausgaben in `dokumente/handouts/`.
+Bildverweise in den Vorlagen werden relativ zum jeweiligen Quelldokument
+aufgelöst. HTML bettet die Bilder direkt ein, EML enthält sie als CID-Anhänge;
+die fertigen Dokumente benötigen den Bildordner nicht. Archivvorlagen werden
+beim Standardlauf nicht verarbeitet. Alle drei Dokument-Einstiege verwenden
+`tools/build_documents.py`; so entstehen keine Ausgaben neben den Quellen.
+Die Bedienung steht im [README](../README.md#dokumentvarianten-als-pdf-und-e-mail-bauen).
+
+### Thunderbird-Signaturen
+
+`tools/generate_signatures.py` verwendet die aktuellen Build-Ergebnisse für
+vCards und QR-Bilder. Kontaktdaten kommen aus den
+Büro- und Personen-JSON-Dateien, Farben aus dem hellen PALETTE-Block des
+Stylesheets. `src/signatures/` enthält die gemeinsame Vorlage und optionale
+Funktionsbezeichnungen. Fehlt eine solche, gilt `beruf` aus dem Personeneintrag.
+Der mit `@office-only` markierte kurze Fußbereich enthält eine Bürokennzeichnung
+sowie Links zum Impressum und zum Datenschutz und erscheint nur in der Bürosignatur.
+Persönliche Signaturen enthalten keinen Fußbereich.
+Die zusätzliche Bürosignatur `bb-limen.html` setzt die Geschäftsbezeichnung
+an die erste Stelle und den Bürobetreiber über die Postanschrift. Sie hat
+keine persönliche Funktions- oder Registrierungszeile und verwendet die
+Büro-Kontaktdaten, Büro-vCard und den zugehörigen QR-Code.
+
+Die Ausgabe unter `dokumente/signaturen/` besteht aus lokalen, nicht
+versionierten Dateien. Jede HTML-Signatur enthält das QR-PNG als Base64-Daten-URI
+und benötigt keine Bilddatei. Sie kann unabhängig vom Repository gespeichert
+werden. Mit `--install-dir` wird ein externer Zielordner gewählt und lokal in
+`.signature-output.json` hinterlegt. Der normale Build aktualisiert dann auch
+dessen HTML-Dateien. Thunderbird-Kontoeinstellungen verändert der Generator
+nicht. Die Signaturen gehören nicht zu `dist/` und werden nicht als Website
+veröffentlicht. Im Repository-Hauptverzeichnis wird keine Signaturdatei erzeugt.
+Die QR-Anzeige erhält ganze Module; auch das verkleinerte Bild wird gegen
+die aktuellen vCard-Bytes zurückgelesen. Absätze, Zeilenumbrüche und Mozillas
+Linkklassen erhalten die Reintextfassung ohne doppelte Kontakt-URLs.
+
+Ein normaler Website-Build bereitet die Signaturen vor dem Schreiben vor
+und aktualisiert sie nach der Website-Ausgabe. Mit `--output` werden sie
+ebenfalls erzeugt und geprüft, aber nicht lokal geschrieben; der gemeinsame
+Prüfbefehl verändert deshalb weiterhin weder Quellen noch `dist/`.
+Der Generator ersetzt ausschließlich seine aktuellen Ausgabedateien;
+entfernte Personen werden nicht automatisch auf dem Dateisystem gelöscht.
+Die Bedienung steht im [README](../README.md#thunderbird-signaturen).
+
 ### QR-Codes und Dokumentkopien
 
 Der Website-Build übergibt die gerade erzeugten vCard-Bytes an

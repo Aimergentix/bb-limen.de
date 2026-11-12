@@ -1,7 +1,7 @@
 """Baut die aktuellen Markdown-Handouts als PDF, HTML und EML.
 
 Aufruf: .venv-documents/bin/python tools/build_documents.py
-Die Ausgabe liegt neben den Quellen; bestehende Ausgaben werden ersetzt.
+Quellen: dokumente/vorlagen/; Ausgabe: dokumente/handouts/.
 """
 
 from io import BytesIO
@@ -18,6 +18,7 @@ from reportlab.platypus import Spacer
 
 import generate_emails as emails
 import generate_pdfs as pdfs
+from document_paths import OUTPUT, SOURCES
 
 
 IMAGE = re.compile(r"(?m)^!\[([^\]\n]*)\]\(([^)\n]+)\)[ \t]*$")
@@ -161,10 +162,19 @@ def pdf_story(source):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("sources", nargs="*", type=Path,
-                        help="Markdown-Quellen; Standard: alle kleingeschriebenen .md-Dateien direkt in dokumente/.")
+                        help="Markdown-Quellen; Standard: kleingeschriebene .md-Dateien direkt in dokumente/vorlagen/.")
+    parser.add_argument("--output-dir", type=Path, default=OUTPUT,
+                        help="Ausgabeordner für PDF, HTML und EML (Standard: dokumente/handouts/).")
     args = parser.parse_args()
-    sources = args.sources or sorted(path for path in pdfs.OUT_DIR.glob("*.md")
+    sources = args.sources or sorted(path for path in SOURCES.glob("*.md")
                                     if path.name == path.name.lower())
+    if not sources:
+        parser.error(f"Keine Markdown-Vorlagen gefunden: {SOURCES}")
+    stems = [path.stem for path in sources]
+    if len(stems) != len(set(stems)):
+        parser.error("Vorlagen mit gleichem Dateinamen würden dieselbe Ausgabe überschreiben")
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
     pdfs.register_fonts()
     for path in sources:
         source = path.read_text(encoding="utf-8")
@@ -194,10 +204,11 @@ def main():
             message.get_payload()[-1].add_related(
                 data, maintype="image", subtype=mime.split("/", 1)[1],
                 cid=f"<{cid}>", disposition="inline")
-        path.with_suffix(".pdf").write_bytes(buffer.getvalue())
-        path.with_suffix(".html").write_text(html, encoding="utf-8")
-        path.with_suffix(".eml").write_bytes(message.as_bytes())
-        print(f"Erzeugt: {path.with_suffix('.pdf')} / .html / .eml")
+        output = output_dir / path.stem
+        output.with_suffix(".pdf").write_bytes(buffer.getvalue())
+        output.with_suffix(".html").write_text(html, encoding="utf-8")
+        output.with_suffix(".eml").write_bytes(message.as_bytes())
+        print(f"Erzeugt: {output.with_suffix('.pdf')} / .html / .eml")
 
 
 if __name__ == "__main__":

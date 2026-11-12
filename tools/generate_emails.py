@@ -1,7 +1,7 @@
 """Erzeugt HTML-E-Mails und unadressierte EML-Entwürfe aus den Handouts.
 
-Aufruf: python3 tools/generate_emails.py (nur Python-Standardbibliothek).
-Texte: dokumente/*.md; Farben: heller PALETTE-Block in src/style.css.
+Aufruf: python3 tools/generate_emails.py (gemeinsamer Dokument-Build).
+Texte: dokumente/vorlagen/*.md; Farben: heller PALETTE-Block in src/style.css.
 """
 from email.message import EmailMessage
 from email.policy import SMTP
@@ -10,8 +10,9 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 
+from document_paths import OUTPUT
+
 ROOT = Path(__file__).resolve().parents[1]
-DOCUMENTS = ROOT / "dokumente"
 CSS = (ROOT / "src/style.css").read_text(encoding="utf-8")
 PALETTE = dict(re.findall(r"--([\w-]+):\s*(#[0-9a-fA-F]{6})", CSS.split(":root {", 1)[1].split("}", 1)[0]))
 SANS = "Arial, Helvetica, sans-serif"
@@ -206,7 +207,8 @@ class PlainText(HTMLParser):
 
 
 def write_email(output_name, title, html):
-    (DOCUMENTS / f"{output_name}.html").write_text(html, encoding="utf-8")
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    (OUTPUT / f"{output_name}.html").write_text(html, encoding="utf-8")
     plain = PlainText()
     plain.feed(html)
     message = EmailMessage(policy=SMTP)
@@ -214,30 +216,14 @@ def write_email(output_name, title, html):
     message["X-Unsent"] = "1"
     message.set_content(plain.text())
     message.add_alternative(html, subtype="html")
-    (DOCUMENTS / f"{output_name}.eml").write_bytes(message.as_bytes())
-    print(f"Erzeugt: dokumente/{output_name}.html und .eml")
+    (OUTPUT / f"{output_name}.eml").write_bytes(message.as_bytes())
+    print(f"Erzeugt: {OUTPUT / output_name}.html und .eml")
 
 
 def main():
-    jobs = [
-        ("BB-Limen-Vorstellung-Einseiter.md", "bb-limen-vorstellung-email", "BB Limen · Büro für rechtliche Betreuung – Vorstellung"),
-        ("BB-Limen-Stammdaten-Serviceeinheiten-Amtsgerichte.md", "bb-limen-stammdaten-email", "BB Limen · Stammdatenmitteilung für die Betreuungsgerichte"),
-    ]
-    integrated = []
-    for source_name, output_name, title in jobs:
-        source = (DOCUMENTS / source_name).read_text(encoding="utf-8")
-        html = render(source, title)
-        write_email(output_name, title, html)
-        integrated.append(content_rows(source))
-
-    title = "BB Limen – Vorstellung unseres Betreuungsbüros und Stammdatenmitteilung"
-    cover = (DOCUMENTS / "bb-limen-anschreiben-amtsgerichte.md").read_text(encoding="utf-8")
-    intro = heading("Vorstellung unseres Betreuungsbüros") + markdown(cover)
-    rows = [f'<tr><td style="padding:28px;border-bottom:2px solid {PALETTE["accent"]};">{intro}</td></tr>']
-    for label, content in zip(("Bürovorstellung", "Stammdaten für die Betreuungsgerichte"), integrated):
-        rows.append(f'<tr><td style="padding:18px 28px;background-color:{PALETTE["surface"]};border-top:2px solid {PALETTE["accent"]};">{heading(label)}</td></tr>')
-        rows.append(content)
-    write_email("bb-limen-anschreiben-amtsgerichte", title, document_html("\n".join(rows), title))
+    # Gemeinsamer Einstieg verhindert abweichende Quell- und Ausgabepfade.
+    from build_documents import main as build_documents
+    build_documents()
 
 
 if __name__ == "__main__":

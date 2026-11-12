@@ -93,10 +93,10 @@ Gesetz ändern sich auch die Jahreszahlen im Text (R-RECHT-4).
 ## Dokumentvarianten als PDF und E-Mail bauen
 
 Die bearbeitbaren Vorlagen sind
-[Stammdaten](dokumente/bb-limen-stammdaten.md) und
-[Vorstellung](dokumente/bb-limen-vorstellung.md) sowie die persönlichen
-Vorstellungen von [Mika Möller](dokumente/mika-moeller-vorstellung.md) und
-[Aranda Möller](dokumente/aranda-moeller-vorstellung.md). Einmalig eine lokale
+[Stammdaten](dokumente/vorlagen/bb-limen-stammdaten.md) und
+[Vorstellung](dokumente/vorlagen/bb-limen-vorstellung.md) sowie die persönlichen
+Vorstellungen von [Mika Möller](dokumente/vorlagen/mika-moeller-vorstellung.md) und
+[Aranda Möller](dokumente/vorlagen/aranda-moeller-vorstellung.md). Einmalig eine lokale
 Python-Umgebung mit ReportLab einrichten:
 
 ```sh
@@ -112,17 +112,19 @@ Markdown-Vorlagen alle Dokumente neu erzeugen:
 .venv-documents/bin/python tools/build_documents.py
 ```
 
-Die Ausgabe liegt neben den Quellen in `dokumente/`: pro Vorlage ein einseitiges
-A4-PDF, eine HTML-Datei und ein unadressierter EML-Entwurf. Vorhandene Ausgaben
+Die bearbeitbaren Markdown-Vorlagen liegen versioniert in `dokumente/vorlagen/`.
+Die Ausgabe landet ausschließlich in `dokumente/handouts/`: pro Vorlage ein
+einseitiges A4-PDF, eine HTML-Datei und ein unadressierter EML-Entwurf. Dieser
+Ausgabeordner wird wie `signaturen/` von Git ignoriert. Vorhandene Ausgaben
 werden überschrieben; die Markdown-Quellen bleiben unverändert.
 Ohne Dateiangaben werden alle `.md`-Dateien mit kleingeschriebenen Dateinamen
-direkt in `dokumente/` gebaut. Ältere Vorlagen mit Großbuchstaben im Dateinamen
-und Dateien in Unterverzeichnissen werden dabei nicht verarbeitet.
+direkt in `dokumente/vorlagen/` gebaut. Das Unterverzeichnis `archiv/` und
+Dateien in weiteren Unterverzeichnissen werden dabei nicht verarbeitet.
 Ein Porträt wird als eigener Markdown-Absatz eingebunden, zum Beispiel
-`![Porträt von Mika Möller](assets/mika.png)`. Der Build setzt es klein und rund.
+`![Porträt von Mika Möller](../assets/mika.png)`. Der Build setzt es klein und rund.
 Ein QR-Code mit den Kontaktdaten wird ebenfalls als eigener Markdown-Absatz
 eingebunden, am Alt-Text `QR-Code:` erkennbar, zum Beispiel
-`![QR-Code: Kontaktdaten von Mika Möller](assets/mika-moeller-qr.png)`;
+`![QR-Code: Kontaktdaten von Mika Möller](../assets/mika-moeller-qr.png)`;
 der Build setzt ihn quadratisch (im PDF neben einem Porträt oder Text).
 HTML und EML enthalten die Bilddaten und benötigen keine externen Bilddateien.
 PDF-Seitenumbrüche und E-Mails nach Änderungen ansehen.
@@ -131,11 +133,70 @@ Vor dem Versand den Namensplatzhalter durch die zuständige Person ersetzen.
 Ein einzelnes Dokument bauen:
 
 ```sh
-.venv-documents/bin/python tools/build_documents.py dokumente/bb-limen-stammdaten.md
+.venv-documents/bin/python tools/build_documents.py dokumente/vorlagen/bb-limen-stammdaten.md
 ```
+
+Mit `--output-dir /absoluter/pfad` lässt sich ein anderer Ausgabeordner wählen.
+Die älteren Aufrufe `tools/generate_pdfs.py` und `tools/generate_emails.py`
+verwenden denselben gemeinsamen Build und dieselben Ordner.
 
 Die lokale Python-Umgebung wird nicht versioniert.
 Dieser Dokument-Build ist unabhängig von `tools/build.sh` für die Website.
+
+## Thunderbird-Signaturen
+
+Der normale Aufruf von `tools/build.sh` aktualisiert zusätzlich die lokalen
+HTML-Signaturen aller Personen aus `src/betreuende.json`:
+
+- `dokumente/signaturen/<kennung>.html`
+- `dokumente/signaturen/bb-limen.html` für das Büro, mit Büro-vCard und Büro-QR-Code
+- passende QR-Bilder in `dokumente/signaturen/assets/` und vCards daneben
+
+Jede HTML-Datei enthält ihr QR-Bild vollständig als Bilddaten. Sie kann allein
+in einen beliebigen Ordner kopiert werden; es gibt keine Bildpfade ins
+Repository und keine erzeugte `signature.html` im Hauptverzeichnis.
+
+Nur die Signaturen neu erzeugen:
+
+```sh
+.venv-documents/bin/python tools/generate_signatures.py
+```
+
+In Thunderbird unter Konten-Einstellungen das betreffende Konto auswählen,
+„Stattdessen eine Datei als Signatur anhängen“ aktivieren und die persönliche
+HTML-Datei auswählen. Eine neue Nachricht öffnen und eine Testmail an sich
+selbst senden; auch als Reintext ansehen.
+
+Für die Ablage außerhalb des Repositories, beispielsweise in einem Ordner
+`signatures/bb-limen` im Thunderbird-Profil, einmalig den gewünschten Zielordner
+angeben:
+
+```sh
+.venv-documents/bin/python tools/generate_signatures.py --install-dir /absoluter/pfad/zum/signaturordner
+```
+
+Der Zielordner wird ausschließlich lokal in `.signature-output.json` gemerkt.
+Künftige normale Builds und Signatur-Exporte aktualisieren auch die dortigen
+HTML-Dateien. In Thunderbird einmalig die Datei aus diesem Zielordner auswählen.
+Eine alte `signature.html` im Hauptverzeichnis kann nach Umstellung aller
+betroffenen Konten entfernt werden. Eine bereits ausgewählte Datei wird
+weiterhin über ihren Pfad gefunden; beim
+Verschieben dieser Datei muss sie neu ausgewählt werden. Alternativ den
+HTML-Code in das Signaturtextfeld mit aktiviertem „HTML verwenden“ kopieren:
+Dann liegt die Signatur direkt in den Kontoeinstellungen; spätere Exporte
+müssen dort erneut eingefügt werden.
+
+Kontaktdaten weiterhin ausschließlich in den bestehenden JSON-Dateien ändern.
+Die gemeinsame Gestaltung steht in `src/signatures/signature.html`, optionale
+abweichende Funktionsbezeichnungen in `src/signatures/settings.json` unter
+`roles` mit der Personenkennung als Schlüssel. Die erzeugten Dateien nicht
+von Hand bearbeiten. Eine installierte Signatur funktioniert auch nach dem
+Verschieben oder Entfernen des Repositories. Für weitere automatische Updates
+die lokale `.signature-output.json` beim Umzug mitnehmen. Entfernte Personen benötigen
+auch eine manuelle Entfernung ihrer alten Signaturdateien und Kontozuordnung.
+
+Die Datenquellen und die Trennung von Website und lokalen Signaturen stehen
+in [docs/pflege.md](docs/pflege.md#thunderbird-signaturen).
 
 ## QR-Codes für die Kontaktdaten
 
