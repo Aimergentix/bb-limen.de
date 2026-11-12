@@ -676,11 +676,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         files = render()
+        from generate_signatures import render as render_signatures, write_output as write_signatures
+        signatures = render_signatures(ROOT, files)
         write_output(files, args.output)
-    except (OSError, ValueError) as error:
+        # Prüfungen mit --output bleiben ohne lokale Seiteneffekte (R-PRUEFUNG-1).
+        if args.output.resolve() == (ROOT / "dist").resolve():
+            write_signatures(signatures, ROOT)
+    except (OSError, ValueError, RuntimeError) as error:
         print(f"FEHLER: {error}", file=sys.stderr)
         return 1
     print(f"Erzeugt: {len(files)} Dateien in {args.output}")
+    if args.output.resolve() == (ROOT / "dist").resolve():
+        print(f"Lokale Signaturen aktualisiert: {ROOT / 'dokumente/signaturen'}")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""Setzt die beiden Markdown-Handouts als einseitige A4-PDFs.
+"""PDF-Satz und kompatibler Einstieg zum gemeinsamen Dokument-Build.
 
 Aufruf: python3 tools/generate_pdfs.py
 Benötigt ReportLab sowie die lokal installierten Schriften Noto Serif/Sans.
@@ -23,8 +23,9 @@ from reportlab.platypus import (
     Spacer, Table, TableStyle,
 )
 
+from document_paths import ASSETS
+
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "dokumente"
 PAGE_WIDTH, PAGE_HEIGHT = A4
 MARGIN = 13 * mm
 WIDTH = PAGE_WIDTH - 2 * MARGIN
@@ -202,7 +203,7 @@ def profiles(text, portraits=False):
         content = [para(name, font="Text", color="ink", size=13.5, spaceAfter=5)]
         if portraits:
             file = "aranda_bw.png" if "Aranda" in name else "mika_bw.png"
-            photo = Image(str(OUT_DIR / "assets" / file), width=37, height=37)
+            photo = Image(str(ASSETS / file), width=37, height=37)
             content = [columns([content, photo], [(WIDTH-GAP)/2-16-45-GAP, 45])]
         content += blocks(body, size=8, font="Label")
         cards.append(content)
@@ -280,22 +281,9 @@ def footer(canvas, document):
 
 
 def main():
-    register_fonts()
-    jobs = [
-        ("BB-Limen-Vorstellung-Einseiter", portrait_story, "Kurzporträt & Vorstellung"),
-        ("BB-Limen-Stammdaten-Serviceeinheiten-Amtsgerichte", service_story, "Stammdatenmitteilung an die Betreuungsgerichte"),
-    ]
-    for name, make_story, title in jobs:
-        output = OUT_DIR / f"{name}.pdf"
-        buffer = BytesIO()
-        document = SimpleDocTemplate(
-            buffer, pagesize=A4, rightMargin=MARGIN, leftMargin=MARGIN,
-            topMargin=11*mm, bottomMargin=14*mm, title=title, pageCompression=1,
-        )
-        document.build(make_story(sections(OUT_DIR / f"{name}.md")),
-                       onFirstPage=footer, onLaterPages=footer)
-        output.write_bytes(buffer.getvalue())
-        print(f"Erzeugt: {output}")
+    # Gemeinsamer Einstieg verhindert abweichende Quell- und Ausgabepfade.
+    from build_documents import main as build_documents
+    build_documents()
 
 
 if __name__ == "__main__":

@@ -5,6 +5,13 @@
 __pycache__/
 /.venv-documents/
 /dokumente/varianten/build/
+/dokumente/handouts/
+
+# Lokale Thunderbird-Ausgaben und installationsabhängiger Zielordner.
+/dokumente/signaturen/
+/.signature-output.json
+# Bisherige lokale Signatur bis zur Umstellung der Thunderbird-Pfadzuordnung.
+/signature.html
 
 # Gemeinsame technische Dokumentation wird versioniert.
 # Persönliche Unterlagen und Auditberichte bleiben lokal.
